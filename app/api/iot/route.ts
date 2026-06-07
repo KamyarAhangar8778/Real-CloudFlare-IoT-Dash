@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +17,6 @@ export interface IoTState {
   pins: Record<string, boolean>; // Dynamic GPIO pins state: e.g. {"2": false, "4": true}
   logs: Array<{ timestamp: string; message: string; type: "info" | "success" | "warning" }>;
 }
-
-// File path for durable local-disk state storage
-const STATE_FILE_PATH = path.join(process.cwd(), "iot_state.json");
 
 // Default initial state
 const defaultState: IoTState = {
@@ -44,29 +39,52 @@ const defaultState: IoTState = {
   ],
 };
 
-// Helper to asynchronously load state from file with fallback
+// Use globalThis to persist state in serverless/worker runtime (e.g. Cloudflare)
+const globalForState = globalThis as unknown as {
+  inMemoryIoTState?: IoTState;
+};
+
+// Helper to load state with dynamic import of fs/path for Node environments, falling back to in-memory on Cloudflare Edge Runtime
 async function getIoTState(): Promise<IoTState> {
+  if (globalForState.inMemoryIoTState) {
+    return globalForState.inMemoryIoTState;
+  }
+
   try {
-    const fileContent = await fs.readFile(STATE_FILE_PATH, "utf-8");
+    const fs = await import("fs");
+    const path = await import("path");
+    const stateFilePath = path.join(process.cwd(), "iot_state.json");
+
+    const fileContent = await fs.promises.readFile(stateFilePath, "utf-8");
     const parsed = JSON.parse(fileContent);
     // Sanitize to make sure essential objects exist
     if (!parsed.sensors) parsed.sensors = { ...defaultState.sensors };
     if (!parsed.pins) parsed.pins = { ...defaultState.pins };
     if (!Array.isArray(parsed.logs)) parsed.logs = [ ...defaultState.logs ];
+    
+    globalForState.inMemoryIoTState = parsed;
     return parsed;
   } catch (err) {
-    // If file doesn't exist, use default state and save it
-    await saveIoTState(defaultState);
-    return defaultState;
+    // Falls back to in-memory state on error or serverless V8 runtime (Cloudflare)
+    if (!globalForState.inMemoryIoTState) {
+      globalForState.inMemoryIoTState = { ...defaultState };
+    }
+    return globalForState.inMemoryIoTState;
   }
 }
 
-// Helper to asynchronously save state to file
+// Helper to save state with fallback
 async function saveIoTState(state: IoTState) {
+  globalForState.inMemoryIoTState = state;
   try {
-    await fs.writeFile(STATE_FILE_PATH, JSON.stringify(state, null, 2), "utf-8");
+    const fs = await import("fs");
+    const path = await import("path");
+    const stateFilePath = path.join(process.cwd(), "iot_state.json");
+
+    await fs.promises.writeFile(stateFilePath, JSON.stringify(state, null, 2), "utf-8");
   } catch (err) {
-    console.error("خطا در ذخیره‌سازی وضعیت روی دیسک سرور:", err);
+    // File storage is not writable/supported on Cloudflare Edge Runtime
+    console.warn("[Cloudflare/Serverless Context] State updated in-memory only. Disk persistence is skipped.");
   }
 }
 
