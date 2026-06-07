@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-vazirmatn), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+}
