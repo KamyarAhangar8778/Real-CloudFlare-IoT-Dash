@@ -153,11 +153,19 @@ function AchaemenidDashboard() {
   const { data: iotData, refetch: refetchIot, isPending } = useQuery({
     queryKey: ["iotState"],
     queryFn: async () => {
-      const res = await fetch("/api/iot");
-      if (!res.ok) throw new Error("Could not retrieve current status");
-      return res.json();
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem("achaemenid_dashboard_pins_cache");
+        if (cached) {
+          try {
+            return { pins: JSON.parse(cached) };
+          } catch (e) {
+            console.error("Error parsing local pins cache", e);
+          }
+        }
+      }
+      return { pins: pinsState };
     },
-    refetchInterval: lowDataMode ? false : 3000, // Disables background polling to reduce internet data usage when lowDataMode is active
+    refetchInterval: false, // Purely client-side standalone mode, no background polling needed
   });
 
   // Automatically sync incoming Server updates into our Local Store & cached cache
@@ -429,26 +437,16 @@ function AchaemenidDashboard() {
   const updatePinOnServer = async (pin: string, pinState: boolean) => {
     try {
       setIsLoadingIoT(true);
-      const res = await fetch("/api/iot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: "dashboard",
-          pin,
-          pinState
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.state && data.state.pins) {
-          setPinsState(data.state.pins);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(data.state.pins));
-          }
+      setPinsState((prev) => {
+        const next = { ...prev, [pin]: pinState };
+        if (typeof window !== "undefined") {
+          localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(next));
         }
-      }
+        return next;
+      });
+      refetchIot();
     } catch (err) {
-      console.error("Failed to post pin state update to API", err);
+      console.error("Failed to update pin state in local storage", err);
     } finally {
       setIsLoadingIoT(false);
     }

@@ -135,11 +135,6 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
         const next = { ...state.pinsState, ...importedPins };
         if (typeof window !== "undefined") {
           localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(next));
-          fetch("/api/iot", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pins: next }),
-          }).catch((err) => console.error("Error syncing imported pin states", err));
         }
         return { pinsState: next };
       });
