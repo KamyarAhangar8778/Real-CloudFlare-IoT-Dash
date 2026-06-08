@@ -99,15 +99,10 @@ export default function ImperialClock() {
          <AnimatedDigit digit={seconds[0]} isSecondary />
          <AnimatedDigit digit={seconds[1]} isSecondary />
        </div>
-       <div className="flex items-center justify-center gap-1.5 text-[9px] md:text-[10px] theme-text-muted mt-[-2px] tracking-wider" dir="rtl">
+       <div className="flex items-center justify-center gap-1.5 text-[10px] theme-text-muted mt-0.5 tracking-wide font-sans" dir="rtl">
          <span>{toPersianDigits(dayLabel)}</span>
-         <span className="theme-text-secondary">{cleanMonth}</span>
-         {cleanZoro && (
-           <span className="text-accent3 font-bold" style={{ color: "var(--accent3)" }}>
-             ({cleanZoro})
-           </span>
-         )}
-         <span>{toPersianDigits(shahanshahiYear)} شاهنشاهی</span>
+         <span className="theme-text-secondary font-bold">{cleanMonth}</span>
+         <span>{toPersianDigits(solarYear)} خورشیدی</span>
        </div>
     </div>
   );

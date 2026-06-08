@@ -30,6 +30,8 @@ interface SettingsDrawerProps {
   cuneiformColor: "accent3" | "accent4" | "white" | "muted";
   setCuneiformColor: (val: "accent3" | "accent4" | "white" | "muted") => void;
   isDark: boolean;
+  headerPosition: "top" | "left";
+  setHeaderPosition: (val: "top" | "left") => void;
 }
 
 export default function SettingsDrawer({
@@ -51,7 +53,9 @@ export default function SettingsDrawer({
   setCuneiformOpacity,
   cuneiformColor,
   setCuneiformColor,
-  isDark
+  isDark,
+  headerPosition,
+  setHeaderPosition
 }: SettingsDrawerProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -143,6 +147,8 @@ export default function SettingsDrawer({
                   setHeaderTitle={setHeaderTitle}
                   expandedSection={expandedSection}
                   toggleSection={toggleSection}
+                  headerPosition={headerPosition}
+                  setHeaderPosition={setHeaderPosition}
                 />
 
                 {/* ACCORDION MODULE 5: ANCIENT CUNEIFORM BACKGROUND CONTROLS */}

@@ -103,6 +103,9 @@ function AchaemenidDashboard() {
   // ESP32 Integration Gate and builder states
   const [isEspDrawerOpen, setIsEspDrawerOpen] = useState(false);
 
+  // Layout presentation model: top header or left sidebar
+  const [headerPosition, setHeaderPosition] = useState<"top" | "left">("top");
+
   // Zustand state manager for clean global configurations
   const {
     segments,
@@ -303,6 +306,11 @@ function AchaemenidDashboard() {
       const savedHeaderTitle = localStorage.getItem("achaemenid_header_title");
       if (savedHeaderTitle) {
         setHeaderTitle(savedHeaderTitle);
+      }
+
+      const savedHeaderPos = localStorage.getItem("cloudflare_layout_header_position");
+      if (savedHeaderPos === "top" || savedHeaderPos === "left") {
+        setHeaderPosition(savedHeaderPos);
       }
 
       const savedPinsState = localStorage.getItem("achaemenid_dashboard_pins_cache");
@@ -569,39 +577,30 @@ function AchaemenidDashboard() {
           background: "radial-gradient(ellipse_at_center, #0c0f1d 0%, #030408 100%)"
         }}
       >
-        {/* Mystic Rotating Gold Pattern Emblem */}
-        <div className="relative w-40 h-40 mb-8 shrink-0 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-dashed border-[#D4AF37]/50 animate-spin" style={{ animationDuration: "16s" }} />
-          <div className="absolute inset-3 rounded-full border border-double border-[#10B981]/40 animate-spin" style={{ animationDuration: "10s", animationDirection: "reverse" }} />
-          <Cpu className="w-12 h-12 text-[#D4AF37] animate-pulse" />
+        <div className="relative w-20 h-20 mb-8 shrink-0 flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border border-dashed border-cyan-500/50 animate-spin" style={{ animationDuration: "12s" }} />
+          <Cpu className="w-8 h-8 text-cyan-400 animate-pulse" />
         </div>
 
-        {/* Loader description & Persian Title */}
-        <div className="space-y-4 max-w-lg">
-          <h3 className="text-xl font-extrabold tracking-wide font-sans" style={{ color: "#D4AF37" }}>
-            سامانه هوشمند پادشاهی هخامنش
+        <div className="space-y-3 max-w-lg">
+          <h3 className="text-lg font-bold tracking-wide font-sans text-white">
+            داشبورد هوشمند اینترنت اشیا
           </h3>
           <p className="text-xs text-slate-400">
-            در حال فراخوانی نگاره‌های باستانی و داده‌های اصلی...
+            در حال بارگذاری ایمن ماژول‌ها و منابع سیستم...
           </p>
 
-          {/* Progress bar container */}
-          <div className="w-64 h-1.5 bg-black/50 border border-gray-800/60 rounded-full overflow-hidden mx-auto mt-2 relative">
-            <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#10B981]" style={{ width: "30%" }} />
-          </div>
-          
-          <div className="text-[10px] text-slate-500 font-mono">
-            BARGHOZARI...
+          <div className="w-48 h-1 bg-black/50 border border-gray-800/60 rounded-full overflow-hidden mx-auto mt-2">
+            <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500" style={{ width: "45%" }} />
           </div>
         </div>
       </div>
     );
   }
 
-  // Dynamic royal golden-emerald custom cursors matching Achaemenid themes.
-  const defaultCursorSvg = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0,0 L16,6 L10,10 L18,18 L16,20 L8,12 L6,16 Z" fill="${accent3}" stroke="${isDark ? "#000000" : "#ffffff"}" stroke-width="1.5" stroke-linejoin="round" /><circle cx="10" cy="10" r="2.5" fill="${accent4}" stroke="${isDark ? "#000000" : "#ffffff"}" stroke-width="1"/></svg>`)}`;
-
-  const pointerCursorSvg = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0,0 L14,4 L9,9 L17,17 L15,19 L7,11 L4,14 Z" fill="${accent4}" stroke="${isDark ? "#000000" : "#ffffff"}" stroke-width="1.5" stroke-linejoin="round" /><circle cx="9" cy="9" r="2.5" fill="${accent3}" stroke="${isDark ? "#000000" : "#ffffff"}" stroke-width="1"/></svg>`)}`;
+  // Optimized native cursors used for max performance across all devices.
+  const defaultCursorSvg = "";
+  const pointerCursorSvg = "";
 
   // Synchronized with local assets and presets
 
@@ -622,42 +621,37 @@ function AchaemenidDashboard() {
                 fontFamily: "var(--font-vazir)"
               }}
             >
-              {/* Mystic Rotating Gold Pattern Emblem */}
-              <div className="relative w-40 h-40 mb-8 shrink-0 flex items-center justify-center">
+              {/* Modern rotating loading ring */}
+              <div className="relative w-24 h-24 mb-6 shrink-0 flex items-center justify-center">
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 rounded-full border border-dashed border-[#D4AF37]/50"
-                />
-                <motion.div
-                  animate={{ rotate: -360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-3 rounded-full border border-double border-[#10B981]/40"
+                  className="absolute inset-0 rounded-full border border-dashed border-cyan-500/40"
                 />
-                <Cpu className="w-12 h-12 text-[#D4AF37] animate-pulse" />
+                <Cpu className="w-8 h-8 text-cyan-400 animate-pulse" />
               </div>
 
               {/* Loader description & Persian Title */}
-              <div className="space-y-4 max-w-lg">
-                <h3 className="text-xl font-extrabold text-[#D4AF37] tracking-wide font-sans golden-royal-text-shimmer">
-                  سامانه هوشمند پادشاهی هخامنش
+              <div className="space-y-3 max-w-lg">
+                <h3 className="text-xl font-bold text-white tracking-wide font-sans">
+                  سامانه یکپارچه مانیتورینگ اینترنت اشیا
                 </h3>
                 <p className="text-xs text-slate-400">
                   {syncMessage}
                 </p>
 
                 {/* Progress bar container */}
-                <div className="w-64 h-1.5 bg-black/50 border border-gray-800/60 rounded-full overflow-hidden mx-auto relative mt-2">
+                <div className="w-64 h-1 bg-black/50 border border-gray-800/60 rounded-full overflow-hidden mx-auto relative mt-2">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-[#D4AF37] to-[#10B981]"
+                    className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500"
                     initial={{ width: 0 }}
                     animate={{ width: `${syncProgress}%` }}
                     transition={{ duration: 0.1 }}
                   />
                 </div>
                 
-                <div className="text-[10px] text-slate-500 font-mono">
-                  {syncProgress}% • CONNECTED ON RADIO_RF_LOCAL
+                <div className="text-[10px] text-zinc-500 font-mono">
+                  {syncProgress}% • CONNECTED ON STANDALONE_PORT
                 </div>
 
                 <div className="pt-6">
@@ -863,16 +857,9 @@ function AchaemenidDashboard() {
           background-size: 200% auto;
         }
 
-        @keyframes driftCuneiform {
-          0% {
-            background-position: 0px 0px;
-          }
-          100% {
-            background-position: 1200px 800px;
-          }
-        }
+        /* Static background image to eliminate frame-rate drops and constant page repaints */
         .cuneiform-scroll-container {
-          animation: driftCuneiform 160s linear infinite;
+          background-position: center;
         }
       `}</style>
 
@@ -912,97 +899,159 @@ function AchaemenidDashboard() {
       />
 
       {/* Main Container */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-6 md:py-8 flex flex-col min-h-screen justify-between gap-12">
-        
-        {/* MASTER HEADER */}
-        <MasterHeader 
-          isDark={isDark} 
-          setIsDark={setIsDark} 
-          setIsModulesMenuOpen={setIsModulesMenuOpen} 
-          setIsMenuOpen={setIsMenuOpen} 
-          setIsEspDrawerOpen={setIsEspDrawerOpen}
-          headerAnimationType={headerAnimationType}
-          headerTitle={headerTitle}
-          groupsCols={groupsCols}
-          setGroupsCols={setGroupsCols}
-        />
+      <div className={`relative z-10 w-full min-h-screen transition-all duration-500 ${
+        headerPosition === "left"
+          ? "flex flex-col md:flex-row-reverse items-stretch"
+          : "flex flex-col max-w-6xl mx-auto px-6 py-6 md:py-8 justify-between gap-12"
+      }`}>
 
-        {/* LOW DATA MODE NOTIFICATION & MANUAL REFRESH BUTTON */}
-        {lowDataMode && (
-          <motion.div 
-            initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
-            animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
-            className="flex flex-col sm:flex-row items-center justify-between px-5 py-3 theme-card-bg-solid border border-accent3/20 rounded-lg text-right text-xs theme-text-secondary gap-3 max-w-2xl mx-auto w-full transition-all duration-300 shadow-lg"
-            style={{ clipPath: "polygon(1% 0, 99% 0, 100% 50%, 99% 100%, 1% 100%, 0 50%)" }}
-          >
-            <button
-              onClick={() => {
-                refetchIot();
-              }}
-              className="px-4 py-1.5 bg-accent3/20 border border-accent3 text-accent3 hover:bg-accent3/30 transition-all text-xs font-bold cursor-pointer"
-              style={{ clipPath: BUTTON_CLIP }}
-            >
-              به‌روزرسانی کنونی
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-gray-400">
-                حالت صرفه‌جویی در مصرف اینترنت فعال است. دریافت خودکار داده‌ها متوقف شده است.
-              </span>
-              <WifiOff className="w-4 h-4 text-accent3 animate-pulse" />
-            </div>
-          </motion.div>
+        {/* Desktop Left Sidebar Navigation Frame */}
+        {headerPosition === "left" && (
+          <aside className="hidden md:flex md:w-72 md:shrink-0 md:sticky md:top-0 md:h-screen p-6 border-r border-[var(--border-color)] bg-[var(--card-bg-solid)] flex-col justify-between overflow-y-auto">
+            <MasterHeader 
+              isDark={isDark} 
+              setIsDark={setIsDark} 
+              setIsModulesMenuOpen={setIsModulesMenuOpen} 
+              setIsMenuOpen={setIsMenuOpen} 
+              setIsEspDrawerOpen={setIsEspDrawerOpen}
+              headerAnimationType={headerAnimationType}
+              headerTitle={headerTitle}
+              groupsCols={groupsCols}
+              setGroupsCols={setGroupsCols}
+              headerPosition={headerPosition}
+              setHeaderPosition={setHeaderPosition}
+            />
+          </aside>
         )}
 
-        {/* WORKSPACE AREA */}
-        <main className="flex-1 flex flex-col justify-center items-center text-center max-w-4xl mx-auto space-y-8 py-4 w-full relative">
-          <AnimatePresence mode="wait">
-            {segments.length === 0 ? (
-              <WelcomePortal 
-                setIsMenuOpen={setIsMenuOpen} 
+        {/* Dynamic Workspace Container layout */}
+        <div className={`flex-1 flex flex-col justify-between gap-12 ${
+          headerPosition === "left" ? "p-6 md:p-8 max-w-5xl w-full mx-auto" : "w-full"
+        }`}>
+
+          {/* Standard Top Header (Shows on mobile when left sidebar is selected) */}
+          {(headerPosition === "top" || headerPosition === "left") && (
+            <div className={headerPosition === "left" ? "md:hidden w-full" : "w-full"}>
+              <MasterHeader 
+                isDark={isDark} 
+                setIsDark={setIsDark} 
                 setIsModulesMenuOpen={setIsModulesMenuOpen} 
+                setIsMenuOpen={setIsMenuOpen} 
+                setIsEspDrawerOpen={setIsEspDrawerOpen}
+                headerAnimationType={headerAnimationType}
+                headerTitle={headerTitle}
+                groupsCols={groupsCols}
+                setGroupsCols={setGroupsCols}
+                headerPosition="top"
+                setHeaderPosition={setHeaderPosition}
               />
-            ) : (
-              <motion.div 
-                key="modular-workspace"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.4 }}
-                className="w-full space-y-6"
+            </div>
+          )}
+
+          {/* LOW DATA MODE NOTIFICATION & MANUAL REFRESH BUTTON */}
+          {lowDataMode && (
+            <motion.div 
+              initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
+              animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
+              className="flex flex-col sm:flex-row items-center justify-between px-5 py-3 theme-card-bg-solid border border-accent3/20 rounded-lg text-right text-xs theme-text-secondary gap-3 max-w-2xl mx-auto w-full transition-all duration-300 shadow-lg"
+              style={{ clipPath: "polygon(1% 0, 99% 0, 100% 50%, 99% 100%, 1% 100%, 0 50%)" }}
+            >
+              <button
+                onClick={() => {
+                  refetchIot();
+                }}
+                className="px-4 py-1.5 bg-accent3/20 border border-accent3 text-accent3 hover:bg-accent3/30 transition-all text-xs font-bold cursor-pointer"
+                style={{ clipPath: BUTTON_CLIP }}
               >
-                {/* Grid of Interactive Modules */}
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
+                به‌روزرسانی کنونی
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-gray-400">
+                  حالت صرفه‌جویی در مصرف اینترنت فعال است. دریافت خودکار داده‌ها متوقف شده است.
+                </span>
+                <WifiOff className="w-4 h-4 text-accent3 animate-pulse" />
+              </div>
+            </motion.div>
+          )}
+
+          {/* WORKSPACE AREA */}
+          <main className="flex-1 flex flex-col justify-center items-center text-center max-w-4xl mx-auto space-y-8 py-4 w-full relative">
+            <AnimatePresence mode="wait">
+              {segments.length === 0 ? (
+                <WelcomePortal 
+                  setIsMenuOpen={setIsMenuOpen} 
+                  setIsModulesMenuOpen={setIsModulesMenuOpen} 
+                />
+              ) : (
+                <motion.div 
+                  key="modular-workspace"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full space-y-6"
                 >
-                  <SortableContext 
-                    items={groupsOrder.map(g => `group-${g}`)} 
-                    strategy={groupsCols > 1 ? rectSortingStrategy : verticalListSortingStrategy}
+                  {/* Grid of Interactive Modules */}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                   >
-                    <div className={
-                      groupsCols === 3 ? "grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start" :
-                      groupsCols === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-8 w-full items-start" :
-                      "w-full space-y-8 items-start"
-                    }>
-                      {groupsOrder.map((groupName) => {
-                        const groupSegments = segments.filter(s => (s.group || "Test") === groupName);
-                        return (
-                          <div key={groupName} className="space-y-3 w-full">
-                            <SortableGroup 
-                              id={groupName} 
-                              items={groupSegments.map(s => s.id)} 
-                              segmentCount={groupSegments.length}
-                              maxCols={groupConfigs[groupName]?.maxCols || 3}
-                              onColsChange={(cols) => handleGroupColsChange(groupName, cols)}
-                              onAddPlaceholder={handleAddPlaceholder}
-                              onDeleteGroup={handleRemoveGroup}
-                              parentGroupsCols={groupsCols}
-                            >
-                              {groupSegments.map((seg) => (
-                                <SortableSegmentCard
-                                  key={seg.id}
+                    <SortableContext 
+                      items={groupsOrder.map(g => `group-${g}`)} 
+                      strategy={groupsCols > 1 ? rectSortingStrategy : verticalListSortingStrategy}
+                    >
+                      <div className={
+                        groupsCols === 3 ? "grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start" :
+                        groupsCols === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-8 w-full items-start" :
+                        "w-full space-y-8 items-start"
+                      }>
+                        {groupsOrder.map((groupName) => {
+                          const groupSegments = segments.filter(s => (s.group || "Test") === groupName);
+                          return (
+                            <div key={groupName} className="space-y-3 w-full">
+                              <SortableGroup 
+                                id={groupName} 
+                                items={groupSegments.map(s => s.id)} 
+                                segmentCount={groupSegments.length}
+                                maxCols={groupConfigs[groupName]?.maxCols || 3}
+                                onColsChange={(cols) => handleGroupColsChange(groupName, cols)}
+                                onAddPlaceholder={handleAddPlaceholder}
+                                onDeleteGroup={handleRemoveGroup}
+                                parentGroupsCols={groupsCols}
+                              >
+                                {groupSegments.map((seg) => (
+                                  <SortableSegmentCard
+                                    key={seg.id}
+                                    segment={seg}
+                                    isPinOn={!!pinsState[seg.pin]}
+                                    onRemove={handleRemoveSegment}
+                                    onTogglePin={handleTogglePin}
+                                    onSetPinState={handleSetPinState}
+                                    onUpdateSegmentMode={handleUpdateSegmentMode}
+                                    isLoadingIoT={isLoadingIoT}
+                                    onSetupPlaceholder={handleSetupPlaceholder}
+                                    parentGroupsCols={groupsCols}
+                                    groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
+                                  >
+                                  </SortableSegmentCard>
+                                ))}
+                              </SortableGroup>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </SortableContext>
+                    <DragOverlay>
+                      {activeSegmentId ? (
+                        (() => {
+                          const seg = segments.find(s => s.id === activeSegmentId);
+                          if (!seg) return null;
+                          const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
+                          return (
+                            <div style={{ opacity: 0.8, cursor: "grabbing" }}>
+                              <SortableSegmentCard
                                   segment={seg}
                                   isPinOn={!!pinsState[seg.pin]}
                                   onRemove={handleRemoveSegment}
@@ -1010,86 +1059,58 @@ function AchaemenidDashboard() {
                                   onSetPinState={handleSetPinState}
                                   onUpdateSegmentMode={handleUpdateSegmentMode}
                                   isLoadingIoT={isLoadingIoT}
-                                  onSetupPlaceholder={handleSetupPlaceholder}
                                   parentGroupsCols={groupsCols}
-                                  groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
-                                >
-                                </SortableSegmentCard>
-                              ))}
-                            </SortableGroup>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </SortableContext>
-                  <DragOverlay>
-                    {activeSegmentId ? (
-                      (() => {
-                        const seg = segments.find(s => s.id === activeSegmentId);
-                        if (!seg) return null;
-                        const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
-                        return (
-                          <div style={{ opacity: 0.8, cursor: "grabbing" }}>
-                            <SortableSegmentCard
-                                segment={seg}
-                                isPinOn={!!pinsState[seg.pin]}
-                                onRemove={handleRemoveSegment}
-                                onTogglePin={handleTogglePin}
-                                onSetPinState={handleSetPinState}
-                                onUpdateSegmentMode={handleUpdateSegmentMode}
-                                isLoadingIoT={isLoadingIoT}
+                                  groupMaxCols={originalGroupCols}
+                              />
+                            </div>
+                          );
+                        })()
+                      ) : null}
+                      {activeGroupId ? (
+                        (() => {
+                          const groupId = activeGroupId.replace("group-", "");
+                          const groupSegments = segments.filter(s => (s.group || "Test") === groupId);
+                          return (
+                            <div style={{ opacity: 0.8, cursor: "grabbing" }}>
+                              <SortableGroup 
+                                id={groupId} 
+                                items={groupSegments.map(s => s.id)} 
+                                segmentCount={groupSegments.length}
+                                maxCols={groupConfigs[groupId]?.maxCols || 3}
                                 parentGroupsCols={groupsCols}
-                                groupMaxCols={originalGroupCols}
-                            />
-                          </div>
-                        );
-                      })()
-                    ) : null}
-                    {activeGroupId ? (
-                      (() => {
-                        const groupId = activeGroupId.replace("group-", "");
-                        const groupSegments = segments.filter(s => (s.group || "Test") === groupId);
-                        return (
-                          <div style={{ opacity: 0.8, cursor: "grabbing" }}>
-                            <SortableGroup 
-                              id={groupId} 
-                              items={groupSegments.map(s => s.id)} 
-                              segmentCount={groupSegments.length}
-                              maxCols={groupConfigs[groupId]?.maxCols || 3}
-                              parentGroupsCols={groupsCols}
-                              onColsChange={() => {}}
-                              onAddPlaceholder={() => {}}
-                              onDeleteGroup={() => {}}
-                            >
-                              <></>
-                            </SortableGroup>
-                          </div>
-                        );
-                      })()
-                    ) : null}
-                  </DragOverlay>
-                  <TrashDropZone activeId={activeSegmentId || activeGroupId} />
-                </DndContext>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+                                onColsChange={() => {}}
+                                onAddPlaceholder={() => {}}
+                                onDeleteGroup={() => {}}
+                              >
+                                <></>
+                              </SortableGroup>
+                            </div>
+                          );
+                        })()
+                      ) : null}
+                    </DragOverlay>
+                    <TrashDropZone activeId={activeSegmentId || activeGroupId} />
+                  </DndContext>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
 
-        {/* ENCYCLOPEDIA SECTION */}
-        <EncyclopediaSection 
-          selectedSymbol={selectedSymbol} 
-          setSelectedSymbol={setSelectedSymbol} 
-          isSymbolsSectionExpanded={isSymbolsSectionExpanded} 
-          setIsSymbolsSectionExpanded={setIsSymbolsSectionExpanded} 
-        />
+          {/* ENCYCLOPEDIA SECTION */}
+          <EncyclopediaSection 
+            selectedSymbol={selectedSymbol} 
+            setSelectedSymbol={setSelectedSymbol} 
+            isSymbolsSectionExpanded={isSymbolsSectionExpanded} 
+            setIsSymbolsSectionExpanded={setIsSymbolsSectionExpanded} 
+          />
 
-        {/* Elegant Minimalist Footer Wrapped as a Floating Island Card with diagonal corners */}
-        <footer 
-          className="text-center text-[10px] theme-text-muted font-sans border border-accent3-medium/30 bg-[var(--card-bg)] backdrop-blur-md py-4 px-6 mt-12 mb-4 mx-auto max-w-4xl shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_45px_rgba(212,163,89,0.25)] transition-all duration-500 hover:-translate-y-[2px]"
-          style={{ clipPath: "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)" }}
-        >
-          طراحی بر پایه معماری اصیل تخت جمشید © سال ۲۰۱۶ میلادی (نسخه مرجع تائید کانسپت بومی پادشاهی ایران‌زمین)
-        </footer>
+          {/* Elegant Minimalist Footer Wrapped as a Floating Island Card with diagonal corners */}
+          <footer 
+            className="text-center text-[10px] theme-text-muted font-sans border border-[var(--border-color)] bg-[var(--card-bg-solid)] py-4 px-6 mt-12 mb-4 mx-auto max-w-4xl shadow-sm hover:shadow-md rounded-xl transition-all duration-300"
+          >
+            سامانه هوشمند و داشبورد تعاملی مانیتورینگ صنعت اینترنت اشیاء (الهام گرفته از طراحی کلودفلر)
+          </footer>
+        </div>
       </div>
 
       {/* Settings configuration Drawer */}
@@ -1113,6 +1134,8 @@ function AchaemenidDashboard() {
         cuneiformColor={cuneiformColor}
         setCuneiformColor={setCuneiformColor}
         isDark={isDark}
+        headerPosition={headerPosition}
+        setHeaderPosition={setHeaderPosition}
       />
 
       {/* Modules management Drawer */}

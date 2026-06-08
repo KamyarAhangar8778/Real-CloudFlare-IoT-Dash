@@ -5,13 +5,15 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   Settings as SettingsIcon, 
   Layers, 
-  Sun,
-  Moon,
-  Cpu
+  Sun, 
+  Moon, 
+  Cpu, 
+  PanelTop, 
+  PanelLeft,
+  LayoutGrid,
+  Columns2,
+  Sparkles
 } from "lucide-react";
-import { 
-  BUTTON_CLIP
-} from "@/lib/presets";
 import ImperialClock from "@/features/encyclopedia/components/ImperialClock";
 
 interface MasterHeaderProps {
@@ -24,6 +26,8 @@ interface MasterHeaderProps {
   headerTitle: string;
   groupsCols: number;
   setGroupsCols: (val: number) => void;
+  headerPosition: "top" | "left";
+  setHeaderPosition: (val: "top" | "left") => void;
 }
 
 export default function MasterHeader({
@@ -35,321 +39,299 @@ export default function MasterHeader({
   headerAnimationType,
   headerTitle,
   groupsCols,
-  setGroupsCols
+  setGroupsCols,
+  headerPosition,
+  setHeaderPosition
 }: MasterHeaderProps) {
-  return (
-    <div id="header-continent-group" className="w-full flex flex-col md:flex-row-reverse items-stretch gap-4 relative md:-mt-2 z-20">
-      
-      {/* Structural Styles for parallel slants and animations */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media (min-width: 640px) {
-          /* All three islands and the theme toggle are parallel parallelograms slanted on both sides */
-          .clip-header-island {
-            clip-path: polygon(16px 0%, 100% 0%, calc(100% - 16px) 100%, 0% 100%);
-          }
-        }
-        @media (max-width: 639px) {
-          .clip-header-island {
-            clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
-          }
-        }
 
-        @keyframes borderShiftMove {
-          0% {
-            background-position: 0% 0%;
-            filter: drop-shadow(0 0 1px var(--accent3-medium));
-          }
-          50% {
-            filter: drop-shadow(0 0 3px var(--accent4-medium));
-          }
-          100% {
-            background-position: 200% 0%;
-            filter: drop-shadow(0 0 1px var(--accent3-medium));
-          }
-        }
+  const handleTogglePosition = (pos: "top" | "left") => {
+    setHeaderPosition(pos);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cloudflare_layout_header_position", pos);
+    }
+  };
 
-        .animated-border-gold-emerald {
-          background: linear-gradient(90deg, var(--accent3) 0%, var(--accent4) 25%, var(--accent3) 50%, var(--accent4) 75%, var(--accent3) 100%);
-          background-size: 200% 100%;
-          animation: borderShiftMove 8s linear infinite;
-          transition: all 0.5s ease;
-        }
-      ` }} />
-
-      {/* THEME ISLAND (Floating parallel-slanted state-switching button on the right) */}
-      <motion.div 
-        className="clip-header-island p-[1.5px] relative overflow-hidden flex items-stretch shrink-0 w-14 h-12 shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)] transition-shadow duration-300 cursor-pointer"
-        whileHover={{
-          y: -4,
-          scale: 1.05
-        }}
-      >
-        {headerAnimationType === "chase" ? (
-          <div 
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] pointer-events-none"
-            style={{
-              width: "400px",
-              height: "400px",
-              background: "conic-gradient(from 0deg, var(--accent3), var(--accent4), var(--accent3))",
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 animated-border-gold-emerald" />
-        )}
-
-        <button
-          onClick={() => setIsDark(!isDark)}
-          id="theme-island-toggle"
-          className="clip-header-island group flex items-center justify-center h-full w-full transition-all duration-500 cursor-pointer overflow-hidden transform active:scale-95 z-10"
-          style={{ 
-            backgroundColor: isDark ? "#080a0f" : "#fcfdfe" 
-          }}
-          title="تغییر طرح رنگ‌بندی (روز تابان / شب سرد)"
-          aria-label="تغییر طرح رنگ‌بندی (روز تابان / شب سرد)"
-        >
-          {/* Subtle Decorative Indicators */}
-          <div className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r border-accent3/20 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l border-accent3/20 pointer-events-none" />
-          
-          <AnimatePresence mode="wait">
-            {isDark ? (
-              <motion.div 
-                key="moon"
-                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
-                animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="flex items-center justify-center"
-              >
-                <Moon className="w-5 h-5 text-accent3 transition-all duration-500 group-hover:scale-120 group-hover:rotate-12" style={{ color: "var(--accent3)" }} />
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="sun"
-                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
-                animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="flex items-center justify-center animate-[spin_30s_linear_infinite]"
-              >
-                <Sun className="w-5 h-5 text-accent4 transition-all duration-500 group-hover:scale-120" style={{ color: "var(--accent4)" }} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </button>
-      </motion.div>
-
-      {/* MASTER FLOATING ARCHIPELAGO (Constructed from 3 distinct floating islands with pure border animations) */}
-      <div className="flex-1 flex flex-col sm:flex-row-reverse items-stretch gap-3 md:gap-4 relative">
-
-        {/* Island 1: Title Island (Rightmost in Persian/RTL) */}
-        <motion.div 
-          className="clip-header-island p-[1.5px] flex items-stretch shrink-0 relative overflow-hidden shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_45px_rgba(212,163,89,0.35)] transition-shadow duration-300"
-          whileHover={{
-            y: -4,
-            scale: 1.03
-          }}
-        >
-          {headerAnimationType === "chase" ? (
-            <div 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] pointer-events-none"
-              style={{
-                width: "800px",
-                height: "800px",
-                background: "conic-gradient(from 0deg, var(--accent3), var(--accent4), var(--accent3))",
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 animated-border-gold-emerald" />
-          )}
-
-          <div 
-            className="clip-header-island flex items-center gap-2.5 px-6 py-2 h-12 w-full transition-all duration-500 z-10"
-            style={{ 
-              backgroundColor: isDark ? "#080a0f" : "#fcfdfe" 
-            }}
-          >
-            <motion.div 
-              className="w-4 h-4 flex items-center justify-center relative border border-accent3/40 bg-accent3-transparent shrink-0"
-              style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
-              animate={{
-                rotate: [0, 90, 180, 270, 360]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            >
-              <div 
-                className="w-1.5 h-1.5 bg-accent3" 
-                style={{ 
-                  backgroundColor: "var(--accent3)",
-                  clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" 
-                }} 
-              />
-            </motion.div>
-            <h1 className="font-sans font-extrabold text-xs md:text-sm tracking-tight theme-text-primary header-noble-glow bg-gradient-to-r from-[var(--text-primary)] via-slate-400 to-accent3 bg-clip-text text-transparent whitespace-nowrap select-none" dir="rtl">
-              {headerTitle}
-            </h1>
+  // 1. VERTICAL SIDEBAR LAYOUT (For Left sidebar position on medium/desktop displays)
+  if (headerPosition === "left") {
+    return (
+      <div id="vertical-master-header" className="w-full h-full flex flex-col justify-between gap-6 py-2">
+        {/* Core Header section */}
+        <div className="space-y-6">
+          {/* Brand/Title Header */}
+          <div className="flex items-center justify-between gap-3 pb-4 border-b border-[var(--border-color)]">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-[var(--accent4-transparent)] border border-[var(--accent4-medium)] text-[var(--accent4)] rounded-lg shrink-0">
+                <Cpu className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="text-right">
+                <h1 className="font-sans font-bold text-sm text-[var(--text-primary)] leading-tight tracking-tight select-none">
+                  {headerTitle}
+                </h1>
+                <span className="text-[9px] text-[var(--text-muted)] block font-mono">
+                  Cloudflare Inspired IoT Node
+                </span>
+              </div>
+            </div>
           </div>
-        </motion.div>
 
-        {/* Island 2: Clock & Calendar Island (Middle) */}
-        <motion.div 
-          className="clip-header-island p-[1.5px] flex items-stretch flex-1 min-w-[200px] relative overflow-hidden shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_45px_rgba(16,185,129,0.25)] transition-shadow duration-300"
-          whileHover={{
-            y: -4,
-            scale: 1.01
-          }}
-        >
-          {headerAnimationType === "chase" ? (
-            <div 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] pointer-events-none"
-              style={{
-                width: "1000px",
-                height: "1000px",
-                background: "conic-gradient(from 0deg, var(--accent3), var(--accent4), var(--accent3))",
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 animated-border-gold-emerald" />
-          )}
+          {/* Live Clock Capsule (Vertical) */}
+          <div className="p-3 bg-[var(--bg-main)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-300">
+            <ImperialClock />
+          </div>
 
-          <div 
-            className="clip-header-island flex items-center justify-between px-4 py-2 h-12 w-full transition-all duration-500 z-10 gap-2"
-            style={{ 
-              backgroundColor: isDark ? "#080a0f" : "#fcfdfe" 
-            }}
-          >
-            {/* Groups grid layout toggler */}
-            <div 
-              className="flex items-center gap-[3px] p-0.5 bg-black/30 border border-gray-800/40 shrink-0" 
-              style={{ clipPath: "polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)" }}
-            >
+          {/* Interactive Layout Modifiers Grid */}
+          <div className="space-y-3">
+            <span className="text-[10px] text-[var(--text-muted)] font-black block text-right uppercase tracking-wider">
+              پیکربندی موقعیت و ساختار
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {/* Top Layout Option */}
               <button
-                onClick={() => {
-                  setGroupsCols(1);
-                  if (typeof window !== "undefined") {
-                     localStorage.setItem("achaemenid_dashboard_groups_cols", "1");
-                  }
-                }}
-                className={`w-5 h-5 flex flex-col items-center justify-center gap-[1px] transition-all cursor-pointer hover:-translate-y-[1px] ${groupsCols === 1 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)] font-bold scale-105' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px), 0 2px)" }}
-                title="نمایش تک ستونه گروه‌ها"
-                aria-label="نمایش تک ستونه گروه‌ها"
+                onClick={() => handleTogglePosition("top")}
+                className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-[var(--border-color)] text-[11px] font-bold text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--card-hover-bg)] transition-all"
+                title="قرارگیری هدر در بالای صفحه"
               >
-                <div className="w-[11px] h-[3px] bg-current rounded-[1px]" />
-                <div className="w-[11px] h-[3px] bg-current rounded-[1px]" />
+                <PanelTop className="w-3.5 h-3.5" />
+                <span>هدر بالا</span>
               </button>
+
+              {/* Left Layout Option */}
               <button
-                onClick={() => {
-                  setGroupsCols(2);
-                  if (typeof window !== "undefined") {
-                     localStorage.setItem("achaemenid_dashboard_groups_cols", "2");
-                  }
-                }}
-                className={`w-5 h-5 flex items-center justify-center gap-[1.5px] transition-all cursor-pointer hover:-translate-y-[1px] ${groupsCols === 2 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)] font-bold scale-105' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px), 0 2px)" }}
-                title="نمایش دو ستونه گروه‌ها"
-                aria-label="نمایش دو ستونه گروه‌ها"
+                onClick={() => handleTogglePosition("left")}
+                className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-[var(--accent4)] bg-[var(--accent4-transparent)] text-[var(--accent4)] text-[11px] font-bold transition-all"
+                title="قرارگیری منو در سمت چپ"
               >
-                <div className="w-[4px] h-[8px] bg-current rounded-[1px]" />
-                <div className="w-[4px] h-[8px] bg-current rounded-[1px]" />
-              </button>
-              <button
-                onClick={() => {
-                  setGroupsCols(3);
-                  if (typeof window !== "undefined") {
-                     localStorage.setItem("achaemenid_dashboard_groups_cols", "3");
-                  }
-                }}
-                className={`w-5 h-5 flex items-center justify-center gap-[1px] transition-all cursor-pointer hover:-translate-y-[1px] ${groupsCols === 3 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)] font-bold scale-105' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(2px 0, calc(100% - 2px) 0, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) 100%, 2px 100%, 0 calc(100% - 2px), 0 2px)" }}
-                title="نمایش سه ستونه گروه‌ها"
-                aria-label="نمایش سه ستونه گروه‌ها"
-              >
-                <div className="w-[2.5px] h-[8px] bg-current rounded-[1px]" />
-                <div className="w-[2.5px] h-[8px] bg-current rounded-[1px]" />
-                <div className="w-[2.5px] h-[8px] bg-current rounded-[1px]" />
+                <PanelLeft className="w-3.5 h-3.5" />
+                <span>منوی چپ</span>
               </button>
             </div>
 
-            {/* Simulated Live Imperial Clock Center */}
-            <div className="flex-1 flex justify-center">
-              <ImperialClock />
+            {/* Grid layout cols switcher inside sidebar */}
+            <div className="flex items-center justify-between p-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg gap-2">
+              <span className="text-[10px] text-[var(--text-tertiary)] font-bold">ستون‌ها:</span>
+              <div className="flex gap-1">
+                {[1, 2, 3].map((cols) => (
+                  <button
+                    key={cols}
+                    onClick={() => setGroupsCols(cols)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                      groupsCols === cols
+                        ? "bg-[var(--accent3)] text-black"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                    }`}
+                  >
+                    {cols} ستون
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </motion.div>
 
-        {/* Island 3: Modules & Settings Toggles Island (Leftmost in Persian/RTL) */}
-        <motion.div 
-          className="clip-header-island p-[1.5px] flex items-stretch shrink-0 relative overflow-hidden shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_45px_rgba(212,163,89,0.35)] transition-shadow duration-300"
-          whileHover={{
-            y: -4,
-            scale: 1.04
-          }}
-        >
-          {headerAnimationType === "chase" ? (
-            <div 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] pointer-events-none"
-              style={{
-                width: "500px",
-                height: "500px",
-                background: "conic-gradient(from 0deg, var(--accent3), var(--accent4), var(--accent3))",
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 animated-border-gold-emerald" />
-          )}
+          {/* Quick-Access Vertical Control Items */}
+          <div className="space-y-2 mt-4">
+            <span className="text-[10px] text-[var(--text-muted)] font-black block text-right uppercase tracking-wider">
+              بخش‌های کاربری
+            </span>
 
-          <div 
-            className="clip-header-island flex items-center gap-3 px-6 py-2 h-12 w-full transition-all duration-500 z-10"
-            style={{ 
-              backgroundColor: isDark ? "#080a0f" : "#fcfdfe" 
-            }}
-          >
+            {/* Modules Drawer Trigger */}
             <button
               onClick={() => setIsModulesMenuOpen(true)}
-              className="relative group inline-flex items-center justify-center w-8 h-8 hover:from-black hover:-translate-y-[2px] hover:border-[var(--accent4)] hover:shadow-[0_0_8px_rgba(16,185,129,0.3)] transition-all duration-300 cursor-pointer overflow-hidden transform active:scale-95 text-[var(--accent4)]"
-              style={{ 
-                clipPath: BUTTON_CLIP,
-                border: "1px solid var(--accent4-medium)",
-                background: "linear-gradient(90deg, var(--accent4-transparent), transparent)" 
-              }}
-              title="منوی مدیریت ماژول‌ها و سگمنت‌ها"
-              aria-label="منوی مدیریت ماژول‌ها و سگمنت‌ها"
+              className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
             >
-              <Layers className="w-4 h-4 text-[var(--accent4)] group-hover:scale-110 transition-transform duration-500" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-[var(--accent4-transparent)] text-[var(--accent4)]">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-semibold">پالایه و ماژول‌ها</span>
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
+                Modules
+              </span>
             </button>
+
+            {/* ESP Config Sync Trigger */}
             <button
               onClick={() => setIsEspDrawerOpen(true)}
-              className="relative group inline-flex items-center justify-center w-8 h-8 hover:from-black hover:-translate-y-[2px] hover:border-[var(--accent3)] hover:shadow-[0_0_8px_rgba(212,163,89,0.3)] transition-all duration-300 cursor-pointer overflow-hidden transform active:scale-95 text-[var(--accent3)]"
-              style={{ 
-                clipPath: BUTTON_CLIP,
-                border: "1px solid var(--accent3-medium)",
-                background: "linear-gradient(90deg, var(--accent3-transparent), transparent)" 
-              }}
-              title="موتور همگام‌ساز قالب دیتای تراشه ESP32"
-              aria-label="موتور همگام‌ساز قالب دیتای تراشه ESP32"
+              className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
             >
-              <Cpu className="w-4 h-4 text-[var(--accent3)] group-hover:scale-110 transition-transform duration-500" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
+                  <Cpu className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-semibold">همگام‌ساز تراشه</span>
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
+                ESP32
+              </span>
             </button>
+
+            {/* System config trigger */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="relative group inline-flex items-center justify-center w-8 h-8 hover:from-black hover:-translate-y-[2px] hover:border-[var(--accent3)] hover:shadow-[0_0_8px_rgba(212,163,89,0.3)] transition-all duration-300 cursor-pointer overflow-hidden transform active:scale-95 text-accent3"
-              style={{ 
-                clipPath: BUTTON_CLIP,
-                border: "1px solid var(--accent3-medium)",
-                background: "linear-gradient(90deg, var(--accent3-transparent), transparent)" 
-              }}
-              title="تنظیمات پایداری و منو"
-              aria-label="تنظیمات پایداری و منو"
+              className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
             >
-              <SettingsIcon className="w-4 h-4 text-accent3 group-hover:rotate-90 transition-transform duration-500" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-gray-500/10 text-[var(--text-tertiary)]">
+                  <SettingsIcon className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-semibold">تنظیمات اصلی</span>
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
+                Setup
+              </span>
             </button>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Footer controls: theme toggler and brand info */}
+        <div className="space-y-4 pt-4 border-t border-[var(--border-color)]">
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-main)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] transition-all text-xs font-medium"
+          >
+            <span className="text-[11px] text-[var(--text-secondary)]">
+              {isDark ? "حالت تیره" : "حالت روشن"}
+            </span>
+            <div className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
+              {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. HORIZONTAL HEADER LAYOUT (For standard top placement & mobile displays)
+  return (
+    <div id="horizontal-master-header" className="w-full flex flex-col md:flex-row gap-4 justify-between items-center bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm relative z-20">
+      
+      {/* Right Column: Logo & Editable Title */}
+      <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        {/* Mobile menu trigger helper/indicator & logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="p-2.5 bg-[var(--accent4-transparent)] border border-[var(--accent4-medium)] text-[var(--accent4)] rounded-xl shrink-0">
+            <Cpu className="w-5 h-5" />
+          </div>
+          <div className="text-right">
+            <h1 className="font-sans font-extrabold text-[13px] md:text-sm tracking-tight text-[var(--text-primary)]">
+              {headerTitle}
+            </h1>
+            <p className="text-[9px] text-[var(--text-muted)] font-mono leading-none mt-0.5">
+              Interactive Modern Dashboard
+            </p>
+          </div>
+        </div>
+
+        {/* Short Layout toggler just for mobile viewports */}
+        <div className="md:hidden flex items-center gap-1 bg-[var(--bg-main)] p-1 border border-[var(--border-color)] rounded-lg">
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent4)] rounded transition-all"
+            title="تغییر تم"
+          >
+            {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Middle Column: Unified Clock capsule */}
+      <div className="hidden lg:flex items-center justify-center shrink-0">
+        <div className="px-5 py-1.5 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full">
+          <ImperialClock />
+        </div>
+      </div>
+
+      {/* Left Column: Row of Action Items */}
+      <div className="flex items-center flex-wrap justify-center gap-3 w-full md:w-auto md:justify-end border-t border-[var(--border-color)] pt-3 md:pt-0 md:border-t-0">
+        
+        {/* Layout Switcher Buttons Inside Header */}
+        <div className="flex items-center p-0.5 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl shadow-inner gap-0.5 shrink-0">
+          <button
+            onClick={() => handleTogglePosition("top")}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-[var(--accent3)] text-black shadow-sm transition-all"
+            title="نمای پهن بالا"
+          >
+            <PanelTop className="w-3 h-3" />
+            <span className="hidden sm:inline">هدر بالا</span>
+          </button>
+          <button
+            onClick={() => handleTogglePosition("left")}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all"
+            title="نمای ستونی چپ"
+          >
+            <PanelLeft className="w-3 h-3" />
+            <span className="hidden sm:inline">منوی چپ</span>
+          </button>
+        </div>
+
+        {/* Dashboard Grid columns layout switcher (Standard 1, 2, 3 columns tabs) */}
+        <div className="flex items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-0.5 rounded-xl text-xs gap-0.5 shrink-0">
+          <button
+            onClick={() => setGroupsCols(1)}
+            aria-label="تک ستون"
+            className={`p-1.5 rounded-lg transition-all ${groupsCols === 1 ? 'bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+            title="نمایش تک ستونه"
+          >
+            <Columns2 className="w-3.5 h-3.5 rotate-90" />
+          </button>
+          <button
+            onClick={() => setGroupsCols(2)}
+            aria-label="دو ستون"
+            className={`p-1.5 rounded-lg transition-all ${groupsCols === 2 ? 'bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+            title="نمایش دو ستونه"
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setGroupsCols(3)}
+            aria-label="سه ستون"
+            className={`p-1.5 rounded-lg transition-all ${groupsCols === 3 ? 'bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+            title="نمایش سه ستونه"
+          >
+            <LayoutGrid className="w-3.5 h-3.5 scale-x-110" />
+          </button>
+        </div>
+
+        {/* Functional drawer triggers */}
+        <div className="flex items-center gap-2">
+          {/* Modules Control Dialog */}
+          <button
+            onClick={() => setIsModulesMenuOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97]"
+            title="مدیریت ماژول‌ها"
+          >
+            <Layers className="w-3.5 h-3.5 text-[var(--accent4)]" />
+            <span>ماژول‌ها</span>
+          </button>
+
+          {/* ESP Synchronization Dialog */}
+          <button
+            onClick={() => setIsEspDrawerOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97]"
+            title="همگام‌سازی ESP32"
+          >
+            <Cpu className="w-3.5 h-3.5 text-[var(--accent3)]" />
+            <span>تراشه</span>
+          </button>
+
+          {/* Master Settings Dialog */}
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97]"
+            title="تنظیمات سامانه"
+          >
+            <SettingsIcon className="w-4 h-4" />
+          </button>
+
+          {/* Standard simple theme mode toggle */}
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="hidden md:flex p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all active:scale-[0.97]"
+            title="تغییر تم"
+          >
+            {isDark ? <Sun className="w-4 h-4 text-orange-450" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+          </button>
+        </div>
 
       </div>
     </div>

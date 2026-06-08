@@ -83,10 +83,9 @@ export default function SortableSegmentCard({
         </div>
         <button
           onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
-          className={`w-full h-full border-2 border-dashed border-accent3-medium/30 hover:border-accent3/80 bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-300 cursor-pointer text-center group ${
+          className={`w-full h-full border-2 border-dashed border-accent3-medium/30 hover:border-emerald-500/80 bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 cursor-pointer text-center group rounded-2xl ${
             isUltraCompact ? "p-3 min-h-[90px]" : isCompact ? "p-4 min-h-[128px]" : "p-6 min-h-[178px]"
           }`}
-          style={{ clipPath: CLIP_DIAGONAL_TR_BL }}
         >
           <div className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors" style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}>
             <Plus className="w-4 h-4" />
@@ -144,11 +143,10 @@ export default function SortableSegmentCard({
   return (
     <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
       <motion.div
-        whileHover={{ y: -3, scale: 1.01 }}
-        className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--accent3-medium)] transition-all duration-300 relative group h-full shadow-[0_15px_30px_rgba(0,0,0,0.6)] ${
+        whileHover={{ y: -2, scale: 1.005 }}
+        className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-slate-500/30 transition-all duration-300 relative group h-full shadow-sm hover:shadow-md rounded-2xl overflow-hidden ${
           isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
         }`}
-        style={{ clipPath: CLIP_DIAGONAL_TR_BL }}
       >
         {/* Shimmer linear accents */}
         <div className="absolute top-0 right-0 w-3 h-3 hover:border-accent3/40 pointer-events-none" />
@@ -337,11 +335,6 @@ export default function SortableSegmentCard({
           )}
         </div>
       </motion.div>
-
-      {/* Diagonal Cut Line at Top Right for rhythm */}
-      <div className="absolute top-0 right-0 w-6 h-6 pointer-events-none z-10 overflow-hidden">
-        <div className="absolute w-[150%] h-[1px] bg-[var(--accent3)] top-0 right-0 origin-top-right rotate-45 -translate-y-[1px]" />
-      </div>
     </div>
   );
 }

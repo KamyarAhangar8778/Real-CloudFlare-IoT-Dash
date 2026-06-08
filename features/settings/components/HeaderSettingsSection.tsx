@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { LayoutGrid, ChevronLeft } from "lucide-react";
+import { LayoutGrid, ChevronLeft, PanelTop, PanelLeft } from "lucide-react";
 import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
 
 interface HeaderSettingsSectionProps {
@@ -12,6 +12,8 @@ interface HeaderSettingsSectionProps {
   setHeaderTitle: (val: string) => void;
   expandedSection: string | null;
   toggleSection: (section: string) => void;
+  headerPosition: "top" | "left";
+  setHeaderPosition: (val: "top" | "left") => void;
 }
 
 export default function HeaderSettingsSection({
@@ -20,7 +22,9 @@ export default function HeaderSettingsSection({
   headerTitle,
   setHeaderTitle,
   expandedSection,
-  toggleSection
+  toggleSection,
+  headerPosition,
+  setHeaderPosition
 }: HeaderSettingsSectionProps) {
   const isExpanded = expandedSection === "header-settings";
 
@@ -39,10 +43,17 @@ export default function HeaderSettingsSection({
   };
 
   const handleResetTitle = () => {
-    const defaultTitle = "سامانه هوشمند پادشاهی هخامنش";
+    const defaultTitle = "سامانه هوشمند پادشاهی بومی";
     setHeaderTitle(defaultTitle);
     if (typeof window !== "undefined") {
       localStorage.setItem("achaemenid_header_title", defaultTitle);
+    }
+  };
+
+  const handlePositionChange = (pos: "top" | "left") => {
+    setHeaderPosition(pos);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cloudflare_layout_header_position", pos);
     }
   };
 
@@ -60,7 +71,7 @@ export default function HeaderSettingsSection({
           style={{ transform: isExpanded ? "rotate(-90deg)" : "rotate(0deg)" }}
         />
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold theme-text-primary">تنظیمات هدر داشبورد</span>
+          <span className="text-xs font-bold theme-text-primary">موقعیت و تنظیمات هدر</span>
           <LayoutGrid className="w-4 h-4 text-accent4" style={{ color: "var(--accent4)" }} />
         </div>
       </button>
@@ -72,76 +83,62 @@ export default function HeaderSettingsSection({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="theme-card-bg-solid border-t border-accent3-medium/30 p-4 space-y-3 overflow-hidden text-right"
+            className="theme-card-bg-solid border-t border-accent3-medium/30 p-4 space-y-4 overflow-hidden text-right"
           >
-            <p className="text-[10px] theme-text-tertiary leading-relaxed">
-              افکت حرکتی بردر جزیره‌های سه‌گانه بالای صفحه را متناسب با سلیقه خود تغییر دهید:
-            </p>
-
-            <div className="grid grid-cols-1 gap-2">
-              {/* Option 1: Fade */}
-              <button
-                onClick={() => handleSelectOption("fade")}
-                className="p-2.5 text-right transition-all border flex flex-col justify-center hover:border-accent3 cursor-pointer w-full"
-                style={{
-                  clipPath: BUTTON_CLIP,
-                  borderColor: headerAnimationType === "fade" ? "var(--accent4)" : "var(--border-color)",
-                  backgroundColor: headerAnimationType === "fade" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
-                }}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className={`w-3 h-3 rounded-full border flex items-center justify-center ${headerAnimationType === "fade" ? "border-accent4" : "border-gray-500"}`}>
-                    {headerAnimationType === "fade" && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent4" style={{ backgroundColor: "var(--accent4)" }} />
-                    )}
-                  </div>
+            {/* Position switcher */}
+            <div className="space-y-2">
+              <span className="font-bold text-[10px] text-accent3 tracking-wide block">
+                موقعیت قرارگیری هدر داشبورد (طرح کلودفلر)
+              </span>
+              <p className="text-[9px] theme-text-tertiary">
+                محل نمایش و ساختار هدر و منوهای کنترلی را انتخاب کنید:
+              </p>
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                {/* Position 1: Top */}
+                <button
+                  onClick={() => handlePositionChange("top")}
+                  className="p-2.5 text-right transition-all border flex items-center justify-between hover:border-accent3 cursor-pointer w-full"
+                  style={{
+                    clipPath: BUTTON_CLIP,
+                    borderColor: headerPosition === "top" ? "var(--accent4)" : "var(--border-color)",
+                    backgroundColor: headerPosition === "top" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
+                  }}
+                >
+                  <PanelTop className="w-4 h-4 text-[var(--accent4)]" />
                   <span className="font-bold text-xs theme-text-primary">
-                    محو خطی (راست به چپ)
+                    هدر پهن بالا
                   </span>
-                </div>
-                <span className="text-[9px] theme-text-muted mt-0.5">
-                  تغییر رنگ ملایم بردر بین زرهای ناب و فیروزه‌های درخشان
-                </span>
-              </button>
+                </button>
 
-              {/* Option 2: Chase */}
-              <button
-                onClick={() => handleSelectOption("chase")}
-                className="p-2.5 text-right transition-all border flex flex-col justify-center hover:border-accent3 cursor-pointer w-full"
-                style={{
-                  clipPath: BUTTON_CLIP,
-                  borderColor: headerAnimationType === "chase" ? "var(--accent4)" : "var(--border-color)",
-                  backgroundColor: headerAnimationType === "chase" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
-                }}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className={`w-3 h-3 rounded-full border flex items-center justify-center ${headerAnimationType === "chase" ? "border-accent4" : "border-gray-500"}`}>
-                    {headerAnimationType === "chase" && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent4" style={{ backgroundColor: "var(--accent4)" }} />
-                    )}
-                  </div>
+                {/* Position 2: Left */}
+                <button
+                  onClick={() => handlePositionChange("left")}
+                  className="p-2.5 text-right transition-all border flex items-center justify-between hover:border-accent3 cursor-pointer w-full"
+                  style={{
+                    clipPath: BUTTON_CLIP,
+                    borderColor: headerPosition === "left" ? "var(--accent4)" : "var(--border-color)",
+                    backgroundColor: headerPosition === "left" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
+                  }}
+                >
+                  <PanelLeft className="w-4 h-4 text-[var(--accent4)]" />
                   <span className="font-bold text-xs theme-text-primary">
-                    چرخش به دور هر جزیره (چیس)
+                    منوی ستونی چپ
                   </span>
-                </div>
-                <span className="text-[9px] theme-text-muted mt-0.5">
-                  جریان یافتن پویا و بی‌پایان رنگ‌های ناب دور تا دور جزیره‌های سه‌گانه
-                </span>
-              </button>
+                </button>
+              </div>
             </div>
 
             {/* Custom Header Title Input Field */}
-            <div className="border-t border-accent3-medium/20 pt-3 mt-3 space-y-2">
+            <div className="border-t border-accent3-medium/20 pt-3 space-y-2">
               <div className="flex items-center justify-between">
                 <button
                   onClick={handleResetTitle}
                   className="text-[9px] text-accent3 hover:text-accent4 transition-colors underline decoration-dotted cursor-pointer"
-                  title="بازگرداندن عنوان به شکل پیش‌فرض شاهنشاهی"
                 >
-                  بازنشانی به پیش‌فرض
+                  بازنشانی عنوان
                 </button>
                 <span className="font-bold text-[10px] text-accent3 tracking-wide">
-                  عنوان هدر سامانه و جزیره اول
+                  عنوان هدر هوشمند
                 </span>
               </div>
               
@@ -152,11 +149,8 @@ export default function HeaderSettingsSection({
                 maxLength={50}
                 className="w-full px-3 py-2 text-xs text-right theme-card-bg-solid border border-accent3-medium/60 text-white rounded focus:outline-none focus:border-accent4 transition-colors"
                 style={{ clipPath: BUTTON_CLIP }}
-                placeholder="مثال: سامانه هوشمند پادشاهی هخامنش"
+                placeholder="مثال: داشبورد هوشمند کاربری"
               />
-              <p className="text-[9px] theme-text-muted leading-tight">
-                با تغییر این متن، نوشته‌ی زرین حک شده بر روی جزیره‌ی راست هدر تغییر خواهد کرد.
-              </p>
             </div>
           </motion.div>
         )}

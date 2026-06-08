@@ -44,19 +44,15 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="relative group/group-card w-full mb-4 touch-none flex flex-col gap-4"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col border border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-150"
     >
-      {/* Decorative top-right accent */}
-      <div className="absolute -top-1 -right-1 w-8 h-8 pointer-events-none z-20 overflow-hidden opacity-50 group-hover/group-card:opacity-100 transition-opacity">
-        <div className="absolute w-[150%] h-[1px] bg-[var(--accent3)] top-0 right-0 origin-top-right rotate-45 -translate-y-[1px]" />
-      </div>
+
 
       {/* Header Island */}
       <div 
-        className={`flex items-center justify-between bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] opacity-95 hover:opacity-100 transition-all duration-300 backdrop-blur-md border border-[var(--border-color)] group-hover/group-card:border-[var(--accent3-medium)] relative z-10 shadow-[0_15px_30px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.75)] ${
-          parentGroupsCols === 3 ? "p-2 px-3 gap-2" : "p-4 gap-4"
+        className={`flex items-center justify-between bg-black/20 border-b border-[var(--border-color)] relative z-10 rounded-t-2xl ${
+          parentGroupsCols === 3 ? "p-3 px-4 gap-2" : "p-4 gap-4"
         }`}
-        style={{ clipPath: "polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)" }}
       >
         <div className="flex items-center gap-2 min-w-0 flex-1">
            <div 
@@ -144,18 +140,14 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
       </div>
 
       {/* Body Island */}
-      <div className="w-full relative group/body shadow-[0_20px_40px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.8)] transition-all duration-300">
-        <div 
-          className="absolute inset-0 bg-[var(--card-bg)] backdrop-blur-sm border border-[var(--accent3-medium)] group-hover/group-card:border-[var(--accent3)] transition-all duration-300 opacity-60" 
-          style={{ clipPath: "polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)" }}
-        />
+      <div className="w-full relative group/body flex-grow">
         <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
-          <div className={`flex flex-wrap gap-6 w-full text-right p-6 min-h-[160px] relative z-10 group-layout-${id.replace(/\s+/g, '-')}`}>
+          <div className={`flex flex-wrap gap-4 w-full text-right p-4 relative z-10 group-layout-${id.replace(/\s+/g, '-')}`}>
             <style dangerouslySetInnerHTML={{__html: `
               .group-layout-${id.replace(/\s+/g, '-')} > * {
                 flex-grow: 1;
                 flex-shrink: 0;
-                flex-basis: ${maxCols === 1 ? '100%' : maxCols === 2 ? 'calc(50% - 0.75rem)' : 'calc(33.333% - 1rem)'};
+                flex-basis: ${maxCols === 1 ? '100%' : maxCols === 2 ? 'calc(50% - 0.5rem)' : 'calc(33.333% - 0.75rem)'};
                 max-width: 100%;
               }
             `}} />
@@ -166,8 +158,7 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
       
       {/* Footer Island */}
       <div 
-        className="p-3 bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] opacity-95 transition-all duration-300 backdrop-blur-md border border-[var(--border-color)] flex justify-between flex-row-reverse items-center group-hover/group-card:border-[var(--accent3-medium)] relative z-10 shadow-[0_15px_30px_rgba(0,0,0,0.65)]"
-        style={{ clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%)" }}
+        className="p-3 bg-black/10 border-t border-[var(--border-color)] flex justify-between flex-row-reverse items-center relative z-10"
       >
           <div className="flex gap-1.5 opacity-50 px-2 transition-opacity group-hover/group-card:opacity-100">
              {Array.from({ length: maxCols }).map((_, idx) => (
