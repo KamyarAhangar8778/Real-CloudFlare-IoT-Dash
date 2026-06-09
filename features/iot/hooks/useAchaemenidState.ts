@@ -1,0 +1,593 @@
+"use client";
+/* eslint-disable react-hooks/set-state-in-effect */
+
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { EspConfig, DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
+import { persianSymbols, PersianSymbol } from "@/features/encyclopedia/data/symbols";
+import {
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+
+export function useAchaemenidState() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Sync state with URL Query Params (Server-First state synchronization)
+  const symbolParam = searchParams.get("symbol") || "";
+  const selectedSymbol = persianSymbols.find((s) => s.id === symbolParam) || persianSymbols[0];
+
+  const setSelectedSymbol = (sym: PersianSymbol) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("symbol", sym.id);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModulesMenuOpen, setIsModulesMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+  const [isSymbolsSectionExpanded, setIsSymbolsSectionExpanded] = useState(false);
+
+  // Dynamic 3rd and 4th theme color accents (Defaults to Gold & Emerald)
+  const [accent3, setAccent3] = useState("#D4AF37");
+  const [accent4, setAccent4] = useState("#10B981");
+
+  const [selectedFont, setSelectedFont] = useState("vazir");
+  const [animationsEnabled, setAnimationsEnabled] = useState(true);
+  const [headerAnimationType, setHeaderAnimationType] = useState<"fade" | "chase">("fade");
+  const [headerTitle, setHeaderTitle] = useState("سامانه هوشمند پادشاهی هخامنش");
+
+  // Cuneiform Drift background custom aesthetics (Opacity & Colors)
+  const [cuneiformOpacity, setCuneiformOpacity] = useState(0.08); 
+  const [cuneiformColor, setCuneiformColor] = useState<"accent3" | "accent4" | "white" | "muted">("accent3");
+
+  // ESP32 Integration Gate and builder states
+  const [isEspDrawerOpen, setIsEspDrawerOpen] = useState(false);
+
+  // Layout presentation model: top header or left sidebar
+  const [headerPosition, setHeaderPosition] = useState<"top" | "left">("top");
+
+  // Zustand state manager for clean global configurations
+  const {
+    segments,
+    setSegments,
+    groupsOrder,
+    setGroupsOrder,
+    groupConfigs,
+    setGroupConfigs,
+    groupsCols,
+    setGroupsCols,
+    pinsState,
+    setPinsState,
+    isInitialSyncLoading,
+    syncProgress,
+    syncMessage,
+    setSyncStatus,
+    lowDataMode,
+    setLowDataMode,
+    applyEspConfig,
+  } = useIoTStore();
+
+  const [isLoadingIoT, setIsLoadingIoT] = useState(false);
+  const [activeSegmentId, setActiveSegmentId] = useState<string | null>(null);
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const [targetPlaceholderId, setTargetPlaceholderId] = useState<string | null>(null);
+
+  const [mounted, setMounted] = useState(false);
+  const [isFullyReady, setIsFullyReady] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const cuneiformColorValue = 
+    cuneiformColor === "accent3" ? accent3 :
+    cuneiformColor === "accent4" ? accent4 :
+    cuneiformColor === "white" ? (isDark ? "#ffffff" : "#1e293b") :
+    (isDark ? "#475569" : "#94a3b8");
+
+  // NextJS + TanStack Query for modern client fetching (with Low Data Mode Support)
+  const { data: iotData, refetch: refetchIot } = useQuery({
+    queryKey: ["iotState"],
+    queryFn: async () => {
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem("achaemenid_dashboard_pins_cache");
+        if (cached) {
+          try {
+            return { pins: JSON.parse(cached) };
+          } catch (e) {
+            console.error("Error parsing local pins cache", e);
+          }
+        }
+      }
+      return { pins: pinsState };
+    },
+    refetchInterval: false,
+  });
+
+  // Automatically sync incoming Server updates into our Local Store & cached cache
+  useEffect(() => {
+    if (iotData && iotData.pins) {
+      setPinsState(iotData.pins);
+    }
+  }, [iotData, setPinsState]);
+
+  // Handle global page initialization loader
+  useEffect(() => {
+    if (mounted && !isInitialSyncLoading) {
+      const timer = setTimeout(() => {
+        setIsFullyReady(true);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [mounted, isInitialSyncLoading]);
+
+  // Configuration Parser Engine (تفسیر کننده بومی قالب پیکربندی ESP32)
+  const handleApplyEspConfig = (config: EspConfig) => {
+    if (!config) return;
+    
+    // Apply preferences
+    setIsDark(config.preferences.theme_mode === "dark");
+    setAccent3(config.preferences.accent_color_3);
+    setAccent4(config.preferences.accent_color_4);
+    setSelectedFont(config.preferences.font_family);
+    setAnimationsEnabled(config.preferences.animations_enabled);
+    setHeaderAnimationType(config.preferences.header_animation);
+    setHeaderTitle(config.preferences.header_title);
+    setCuneiformOpacity(config.preferences.cuneiform_opacity);
+    setCuneiformColor(config.preferences.cuneiform_color);
+
+    // Apply segments & structure
+    applyEspConfig(config);
+  };
+
+  // Initial synchronization simulation on dashboard startup - wait for ESP packet
+  useEffect(() => {
+    let progressInterval: NodeJS.Timeout;
+    
+    const startSyncSequence = async () => {
+      let currentProgress = 0;
+      progressInterval = setInterval(() => {
+        currentProgress += Math.floor(Math.random() * 14) + 6;
+        if (currentProgress >= 100) {
+          currentProgress = 100;
+          clearInterval(progressInterval);
+        }
+        setSyncStatus(currentProgress < 100, currentProgress, getSyncMessage(currentProgress));
+      }, 140);
+
+      await new Promise(r => setTimeout(r, 600));
+      setSyncStatus(true, 30, "ارتباط با موفقیت بر روی ردیف رادیویی برقرار شد. بازیابی فایل config.json...");
+      
+      await new Promise(r => setTimeout(r, 800));
+      setSyncStatus(true, 70, "دریافت بسته‌ها کامل شد. موتور تولیدگر در حال تفصیر آرایه‌های قالب JSON است...");
+
+      await new Promise(r => setTimeout(r, 700));
+      
+      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
+      if (!savedSegments) {
+        handleApplyEspConfig(DEFAULT_ESP_CONFIG);
+      }
+      
+      setSyncStatus(false, 100, "انتقال داده‌ها کامل شد.");
+    };
+
+    const getSyncMessage = (prog: number) => {
+      if (prog < 30) return "در حال جستجوی تراشه ESP32 در شبکه محلی پادشاهی...";
+      if (prog < 70) return "ارتباط با موفقیت بر روی ردیف رادیویی برقرار شد. بازیابی فایل config.json...";
+      return "دریافت بسته‌ها کامل شد. موتور تولیدگر در حال تفصیر آرایه‌های قالب JSON است...";
+    };
+
+    startSyncSequence();
+
+    return () => {
+      if (progressInterval) clearInterval(progressInterval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load segments from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
+      const savedGroups = localStorage.getItem("achaemenid_dashboard_groups");
+      const savedConfigs = localStorage.getItem("achaemenid_dashboard_group_configs");
+      let initialSegments: any[] = [];
+      if (savedSegments) {
+        try {
+          initialSegments = JSON.parse(savedSegments);
+          setSegments(initialSegments);
+        } catch (e) {
+          console.error("Error loading segments", e);
+        }
+      }
+      
+      if (savedGroups) {
+         try {
+            setGroupsOrder(JSON.parse(savedGroups));
+         } catch(e) {
+            console.error("Error loading groups", e);
+         }
+      } else if (initialSegments.length > 0) {
+         const uniqueGroups = Array.from(new Set(initialSegments.map((s: any) => s.group || "Test"))) as string[];
+         setGroupsOrder(uniqueGroups);
+      }
+
+      if (savedConfigs) {
+         try {
+            setGroupConfigs(JSON.parse(savedConfigs));
+         } catch(e) {
+            console.error("Error loading group configs", e);
+         }
+      }
+
+      const savedGroupsCols = localStorage.getItem("achaemenid_dashboard_groups_cols");
+      if (savedGroupsCols) {
+         setGroupsCols(parseInt(savedGroupsCols, 10) || 1);
+      }
+
+      const savedHeaderAnim = localStorage.getItem("achaemenid_header_anim");
+      if (savedHeaderAnim === "fade" || savedHeaderAnim === "chase") {
+        setHeaderAnimationType(savedHeaderAnim);
+      }
+
+      const savedLowDataMode = localStorage.getItem("achaemenid_low_data_mode");
+      if (savedLowDataMode) {
+        setLowDataMode(savedLowDataMode === "true");
+      }
+
+      const savedHeaderTitle = localStorage.getItem("achaemenid_header_title");
+      if (savedHeaderTitle) {
+        setHeaderTitle(savedHeaderTitle);
+      }
+
+      const savedHeaderPos = localStorage.getItem("cloudflare_layout_header_position");
+      if (savedHeaderPos === "top" || savedHeaderPos === "left") {
+        setHeaderPosition(savedHeaderPos);
+      }
+
+      const savedPinsState = localStorage.getItem("achaemenid_dashboard_pins_cache");
+      if (savedPinsState) {
+        try {
+          setPinsState(JSON.parse(savedPinsState));
+        } catch (e) {
+          console.error("Error loading cached pins state", e);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleAddSegment = (type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push") => {
+    // eslint-disable-next-line react-hooks/purity
+    const randomId = Math.random().toString(36).substring(2, 9);
+    const finalGroup = group || "Test";
+    const newSeg = {
+      id: randomId,
+      type,
+      pin,
+      title: title || `کنترل پایه دیجیتال (GPIO ${pin})`,
+      group: finalGroup,
+      mode: mode || "switch",
+    };
+    
+    setGroupsOrder(prev => {
+      if (!prev.includes(finalGroup)) {
+        const newGroups = [...prev, finalGroup];
+        if (typeof window !== "undefined") {
+          localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(newGroups));
+        }
+        return newGroups;
+      }
+      return prev;
+    });
+
+    let updated = [...segments];
+    
+    if (targetPlaceholderId) {
+      const index = updated.findIndex(s => s.id === targetPlaceholderId);
+      if (index !== -1) {
+        newSeg.group = updated[index].group || "Test";
+        updated[index] = newSeg;
+      } else {
+        updated.push(newSeg);
+      }
+      setTargetPlaceholderId(null);
+    } else {
+      updated.push(newSeg);
+    }
+    
+    setSegments(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
+    }
+
+    if (pinsState[pin] === undefined) {
+      updatePinOnServer(pin, false);
+    }
+  };
+
+  const handleAddPlaceholder = (groupId: string) => {
+    const randomId = Math.random().toString(36).substring(2, 9);
+    const placeholderSeg = {
+      id: randomId,
+      type: "placeholder",
+      pin: "",
+      title: "جایگاه خالی",
+      group: groupId,
+    };
+    
+    const updated = [...segments, placeholderSeg];
+    setSegments(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
+    }
+  };
+
+  const handleSetupPlaceholder = (id: string) => {
+     setTargetPlaceholderId(id);
+     setIsModulesMenuOpen(true);
+  };
+
+  const handleGroupColsChange = (group: string, maxCols: number) => {
+    setGroupConfigs(prev => {
+      const updated = { ...prev, [group]: { ...prev[group], maxCols } };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("achaemenid_dashboard_group_configs", JSON.stringify(updated));
+      }
+      return updated;
+    });
+  };
+
+  const handleRemoveSegment = (id: string) => {
+    const updated = segments.filter((s) => s.id !== id);
+    setSegments(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
+    }
+  };
+
+  const handleUpdateSegmentMode = (id: string, mode: "switch" | "push") => {
+    setSegments((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, mode } : s));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(next));
+      }
+      return next;
+    });
+  };
+
+  const handleRemoveGroup = (groupId: string) => {
+    setGroupsOrder((prev) => {
+      const updated = prev.filter((g) => g !== groupId);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(updated));
+      }
+      return updated;
+    });
+    setSegments((prev) => {
+      const updated = prev.filter((s) => (s.group || "Test") !== groupId);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
+      }
+      return updated;
+    });
+  };
+
+  const updatePinOnServer = async (pin: string, pinState: boolean) => {
+    try {
+      setIsLoadingIoT(true);
+      setPinsState((prev) => {
+        const next = { ...prev, [pin]: pinState };
+        if (typeof window !== "undefined") {
+          localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(next));
+        }
+        return next;
+      });
+      refetchIot();
+    } catch (err) {
+      console.error("Failed to update pin state in local storage", err);
+    } finally {
+      setIsLoadingIoT(false);
+    }
+  };
+
+  const handleTogglePin = async (pin: string) => {
+    const nextState = !pinsState[pin];
+    setPinsState((prev) => ({ ...prev, [pin]: nextState }));
+    await updatePinOnServer(pin, nextState);
+  };
+
+  const handleSetPinState = async (pin: string, state: boolean) => {
+    setPinsState((prev) => ({ ...prev, [pin]: state }));
+    await updatePinOnServer(pin, state);
+  };
+
+  const handleBypassSync = () => {
+    if (typeof window !== "undefined") {
+      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
+      if (!savedSegments) {
+        handleApplyEspConfig(DEFAULT_ESP_CONFIG);
+      }
+    }
+    setSyncStatus(false, 100, "تایید هویت مستقل.");
+    setIsFullyReady(true);
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const type = active.data.current?.type;
+    
+    if (type === "Group") {
+      setActiveGroupId(active.id as string);
+    } else {
+      setActiveSegmentId(active.id as string);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveSegmentId(null);
+    setActiveGroupId(null);
+    const { active, over } = event;
+    
+    if (over && over.id === "trash-dropzone") {
+      const type = active.data.current?.type;
+      if (type === "Group") {
+        const groupId = active.id.toString().replace("group-", "");
+        handleRemoveGroup(groupId);
+      } else if (type === "Segment") {
+        handleRemoveSegment(active.id.toString());
+      }
+      return;
+    }
+
+    if (!over) {
+      if (typeof window !== "undefined") {
+        setSegments((prev) => {
+          localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(prev));
+          return prev;
+        });
+        setGroupsOrder((prev) => {
+          localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(prev));
+          return prev;
+        });
+      }
+      return;
+    }
+
+    const type = active.data.current?.type;
+
+    if (type === "Group") {
+      const activeIdStr = active.id.toString().replace("group-", "");
+      const overIdStr = over.id.toString().replace("group-", "");
+      
+      if (activeIdStr !== overIdStr) {
+        setGroupsOrder((prev) => {
+          const activeIndex = prev.indexOf(activeIdStr);
+          const overIndex = prev.indexOf(overIdStr);
+          
+          if (activeIndex !== -1 && overIndex !== -1) {
+            const newGroups = arrayMove(prev, activeIndex, overIndex);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(newGroups));
+            }
+            return newGroups;
+          }
+          return prev;
+        });
+      }
+      return;
+    }
+
+    if (type === "Segment") {
+      const activeId = active.id;
+      const overId = over.id;
+
+      if (activeId !== overId) {
+        setSegments((prev) => {
+          const activeSeg = prev.find(s => s.id === activeId);
+          const overSeg = prev.find(s => s.id === overId);
+          
+          if (activeSeg && overSeg && (activeSeg.group || "Test") === (overSeg.group || "Test")) {
+            const activeIndex = prev.findIndex(s => s.id === activeId);
+            const overIndex = prev.findIndex(s => s.id === overId);
+            
+            let newSegs = prev;
+            if (overIndex !== -1 && activeIndex !== -1) {
+              newSegs = arrayMove(prev, activeIndex, overIndex);
+            }
+            
+            if (typeof window !== "undefined") {
+              localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(newSegs));
+            }
+            return newSegs;
+          }
+          return prev;
+        });
+      }
+    }
+  };
+
+  return {
+    selectedSymbol,
+    setSelectedSymbol,
+    isMenuOpen,
+    setIsMenuOpen,
+    isModulesMenuOpen,
+    setIsModulesMenuOpen,
+    isDark,
+    setIsDark,
+    isSymbolsSectionExpanded,
+    setIsSymbolsSectionExpanded,
+    accent3,
+    setAccent3,
+    accent4,
+    setAccent4,
+    selectedFont,
+    setSelectedFont,
+    animationsEnabled,
+    setAnimationsEnabled,
+    headerAnimationType,
+    setHeaderAnimationType,
+    headerTitle,
+    setHeaderTitle,
+    cuneiformOpacity,
+    setCuneiformOpacity,
+    cuneiformColor,
+    setCuneiformColor,
+    isEspDrawerOpen,
+    setIsEspDrawerOpen,
+    headerPosition,
+    setHeaderPosition,
+    segments,
+    groupsOrder,
+    groupConfigs,
+    groupsCols,
+    setGroupsCols,
+    pinsState,
+    lowDataMode,
+    isLoadingIoT,
+    activeSegmentId,
+    activeGroupId,
+    mounted,
+    isFullyReady,
+    setIsFullyReady,
+    syncProgress,
+    syncMessage,
+    sensors,
+    cuneiformColorValue,
+    refetchIot,
+    handleApplyEspConfig,
+    handleAddSegment,
+    handleAddPlaceholder,
+    handleSetupPlaceholder,
+    handleGroupColsChange,
+    handleRemoveSegment,
+    handleUpdateSegmentMode,
+    handleRemoveGroup,
+    handleTogglePin,
+    handleSetPinState,
+    handleBypassSync,
+    handleDragStart,
+    handleDragEnd,
+  };
+}
