@@ -44,13 +44,13 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="relative group/group-card w-full mb-6 touch-none flex flex-col border border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-150"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col border border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-350 hover:-translate-y-1 hover:border-[var(--accent3)]"
     >
 
 
       {/* Header Island */}
       <div 
-        className={`flex items-center justify-between bg-black/20 border-b border-[var(--border-color)] relative z-10 rounded-t-2xl ${
+        className={`flex items-center justify-between bg-black/[0.08] dark:bg-black/35 border-b border-[var(--border-color)] relative z-10 rounded-t-2xl ${
           parentGroupsCols === 3 ? "p-3 px-4 gap-2" : "p-4 gap-4"
         }`}
       >
@@ -63,7 +63,7 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
               <Layers className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
            </div>
            <div className="min-w-0 flex-1 text-right">
-              <h4 className={`font-sans font-bold text-[var(--accent3)] truncate ${parentGroupsCols === 3 ? "text-[11px]" : "text-sm"}`}>{id}</h4>
+              <h4 className={`font-sans font-extrabold text-slate-850 dark:text-[var(--accent3)] truncate ${parentGroupsCols === 3 ? "text-[11px]" : "text-base"}`}>{id}</h4>
               <span className="text-[9px] theme-text-muted mt-0.5 whitespace-nowrap block">({segmentCount} دستگاه)</span>
            </div>
         </div>
@@ -119,7 +119,7 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
           {/* Delete Group Handle */}
           <button
              onClick={() => onDeleteGroup(id)}
-             className={parentGroupsCols === 3 ? "p-1 hover:bg-red-500/20 text-red-500 cursor-pointer transition-colors backdrop-blur-sm" : "p-1.5 hover:bg-red-500/20 text-red-500 cursor-pointer transition-colors backdrop-blur-sm"}
+             className={parentGroupsCols === 3 ? "p-1 hover:bg-[var(--accent3-transparent)] text-[var(--text-muted)] hover:text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm" : "p-1.5 hover:bg-[var(--accent3-transparent)] text-[var(--text-muted)] hover:text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm"}
              style={{ clipPath: "polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)" }}
              title="پاک کردن گروه و تمام محتوای درون آن"
           >

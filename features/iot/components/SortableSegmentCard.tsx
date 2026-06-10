@@ -18,6 +18,7 @@ interface SortableSegmentCardProps {
   onSetupPlaceholder?: (id: string) => void;
   parentGroupsCols?: number;
   groupMaxCols?: number;
+  animationsEnabled?: boolean;
 }
 
 export default function SortableSegmentCard({
@@ -31,6 +32,7 @@ export default function SortableSegmentCard({
   onSetupPlaceholder,
   parentGroupsCols = 1,
   groupMaxCols = 3,
+  animationsEnabled = true,
 }: SortableSegmentCardProps) {
   const {
     attributes,
@@ -65,8 +67,7 @@ export default function SortableSegmentCard({
            <button
              onClick={() => onRemove(segment.id)}
              onPointerDown={(e) => e.stopPropagation()}
-             className="p-1 bg-black/50 hover:bg-red-500/50 text-gray-400 hover:text-white transition-colors cursor-pointer"
-             style={{ clipPath: BUTTON_CLIP }}
+             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] transition-colors cursor-pointer rounded-lg shadow-sm"
              title="حذف جایگاه خالی"
            >
              <X className="w-3.5 h-3.5" />
@@ -74,8 +75,7 @@ export default function SortableSegmentCard({
            <div 
              {...attributes} 
              {...listeners}
-             className="p-1 bg-black/50 hover:bg-[var(--accent3-transparent)] text-gray-400 hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors"
-             style={{ clipPath: BUTTON_CLIP }}
+             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors rounded-lg shadow-sm"
              title="کشیدن جایگاه"
            >
              <GripVertical className="w-3.5 h-3.5" />
@@ -143,8 +143,8 @@ export default function SortableSegmentCard({
   return (
     <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
       <motion.div
-        whileHover={{ y: -2, scale: 1.005 }}
-        className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-slate-500/30 transition-all duration-300 relative group h-full shadow-sm hover:shadow-md rounded-2xl overflow-hidden ${
+        whileHover={{ y: -1.2, scale: 1.001 }}
+        className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl overflow-hidden ${
           isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
         }`}
       >
@@ -154,14 +154,13 @@ export default function SortableSegmentCard({
 
         <div className="flex flex-col h-full justify-between">
           {/* Card Header Row */}
-          <div className={`flex items-center justify-between border-b border-[var(--border-color)] bg-black/20 ${
+          <div className={`flex items-center justify-between border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${
             isUltraCompact ? "p-2" : "p-4"
           }`}>
             <div className="flex items-center gap-1.5 md:gap-2">
               <button
                 onClick={() => onRemove(segment.id)}
-                className="p-1 hover:bg-red-500/15 text-[var(--text-muted)] hover:text-red-500 transition-colors cursor-pointer"
-                style={{ clipPath: BUTTON_CLIP }}
+                className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] transition-all cursor-pointer rounded-lg shadow-sm"
                 title="حذف این سگمنت"
                 onPointerDown={(e) => e.stopPropagation()}
               >
@@ -171,8 +170,7 @@ export default function SortableSegmentCard({
               <div 
                 {...attributes} 
                 {...listeners}
-                className="p-1 hover:bg-[var(--accent3-transparent)] text-[var(--accent3-medium)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors"
-                style={{ clipPath: BUTTON_CLIP }}
+                className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-all rounded-lg shadow-sm"
                 title="کشیدن برای جابه‌جایی"
               >
                 <GripVertical className={`${isUltraCompact ? "w-3.5 h-3.5" : "w-4 h-4"}`} />
@@ -181,30 +179,27 @@ export default function SortableSegmentCard({
               {/* Mode indicator/selector inside card header */}
               {onUpdateSegmentMode && (
                 <div 
-                  className="flex items-center bg-black/55 border border-gray-800/80 p-0.5 mr-1"
-                  style={{ clipPath: BUTTON_CLIP }}
+                  className="flex items-center bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 p-[3px] mr-1.5 rounded-full shadow-sm"
                   onPointerDown={(e) => e.stopPropagation()}
                 >
                   <button
                     onClick={() => onUpdateSegmentMode(segment.id, "switch")}
-                    className={`px-1.5 py-0.5 text-[8.5px] font-sans font-bold transition-all duration-150 cursor-pointer ${
+                    className={`px-2.5 py-1 text-[9.5px] font-sans font-extrabold transition-all duration-150 cursor-pointer select-none rounded-full ${
                       mode === "switch"
-                        ? "bg-[var(--accent3)] text-black font-black"
-                        : "text-gray-500 hover:text-gray-300"
+                        ? "bg-[var(--accent3)] text-black font-black shadow-[0_1px_3px_rgba(0,0,0,0.15)]"
+                        : "text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
-                    style={{ clipPath: BUTTON_CLIP }}
                     title="حالت سوئیچ دائمی"
                   >
                     سوئیچ
                   </button>
                   <button
                     onClick={() => onUpdateSegmentMode(segment.id, "push")}
-                    className={`px-1.5 py-0.5 text-[8.5px] font-sans font-bold transition-all duration-150 cursor-pointer ${
+                    className={`px-2.5 py-1 text-[9.5px] font-sans font-extrabold transition-all duration-150 cursor-pointer select-none rounded-full ${
                       mode === "push"
-                        ? "bg-[var(--accent3)] text-black font-black"
-                        : "text-gray-500 hover:text-gray-300"
+                        ? "bg-[var(--accent3)] text-black font-black shadow-[0_1px_3px_rgba(0,0,0,0.15)]"
+                        : "text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
                     }`}
-                    style={{ clipPath: BUTTON_CLIP }}
                     title="حالت شستی لحظه‌ای"
                   >
                     شستی
@@ -239,24 +234,27 @@ export default function SortableSegmentCard({
               <div className="flex items-center justify-center w-full">
                 <button
                   {...buttonProps}
-                  className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer border border-[var(--border-color)] transition-colors duration-200 ease-in-out focus:outline-none shadow-inner select-none ${
-                    isPinOn ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(var(--accent4),0.4)]" : "bg-black/50"
+                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none shadow-inner select-none ${
+                    isPinOn 
+                      ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
+                      : "bg-black/50 border border-slate-800"
                   }`}
-                  style={{ clipPath: BUTTON_CLIP }}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-full w-1/2 bg-[var(--text-primary)] shadow-lg ring-0 transition-transform duration-200 ease-in-out ${
-                      isPinOn ? "-translate-x-full" : "translate-x-0"
+                    className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
+                      animationsEnabled 
+                        ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                        : ""
+                    } ${
+                      isPinOn ? "-translate-x-5" : "translate-x-0"
                     }`}
-                    style={{ clipPath: BUTTON_CLIP }}
                   />
                 </button>
               </div>
             ) : isCompact ? (
               // Compact view: hide left blue badge, show concise label (پایه X) + toggle
               <div 
-                className="flex items-center justify-between w-full bg-[var(--card-bg-solid)] p-2 border border-[var(--border-color)]"
-                style={{ clipPath: BUTTON_CLIP }}
+                className="flex items-center justify-between w-full bg-[var(--card-bg-solid)] p-2 border border-[var(--border-color)] rounded-xl"
               >
                 <span className="text-[10px] font-sans font-bold theme-text-secondary">
                   {mode === "push" ? `پالس ${segment.pin}` : `پایه ${segment.pin}`}
@@ -264,30 +262,32 @@ export default function SortableSegmentCard({
 
                 <button
                   {...buttonProps}
-                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer border border-[var(--border-color)] transition-colors duration-200 ease-in-out focus:outline-none select-none ${
-                    isPinOn ? "bg-[var(--accent4)]" : "bg-black/30"
+                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none ${
+                    isPinOn 
+                      ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
+                      : "bg-black/30 border border-slate-800/40"
                   }`}
-                  style={{ clipPath: BUTTON_CLIP }}
                 >
                   <span
-                    className={`pointer-events-none inline-block h-full w-1/2 bg-[var(--text-primary)] shadow-lg ring-0 transition-transform duration-200 ease-in-out ${
-                      isPinOn ? "-translate-x-full" : "translate-x-0"
+                    className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
+                      animationsEnabled 
+                        ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                        : ""
+                    } ${
+                      isPinOn ? "-translate-x-5" : "translate-x-0"
                     }`}
-                    style={{ clipPath: BUTTON_CLIP }}
                   />
                 </button>
               </div>
             ) : (
               // Normal full-featured view
               <div 
-                className="flex items-center justify-between bg-[var(--card-bg-solid)] p-4 border border-[var(--border-color)]"
-                style={{ clipPath: BUTTON_CLIP }}
+                className="flex items-center justify-between bg-[var(--card-bg-solid)] p-4 border border-[var(--border-color)] rounded-xl"
               >
                 <span 
-                  className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border ${
+                  className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border rounded-lg ${
                     isPinOn ? "border-[var(--accent4)] text-[var(--accent4)] bg-[var(--accent4-transparent)]" : "border-gray-500 text-gray-400"
                   }`}
-                  style={{ clipPath: BUTTON_CLIP }}
                 >
                   {mode === "push" 
                     ? (isPinOn ? "پالس فعال HIGH" : "آماده تحریک LOW") 
@@ -306,16 +306,20 @@ export default function SortableSegmentCard({
                   
                   <button
                     {...buttonProps}
-                    className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer border border-[var(--border-color)] transition-colors duration-200 ease-in-out focus:outline-none select-none ${
-                      isPinOn ? "bg-[var(--accent4)]" : "bg-black/30"
+                    className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none ${
+                      isPinOn 
+                        ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
+                        : "bg-black/30 border border-slate-800/40"
                     }`}
-                    style={{ clipPath: BUTTON_CLIP }}
                   >
                     <span
-                      className={`pointer-events-none inline-block h-full w-1/2 bg-[var(--text-primary)] shadow-lg ring-0 transition-transform duration-200 ease-in-out ${
-                        isPinOn ? "-translate-x-full" : "translate-x-0"
+                      className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
+                        animationsEnabled 
+                          ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                          : ""
+                      } ${
+                        isPinOn ? "-translate-x-5" : "translate-x-0"
                       }`}
-                      style={{ clipPath: BUTTON_CLIP }}
                     />
                   </button>
                 </div>

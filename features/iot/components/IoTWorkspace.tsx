@@ -27,6 +27,7 @@ interface IoTWorkspaceProps {
   isLoadingIoT: boolean;
   activeSegmentId: string | null;
   activeGroupId: string | null;
+  animationsEnabled?: boolean;
   
   handleDragStart: (event: DragStartEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
@@ -50,6 +51,7 @@ export default function IoTWorkspace({
   isLoadingIoT,
   activeSegmentId,
   activeGroupId,
+  animationsEnabled,
   handleDragStart,
   handleDragEnd,
   handleGroupColsChange,
@@ -104,6 +106,7 @@ export default function IoTWorkspace({
                       onSetupPlaceholder={handleSetupPlaceholder}
                       parentGroupsCols={groupsCols}
                       groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
+                      animationsEnabled={animationsEnabled}
                     />
                   ))}
                 </SortableGroup>
@@ -130,6 +133,7 @@ export default function IoTWorkspace({
                   isLoadingIoT={isLoadingIoT}
                   parentGroupsCols={groupsCols}
                   groupMaxCols={originalGroupCols}
+                  animationsEnabled={animationsEnabled}
                 />
               </div>
             );

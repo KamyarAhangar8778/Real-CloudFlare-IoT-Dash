@@ -29,6 +29,7 @@ interface MasterHeaderProps {
   setGroupsCols: (val: number) => void;
   headerPosition: "top" | "left";
   setHeaderPosition: (val: "top" | "left") => void;
+  animationsEnabled?: boolean;
 }
 
 export default function MasterHeader({
@@ -42,7 +43,8 @@ export default function MasterHeader({
   groupsCols,
   setGroupsCols,
   headerPosition,
-  setHeaderPosition
+  setHeaderPosition,
+  animationsEnabled
 }: MasterHeaderProps) {
 
   const handleTogglePosition = (pos: "top" | "left") => {
@@ -58,7 +60,7 @@ export default function MasterHeader({
       <div id="vertical-master-header" className="w-full h-full flex flex-col justify-stretch gap-4 text-right font-sans" dir="rtl">
         
         {/* 🏛️ Title Island (Compact Brand Box) - Floating Small Island */}
-        <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-4 rounded-2xl shadow-sm flex items-center justify-between gap-4 transition-all duration-300 hover:shadow-md hover:border-[var(--accent3-medium)]">
+        <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-4 rounded-2xl shadow-sm flex items-center justify-between gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
               <Image 
@@ -82,7 +84,7 @@ export default function MasterHeader({
         </div>
 
         {/* 🚀 Controls & Widgets Island - Floating Large Island */}
-        <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-5 rounded-2xl shadow-sm flex flex-col justify-between gap-6 transition-all duration-300 hover:shadow-md">
+        <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-5 rounded-2xl shadow-sm flex flex-col justify-between gap-6 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
           <div className="space-y-5">
             {/* Live Clock Capsule (Vertical) */}
             <div className="p-3 bg-[var(--bg-main)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-300">
@@ -181,8 +183,8 @@ export default function MasterHeader({
                 className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-gray-500/10 text-[var(--text-tertiary)]">
-                    <SettingsIcon className="w-4 h-4" />
+                  <div className={`p-1.5 rounded-lg bg-gray-500/10 text-[var(--text-tertiary)] transition-all`}>
+                    <SettingsIcon className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`} />
                   </div>
                   <span className="text-xs font-semibold">تنظیمات اصلی</span>
                 </div>
@@ -221,7 +223,7 @@ export default function MasterHeader({
       dir="rtl"
     >
       {/* 🏛️ Right Island (Compact Title Box) - Small Island */}
-      <div className="lg:w-1/3 xl:w-1/4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex items-center justify-between lg:justify-start gap-4 transition-all duration-300 hover:shadow-md hover:border-[var(--accent3-medium)]">
+      <div className="lg:w-1/3 xl:w-1/4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex items-center justify-between lg:justify-start gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
             <Image 
@@ -256,7 +258,7 @@ export default function MasterHeader({
       </div>
 
       {/* 🚀 Left Island (Flexible actions controls box) - Large Island */}
-      <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between transition-all duration-300 hover:shadow-md">
+      <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
         {/* Inside Left Island, right-aligned section: Live Clock Capsule */}
         <div className="hidden sm:flex items-center justify-center shrink-0">
           <div className="px-5 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full text-xs font-semibold">
@@ -341,10 +343,10 @@ export default function MasterHeader({
             {/* General system Settings trigger */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97]"
+              className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
               title="پیکربندی سیستم"
             >
-              <SettingsIcon className="w-4 h-4" />
+              <SettingsIcon className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`} />
             </button>
 
             {/* Theme mode selection button */}

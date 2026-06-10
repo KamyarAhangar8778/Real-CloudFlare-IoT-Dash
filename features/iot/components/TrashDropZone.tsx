@@ -16,7 +16,7 @@ export default function TrashDropZone({ activeId }: { activeId: string | null })
       ref={setNodeRef}
       className={`fixed bottom-6 left-1/2 -translate-x-1/2 p-4 w-72 text-center border-2 border-dashed transition-all duration-300 z-50 rounded-xl backdrop-blur-md ${
         isOver
-          ? "bg-red-500/20 border-red-500 text-red-500 scale-105"
+          ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] scale-105"
           : "bg-black/70 border-[var(--accent3-medium)] text-[var(--accent3)]"
       }`}
     >

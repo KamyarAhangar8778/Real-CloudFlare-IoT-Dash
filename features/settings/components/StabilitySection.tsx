@@ -9,18 +9,143 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 interface StabilitySectionProps {
   animationsEnabled: boolean;
   setAnimationsEnabled: (val: boolean) => void;
-  expandedSection: string | null;
-  toggleSection: (section: string) => void;
+  expandedSection?: string | null;
+  toggleSection?: (section: string) => void;
+  hideHeader?: boolean;
+  isDark?: boolean;
 }
 
 export default function StabilitySection({
   animationsEnabled,
   setAnimationsEnabled,
   expandedSection,
-  toggleSection
+  toggleSection,
+  hideHeader = false,
+  isDark = true
 }: StabilitySectionProps) {
-  const isExpanded = expandedSection === "animations";
+  const isExpanded = hideHeader ? true : expandedSection === "animations";
   const { lowDataMode, setLowDataMode } = useIoTStore();
+
+  const renderContent = () => (
+    <div className="space-y-4 text-right">
+      {/* Module 1: Animations Toggle */}
+      <div className="space-y-2">
+        <p className="text-[10px] theme-text-tertiary leading-relaxed">
+          اگر دستگاه شما با تاخیر یا بار پردازشی بالایی مواجه است، انیمیشن‌های سنگین یا ترنزیشن‌های حرکتی را متوقف کنید:
+        </p>
+
+        <button
+          onClick={() => setAnimationsEnabled(!animationsEnabled)}
+          className={`w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
+            animationsEnabled
+              ? isDark
+                ? "bg-emerald-950/20 border-accent4/60 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                : "bg-emerald-50 border-emerald-300 shadow-[0_2px_4px_rgba(16,185,129,0.06)]"
+              : isDark
+                ? "bg-slate-950/40 border-slate-800 hover:border-slate-700"
+                : "bg-slate-50/80 border-slate-200 hover:border-slate-300 shadow-sm"
+          }`}
+        >
+          {/* Text Info */}
+          <div className="text-right space-y-0.5 max-w-[70%]">
+            <span className={`font-sans font-extrabold text-xs block transition-colors duration-300 ${
+              animationsEnabled
+                ? "text-emerald-500" 
+                : isDark ? "text-gray-200" : "text-slate-800"
+            }`}>
+              {animationsEnabled ? "انیمیشن‌های بورد: فعال تابان" : "انیمیشن‌های بورد: غیرفعال ساکن"}
+            </span>
+            <span className={`text-[9px] block leading-normal font-sans font-medium transition-colors duration-300 ${
+              isDark ? "text-gray-400 group-hover:text-gray-300" : "text-slate-500 group-hover:text-slate-600"
+            }`}>
+              {animationsEnabled ? "شکوه کامل بصری و جلوه‌های متحرک فعال" : "بهینه‌سازی کامل منابع و پردازش سخت‌افزار"}
+            </span>
+          </div>
+          
+          {/* Modern Premium Toggle Switch */}
+          <div className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-all duration-300 shrink-0 ${
+            animationsEnabled 
+              ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' 
+              : isDark 
+                ? 'bg-slate-800 border border-slate-705' 
+                : 'bg-slate-200 border border-slate-300'
+          }`}>
+            <div 
+              className={`w-5 h-5 rounded-full bg-white shadow-md transform ${
+                animationsEnabled 
+                  ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-x-5" 
+                  : "translate-x-0"
+              }`}
+            />
+          </div>
+        </button>
+      </div>
+
+      {/* Module 2: Low-Data Mode Toggle */}
+      <div className="border-t border-accent3-medium/10 pt-4 space-y-2">
+        <p className="text-[10px] theme-text-tertiary leading-relaxed">
+          اگر در مصرف اینترنت با محدودیت حجم روبرو هستید، سامانه را در حالت کم‌مصرف قرار دهید تا دریافت‌های خودکار متوقف شده و مصرف پس‌زمینه کاملاً مهار گردد:
+        </p>
+
+        <button
+          onClick={() => setLowDataMode(!lowDataMode)}
+          className={`w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
+            lowDataMode
+              ? isDark
+                ? "bg-amber-950/20 border-accent3/60 shadow-[0_0_12px_rgba(212,175,55,0.1)]"
+                : "bg-amber-50/80 border-amber-300 shadow-[0_2px_4px_rgba(212,175,55,0.06)]"
+              : isDark
+                ? "bg-slate-950/40 border-slate-800 hover:border-slate-700"
+                : "bg-slate-50/80 border-slate-200 hover:border-slate-300 shadow-sm"
+          }`}
+        >
+          {/* Text Info */}
+          <div className="text-right space-y-0.5 max-w-[70%]">
+            <span className={`font-sans font-extrabold text-xs block flex items-center gap-1 w-full justify-end transition-colors duration-300 ${
+              lowDataMode
+                ? isDark ? "text-[rgba(212,175,55,1)]" : "text-amber-600"
+                : isDark ? "text-gray-200" : "text-slate-800"
+            }`}>
+              <span>{lowDataMode ? "حالت کم‌مصرف اینترنت: روشن" : "حالت کم‌مصرف اینترنت: خاموش"}</span>
+              <WifiOff className={`w-3.5 h-3.5 ${lowDataMode ? "text-accent3" : isDark ? "text-gray-400" : "text-slate-500"}`} />
+            </span>
+            <span className={`text-[9px] block leading-normal font-sans font-medium transition-colors duration-300 ${
+              isDark ? "text-gray-400 group-hover:text-gray-300" : "text-slate-500 group-hover:text-slate-600"
+            }`}>
+              {lowDataMode ? "غیرفعال‌سازی همگام‌سازی ۳ ثانیه‌ای زنده (دریافت اطلاعات فقط با رفرش دستی شما)" : "همگام‌سازی هوشمند زنده و پویای هر ۳ ثانیه از سرور ابری"}
+            </span>
+          </div>
+          
+          {/* Modern Premium Toggle Switch */}
+          <div className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-all duration-300 shrink-0 ${
+            lowDataMode 
+              ? 'bg-amber-500 shadow-[0_0_8px_rgba(212,175,55,0.4)]' 
+              : isDark 
+                ? 'bg-slate-800 border border-slate-705' 
+                : 'bg-slate-200 border border-slate-300'
+          }`}>
+            <div 
+              className={`w-5 h-5 rounded-full bg-white shadow-md transform ${
+                animationsEnabled 
+                  ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-x-5" 
+                  : "translate-x-0"
+              } ${
+                lowDataMode ? "-translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+
+  if (hideHeader) {
+    return (
+      <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-xl text-right">
+        {renderContent()}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -28,7 +153,7 @@ export default function StabilitySection({
       style={{ clipPath: ACCORDION_CLIP }}
     >
       <button
-        onClick={() => toggleSection("animations")}
+        onClick={() => toggleSection && toggleSection("animations")}
         className="w-full py-3 px-4 bg-[var(--card-bg-solid)] flex items-center justify-between text-right cursor-pointer"
       >
         <ChevronLeft
@@ -50,76 +175,7 @@ export default function StabilitySection({
             transition={{ duration: 0.3 }}
             className="theme-card-bg-solid border-t border-accent3-medium/30 p-4 space-y-4 overflow-hidden"
           >
-            <div>
-              <p className="text-[10px] theme-text-tertiary leading-relaxed mb-2">
-                اگر دستگاه شما با تاخیر یا بار پردازشی بالایی مواجه است، انیمیشن‌های سنگین یا ترنزیشن‌های حرکتی را متوقف کنید:
-              </p>
-
-              <button
-                onClick={() => setAnimationsEnabled(!animationsEnabled)}
-                className="w-full p-3 text-right transition-all theme-card-bg-solid border flex items-center justify-between hover:border-accent3 cursor-pointer"
-                style={{
-                  clipPath: BUTTON_CLIP,
-                  borderColor: animationsEnabled ? "var(--accent4)" : "var(--accent3-medium)",
-                  backgroundColor: animationsEnabled ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.02)"
-                }}
-              >
-                <div className="text-right">
-                  <span className="font-bold text-xs theme-text-primary block">
-                    {animationsEnabled ? "انیمیشن‌های بورد: فعال تابان" : "انیمیشن‌های بورد: غیرفعال ساکن"}
-                  </span>
-                  <span className="text-[9px] theme-text-muted block mt-0.5">
-                    {animationsEnabled ? "شکوه کامل بصری و جلوه‌های متحرک فعال" : "بهینه‌سازی کامل منابع و پردازش سخت‌افزار"}
-                  </span>
-                </div>
-                
-                <div className={`w-10 h-6 border p-0.5 flex items-center transition-all duration-300 ${animationsEnabled ? 'border-accent4 bg-accent4/20' : 'border-gray-600 bg-gray-900'}`} style={{ clipPath: BUTTON_CLIP }}>
-                  <div 
-                    className={`w-4 h-4 transition-all duration-300 ${animationsEnabled ? 'bg-accent4 translate-x-3.5' : 'bg-gray-500 translate-x-0'}`}
-                    style={{ 
-                      backgroundColor: animationsEnabled ? "var(--accent4)" : "",
-                      clipPath: "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)"
-                    }}
-                  />
-                </div>
-              </button>
-            </div>
-
-            <div className="border-t border-accent3-medium/10 pt-4">
-              <p className="text-[10px] theme-text-tertiary leading-relaxed mb-2">
-                اگر در مصرف اینترنت با محدودیت حجم روبرو هستید، سامانه را در حالت کم‌مصرف قرار دهید تا دریافت‌های خودکار متوقف شده و مصرف پس‌زمینه کاملاً مهار گردد:
-              </p>
-
-              <button
-                onClick={() => setLowDataMode(!lowDataMode)}
-                className="w-full p-3 text-right transition-all theme-card-bg-solid border flex items-center justify-between hover:border-accent3 cursor-pointer"
-                style={{
-                  clipPath: BUTTON_CLIP,
-                  borderColor: lowDataMode ? "var(--accent3)" : "rgba(255, 255, 255, 0.1)",
-                  backgroundColor: lowDataMode ? "rgba(212, 175, 55, 0.08)" : "rgba(255, 255, 255, 0.02)"
-                }}
-              >
-                <div className="text-right">
-                  <span className="font-bold text-xs theme-text-primary block flex items-center gap-1 w-full justify-end">
-                    <span>{lowDataMode ? "حالت کم‌مصرف اینترنت: روشن" : "حالت کم‌مصرف اینترنت: خاموش"}</span>
-                    <WifiOff className="w-3.5 h-3.5 text-accent3" style={{ color: "var(--accent3)" }} />
-                  </span>
-                  <span className="text-[9px] theme-text-muted block mt-0.5">
-                    {lowDataMode ? "غیرفعال‌سازی همگام‌سازی ۳ ثانیه‌ای زنده (دریافت اطلاعات فقط با رفرش دستی شما)" : "همگام‌سازی هوشمند زنده و پویای هر ۳ ثانیه از سرور ابری"}
-                  </span>
-                </div>
-                
-                <div className={`w-10 h-6 border p-0.5 flex items-center transition-all duration-300 ${lowDataMode ? 'border-accent3 bg-accent3/20' : 'border-gray-600 bg-gray-900'}`} style={{ clipPath: BUTTON_CLIP }}>
-                  <div 
-                    className={`w-4 h-4 transition-all duration-300 ${lowDataMode ? 'bg-accent3 translate-x-3.5' : 'bg-gray-500 translate-x-0'}`}
-                    style={{ 
-                      backgroundColor: lowDataMode ? "var(--accent3)" : "",
-                      clipPath: "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)"
-                    }}
-                  />
-                </div>
-              </button>
-            </div>
+            {renderContent()}
           </motion.div>
         )}
       </AnimatePresence>

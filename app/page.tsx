@@ -137,7 +137,7 @@ function AchaemenidDashboard() {
 
           {/* Desktop Left Sidebar Frame */}
           {headerPosition === "left" && (
-            <aside className="hidden md:flex md:w-72 md:shrink-0 md:sticky md:top-0 md:h-screen p-4 flex-col justify-stretch overflow-y-auto gap-4">
+            <aside className="hidden md:flex md:w-72 md:shrink-0 md:sticky md:top-4 md:h-fit p-1 flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] gap-4">
               <MasterHeader 
                 isDark={isDark} 
                 setIsDark={setIsDark} 
@@ -150,6 +150,7 @@ function AchaemenidDashboard() {
                 setGroupsCols={setGroupsCols}
                 headerPosition={headerPosition}
                 setHeaderPosition={setHeaderPosition}
+                animationsEnabled={animationsEnabled}
               />
             </aside>
           )}
@@ -174,16 +175,19 @@ function AchaemenidDashboard() {
                   setGroupsCols={setGroupsCols}
                   headerPosition="top"
                   setHeaderPosition={setHeaderPosition}
+                  animationsEnabled={animationsEnabled}
                 />
               </div>
             )}
 
             {/* Smart Connection Banner */}
-            <LowDataModeBanner
-              lowDataMode={lowDataMode}
-              animationsEnabled={animationsEnabled}
-              refetchIot={refetchIot}
-            />
+            {segments.length > 0 && (
+              <LowDataModeBanner
+                lowDataMode={lowDataMode}
+                animationsEnabled={animationsEnabled}
+                refetchIot={refetchIot}
+              />
+            )}
 
             {/* IoT Main Active Drag-and-Drop Workspace Canvas */}
             <main className="flex-1 flex flex-col justify-center items-center text-center max-w-4xl mx-auto space-y-8 py-4 w-full relative">
@@ -191,6 +195,10 @@ function AchaemenidDashboard() {
                 <WelcomePortal 
                   setIsMenuOpen={setIsMenuOpen} 
                   setIsModulesMenuOpen={setIsModulesMenuOpen} 
+                  accent3={accent3}
+                  accent4={accent4}
+                  animationsEnabled={animationsEnabled}
+                  isDark={isDark}
                 />
               ) : (
                 <div className="w-full space-y-6">
@@ -204,6 +212,7 @@ function AchaemenidDashboard() {
                     isLoadingIoT={isLoadingIoT}
                     activeSegmentId={activeSegmentId}
                     activeGroupId={activeGroupId}
+                    animationsEnabled={animationsEnabled}
                     handleDragStart={handleDragStart}
                     handleDragEnd={handleDragEnd}
                     handleGroupColsChange={handleGroupColsChange}
