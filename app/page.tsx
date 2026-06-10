@@ -24,7 +24,7 @@ import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
 
 export default function Home() {
   return (
-    <React.Suspense fallback={<MountingLoader />}>
+    <React.Suspense fallback={<div className="min-h-screen bg-[#0b0c10]" />}>
       <AchaemenidDashboard />
     </React.Suspense>
   );
@@ -96,7 +96,7 @@ function AchaemenidDashboard() {
   } = useAchaemenidState();
 
   if (!mounted) {
-    return <MountingLoader />;
+    return <div className="min-h-screen bg-[#0b0c10]" />;
   }
 
   return (
@@ -159,7 +159,7 @@ function AchaemenidDashboard() {
 
           {/* Workspace & Main Control Sections */}
           <div className={`flex-1 flex flex-col justify-between gap-12 ${
-            headerPosition === "left" ? "p-6 md:p-8 max-w-5xl w-full mx-auto" : "w-full"
+            headerPosition === "left" ? "p-6 md:pt-1 md:pb-8 md:px-8 max-w-5xl w-full mx-auto" : "w-full"
           }`}>
 
             {/* Top Header Section (Shows on mobile when left sidebar layout is configured) */}

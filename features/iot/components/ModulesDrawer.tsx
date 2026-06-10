@@ -13,7 +13,6 @@ import {
   ToggleLeft,
   ChevronDown
 } from "lucide-react";
-import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
 
 interface Segment {
   id: string;
@@ -177,8 +176,7 @@ export default function ModulesDrawer({
               {/* Form to Add New Segment */}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div 
-                  className="border border-accent3-medium/80 bg-[var(--card-bg-solid)] p-4 space-y-4"
-                  style={{ clipPath: ACCORDION_CLIP }}
+                  className="border border-[var(--border-color)] bg-[var(--card-bg-solid)] p-4 space-y-4 rounded-2xl shadow-sm"
                 >
                   <div className="flex items-center gap-2 text-accent3 border-b border-accent3-medium/30 pb-2">
                     <Plus className="w-4 h-4" />
@@ -193,10 +191,9 @@ export default function ModulesDrawer({
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
-                      className="w-full h-9 px-3 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-accent3-medium focus:border-accent3 outline-none transition-all cursor-pointer font-sans"
-                      style={{ clipPath: BUTTON_CLIP }}
+                      className="w-full h-10 px-3 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all cursor-pointer font-sans"
                     >
-                      <option value="gpio_toggle">خاموش و روشن کردن یک پایه (GPIO Control)</option>
+                      <option value="gpio_toggle" className="bg-slate-900">خاموش و روشن کردن یک پایه (GPIO Control)</option>
                     </select>
                   </div>
 
@@ -211,12 +208,11 @@ export default function ModulesDrawer({
                         whileHover={animationsEnabled ? { scale: 1.03 } : undefined}
                         whileTap={animationsEnabled ? { scale: 0.97 } : undefined}
                         onClick={() => setButtonMode("switch")}
-                        className={`py-2 text-[10px] font-bold font-sans transition-all border cursor-pointer ${
+                        className={`py-2 text-[10px] font-bold font-sans transition-all border rounded-xl cursor-pointer ${
                           buttonMode === "switch"
-                            ? "bg-[var(--accent3-transparent)] border-accent3 text-accent3"
-                            : "border-gray-800 bg-black/20 text-gray-400 hover:text-gray-300"
+                            ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_12px_var(--accent3-transparent)]"
+                            : "border-[var(--border-color)] bg-black/10 text-gray-400 hover:text-gray-300 hover:bg-black/20"
                         }`}
-                        style={{ clipPath: BUTTON_CLIP }}
                       >
                         سوییچ (دائمی Toggle)
                       </motion.button>
@@ -225,12 +221,11 @@ export default function ModulesDrawer({
                         whileHover={animationsEnabled ? { scale: 1.03 } : undefined}
                         whileTap={animationsEnabled ? { scale: 0.97 } : undefined}
                         onClick={() => setButtonMode("push")}
-                        className={`py-2 text-[10px] font-bold font-sans transition-all border cursor-pointer ${
+                        className={`py-2 text-[10px] font-bold font-sans transition-all border rounded-xl cursor-pointer ${
                           buttonMode === "push"
-                            ? "bg-[var(--accent3-transparent)] border-accent3 text-accent3"
-                            : "border-gray-800 bg-black/20 text-gray-400 hover:text-gray-300"
+                            ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_12px_var(--accent3-transparent)]"
+                            : "border-[var(--border-color)] bg-black/10 text-gray-400 hover:text-gray-300 hover:bg-black/20"
                         }`}
-                        style={{ clipPath: BUTTON_CLIP }}
                       >
                         شستی (لحظه‌ای Shasti)
                       </motion.button>
@@ -258,19 +253,17 @@ export default function ModulesDrawer({
                         placeholder="مانند: 14"
                         value={customPin}
                         onChange={(e) => setCustomPin(e.target.value.replace(/[^0-9]/g, ""))}
-                        className="w-full h-9 px-3 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-accent3-medium focus:border-accent3 outline-none transition-all font-sans"
-                        style={{ clipPath: BUTTON_CLIP }}
+                        className="w-full h-10 px-3 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all font-sans"
                         dir="ltr"
                       />
                     ) : (
                       <select
                         value={selectedPin}
                         onChange={(e) => setSelectedPin(e.target.value)}
-                        className="w-full h-9 px-3 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-accent3-medium focus:border-accent3 outline-none transition-all cursor-pointer font-sans"
-                        style={{ clipPath: BUTTON_CLIP }}
+                        className="w-full h-10 px-3 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all cursor-pointer font-sans"
                       >
                         {ESP32_COMMON_PINS.map((pin) => (
-                          <option key={pin.value} value={pin.value}>
+                          <option key={pin.value} value={pin.value} className="bg-slate-900">
                             {pin.label}
                           </option>
                         ))}
@@ -291,8 +284,7 @@ export default function ModulesDrawer({
                       placeholder="مثال: رله پمپ آب حیاط"
                       value={customTitle}
                       onChange={(e) => setCustomTitle(e.target.value)}
-                      className="w-full h-9 px-4 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-accent3-medium focus:border-accent3 outline-none transition-all font-sans text-right placeholder:text-right"
-                      style={{ clipPath: BUTTON_CLIP }}
+                      className="w-full h-10 px-4 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all font-sans text-right placeholder:text-right"
                     />
                   </div>
 
@@ -306,8 +298,7 @@ export default function ModulesDrawer({
                       placeholder="مانند: Test"
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
-                      className="w-full h-9 px-4 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-accent3-medium focus:border-accent3 outline-none transition-all font-sans text-right placeholder:text-right"
-                      style={{ clipPath: BUTTON_CLIP }}
+                      className="w-full h-10 px-4 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all font-sans text-right placeholder:text-right"
                     />
                   </div>
 
@@ -319,8 +310,7 @@ export default function ModulesDrawer({
                     type="submit"
                     whileHover={animationsEnabled ? { scale: 1.02 } : undefined}
                     whileTap={animationsEnabled ? { scale: 0.98 } : undefined}
-                    className="w-full py-2.5 bg-accent3 text-black font-sans font-black text-xs hover:bg-opacity-90 transition-all duration-300 cursor-pointer text-center"
-                    style={{ clipPath: BUTTON_CLIP, backgroundColor: "var(--accent3)" }}
+                    className="w-full py-2.5 bg-[var(--accent3)] text-black font-sans font-black text-xs hover:bg-opacity-90 transition-all duration-300 cursor-pointer text-center rounded-xl shadow-md shadow-[var(--accent3-transparent)] mt-2"
                   >
                     + تأیید و ایجاد سگمنت جدید
                   </motion.button>
@@ -329,27 +319,29 @@ export default function ModulesDrawer({
 
               {/* Added Segments Manager List */}
               <div className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-accent3-medium/20 pb-2">
-                  <Sliders className="w-3.5 h-3.5 text-accent3" />
+                <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-2">
+                  <Sliders className="w-3.5 h-3.5 text-[var(--accent3)]" />
                   <span className="text-[11px] font-bold theme-text-secondary">سگمنت‌های مستقر در پیش‌نمایش ({segments.length})</span>
                 </div>
 
                 {segments.length === 0 ? (
-                  <p className="text-[10px] theme-text-muted py-3 text-center border border-dashed theme-border" style={{ clipPath: BUTTON_CLIP }}>
+                  <p className="text-[10px] theme-text-muted py-3 text-center border border-dashed border-[var(--border-color)] rounded-xl bg-black/10">
                     هیچ سگمنت سفارشی تعریف نشده است.
                   </p>
                 ) : (
                   <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                    <AnimatePresence>
                     {segments.map((seg) => (
-                      <div
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
                         key={seg.id}
-                        className="p-3 bg-[var(--card-bg-solid)] border theme-border flex items-center justify-between gap-3 text-right group hover:border-[var(--accent3-transparent)] transition-all"
-                        style={{ clipPath: BUTTON_CLIP }}
+                        className="p-3 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl flex items-center justify-between gap-3 text-right group hover:border-[var(--accent3-medium)] transition-all shadow-sm"
                       >
                         <button
                           onClick={() => onRemoveSegment(seg.id)}
-                          className="p-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-colors cursor-pointer"
-                          style={{ clipPath: "polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%)" }}
+                          className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-colors cursor-pointer rounded-lg"
                           title="حذف سگمنت"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -361,8 +353,9 @@ export default function ModulesDrawer({
                             GPIO {seg.pin} • {seg.mode === "push" ? "MOMENTARY PUSH" : "ON/OFF SWITCH"}
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
+                    </AnimatePresence>
                   </div>
                 )}
               </div>
@@ -370,8 +363,7 @@ export default function ModulesDrawer({
 
             {/* Note about real connection in preview limits */}
             <div 
-              className="bg-[var(--accent3-transparent)] border border-accent3-medium/30 p-3 text-[10px] theme-text-tertiary leading-relaxed flex items-start gap-2 text-right"
-              style={{ clipPath: BUTTON_CLIP }}
+              className="mt-6 bg-[var(--accent3-transparent)] border border-[var(--accent3-medium)] p-3 rounded-xl text-[10px] theme-text-tertiary leading-relaxed flex items-start gap-2 text-right"
             >
               <Info className="w-4 h-4 text-accent3 shrink-0 mt-0.5" />
               <span>

@@ -23,15 +23,15 @@ export default function LowDataModeBanner({
     <motion.div 
       initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
       animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
-      className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-[var(--card-bg)]/90 backdrop-blur-md border border-[var(--accent3-medium)]/60 text-right text-xs gap-4 w-full transition-all duration-300 shadow-lg rounded-2xl hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] ${
+      className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-[var(--card-bg-solid)] border border-[var(--accent3-medium)]/85 text-right gap-4 w-full transition-all duration-300 shadow-md hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] ${
         headerPosition === "left" 
-          ? "max-w-5xl mt-6 md:mt-0" 
-          : "max-w-6xl mt-4 md:mt-2"
+          ? "max-w-5xl md:mt-0 rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl mt-6" 
+          : "max-w-6xl mt-4 md:mt-2 rounded-2xl"
       } mx-auto`}
     >
       <div className="flex items-center gap-3">
         <WifiOff className="w-5 h-5 text-[var(--accent3)] animate-pulse shrink-0" />
-        <span className="text-xs font-sans font-extrabold text-slate-800 dark:text-slate-100">
+        <span className="text-[12.5px] font-sans font-extrabold text-[var(--text-primary)] drop-shadow-sm">
           حالت صرفه‌جویی در مصرف اینترنت فعال است. دریافت خودکار داده‌ها متوقف شده است.
         </span>
       </div>

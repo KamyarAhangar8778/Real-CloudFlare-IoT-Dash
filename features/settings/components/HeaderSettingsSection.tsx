@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, ChevronLeft, PanelTop, PanelLeft } from "lucide-react";
-import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
 
 interface HeaderSettingsSectionProps {
   headerAnimationType: "fade" | "chase";
@@ -60,60 +59,59 @@ export default function HeaderSettingsSection({
   };
 
   const renderContent = () => (
-    <div className="space-y-4 text-right">
+    <div className="space-y-4 text-right font-sans">
       {/* Position switcher */}
-      <div className="space-y-2">
-        <span className="font-bold text-[10px] text-accent3 tracking-wide block">
-          موقعیت قرارگیری هدر داشبورد (طرح کلودفلر)
+      <div className="space-y-3">
+        <span className="font-bold text-[10px] theme-text-secondary tracking-wide block">
+          موقعیت قرارگیری هدر داشبورد
         </span>
-        <p className="text-[9px] theme-text-tertiary">
-          محل نمایش و ساختار هدر و منوهای کنترلی را انتخاب کنید:
-        </p>
         <div className="grid grid-cols-2 gap-2 mt-1">
           {/* Position 1: Top */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => handlePositionChange("top")}
-            className="p-2.5 text-right transition-all border flex items-center justify-between hover:border-accent3 cursor-pointer w-full"
-            style={{
-              clipPath: BUTTON_CLIP,
-              borderColor: headerPosition === "top" ? "var(--accent4)" : "var(--border-color)",
-              backgroundColor: headerPosition === "top" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
-            }}
+            className={`p-3 text-right transition-all border rounded-xl flex items-center justify-between cursor-pointer w-full ${
+              headerPosition === "top"
+                ? "border-[var(--accent4)] bg-[var(--accent4-transparent)] shadow-[0_0_12px_var(--accent4-transparent)]"
+                : "border-[var(--border-color)] hover:border-[var(--accent4)]/60 bg-black/10 hover:bg-black/20"
+            }`}
           >
-            <PanelTop className="w-4 h-4 text-[var(--accent4)]" />
-            <span className="font-bold text-xs theme-text-primary">
+            <PanelTop className={`w-4 h-4 ${headerPosition === "top" ? "text-[var(--accent4)]" : "theme-text-muted"}`} />
+            <span className={`font-bold text-[11px] ${headerPosition === "top" ? "theme-text-primary" : "theme-text-secondary"}`}>
               هدر پهن بالا
             </span>
-          </button>
+          </motion.button>
 
           {/* Position 2: Left */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => handlePositionChange("left")}
-            className="p-2.5 text-right transition-all border flex items-center justify-between hover:border-accent3 cursor-pointer w-full"
-            style={{
-              clipPath: BUTTON_CLIP,
-              borderColor: headerPosition === "left" ? "var(--accent4)" : "var(--border-color)",
-              backgroundColor: headerPosition === "left" ? "var(--accent4-transparent)" : "rgba(255, 255, 255, 0.01)"
-            }}
+            className={`p-3 text-right transition-all border rounded-xl flex items-center justify-between cursor-pointer w-full ${
+              headerPosition === "left"
+                 ? "border-[var(--accent4)] bg-[var(--accent4-transparent)] shadow-[0_0_12px_var(--accent4-transparent)]"
+                 : "border-[var(--border-color)] hover:border-[var(--accent4)]/60 bg-black/10 hover:bg-black/20"
+            }`}
           >
-            <PanelLeft className="w-4 h-4 text-[var(--accent4)]" />
-            <span className="font-bold text-xs theme-text-primary">
+            <PanelLeft className={`w-4 h-4 ${headerPosition === "left" ? "text-[var(--accent4)]" : "theme-text-muted"}`} />
+            <span className={`font-bold text-[11px] ${headerPosition === "left" ? "theme-text-primary" : "theme-text-secondary"}`}>
               منوی ستونی چپ
             </span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
       {/* Custom Header Title Input Field */}
-      <div className="border-t border-accent3-medium/20 pt-3 space-y-2">
+      <div className="border-t border-[var(--border-color)] pt-3 space-y-2">
         <div className="flex items-center justify-between">
           <button
             onClick={handleResetTitle}
-            className="text-[9px] text-accent3 hover:text-accent4 transition-colors underline decoration-dotted cursor-pointer"
+            className="text-[9.5px] theme-text-tertiary hover:text-[var(--accent4)] transition-colors underline decoration-dotted cursor-pointer"
           >
             بازنشانی عنوان
           </button>
-          <span className="font-bold text-[10px] text-accent3 tracking-wide">
+          <span className="font-bold text-[10px] theme-text-secondary tracking-wide">
             عنوان هدر هوشمند
           </span>
         </div>
@@ -123,8 +121,7 @@ export default function HeaderSettingsSection({
           value={headerTitle}
           onChange={(e) => handleTitleChange(e.target.value)}
           maxLength={50}
-          className="w-full px-3 py-2 text-xs text-right theme-card-bg-solid border border-accent3-medium/60 text-white rounded focus:outline-none focus:border-accent4 transition-colors"
-          style={{ clipPath: BUTTON_CLIP }}
+          className="w-full px-3 py-2.5 text-[11px] text-right bg-black/20 border border-[var(--border-color)] theme-text-primary rounded-xl focus:outline-none focus:border-[var(--accent4)] transition-colors"
           placeholder="مثال: داشبورد هوشمند کاربری"
         />
       </div>
@@ -133,20 +130,17 @@ export default function HeaderSettingsSection({
 
   if (hideHeader) {
     return (
-      <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-xl text-right">
+      <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-2xl text-right">
         {renderContent()}
       </div>
     );
   }
 
   return (
-    <div
-      className="border border-accent3-medium overflow-hidden transition-all duration-300"
-      style={{ clipPath: ACCORDION_CLIP }}
-    >
+    <div className="border border-accent3-medium overflow-hidden transition-all duration-300 rounded-2xl">
       <button
         onClick={() => toggleSection && toggleSection("header-settings")}
-        className="w-full py-3 px-4 bg-[var(--card-bg-solid)] flex items-center justify-between text-right cursor-pointer"
+        className="w-full py-3 px-4 bg-[var(--card-bg-solid)] flex items-center justify-between text-right cursor-pointer hover:bg-[var(--card-hover-bg)] transition-colors"
       >
         <ChevronLeft
           className="w-4 h-4 text-accent3 transition-transform duration-300"

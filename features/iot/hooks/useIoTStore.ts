@@ -38,7 +38,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   groupConfigs: {},
   groupsCols: 1,
   pinsState: {},
-  isInitialSyncLoading: true,
+  isInitialSyncLoading: false,
   syncProgress: 0,
   syncMessage: "در حال جستجوی تراشه ESP32 در شبکه محلی پادشاهی...",
   lowDataMode: false,

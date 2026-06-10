@@ -60,7 +60,7 @@ export default function MasterHeader({
       <div id="vertical-master-header" className="w-full h-full flex flex-col justify-stretch gap-4 text-right font-sans" dir="rtl">
         
         {/* 🏛️ Title Island (Compact Brand Box) - Floating Small Island */}
-        <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-4 rounded-2xl shadow-sm flex items-center justify-between gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
+        <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-4 rounded-2xl md:rounded-bl-md md:rounded-tl-md md:rounded-tr-md shadow-sm flex items-center justify-between gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
               <Image 

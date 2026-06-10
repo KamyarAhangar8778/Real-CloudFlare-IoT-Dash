@@ -87,7 +87,7 @@ export function useAchaemenidState() {
   const [targetPlaceholderId, setTargetPlaceholderId] = useState<string | null>(null);
 
   const [mounted, setMounted] = useState(false);
-  const [isFullyReady, setIsFullyReady] = useState(false);
+  const [isFullyReady, setIsFullyReady] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -163,46 +163,16 @@ export function useAchaemenidState() {
 
   // Initial synchronization simulation on dashboard startup - wait for ESP packet
   useEffect(() => {
-    let progressInterval: NodeJS.Timeout;
+    // Instantly sync for fast development and bypass any loading screen
+    setSyncStatus(false, 100, "انتقال داده‌ها کامل شد.");
+    setIsFullyReady(true);
     
-    const startSyncSequence = async () => {
-      let currentProgress = 0;
-      progressInterval = setInterval(() => {
-        currentProgress += Math.floor(Math.random() * 14) + 6;
-        if (currentProgress >= 100) {
-          currentProgress = 100;
-          clearInterval(progressInterval);
-        }
-        setSyncStatus(currentProgress < 100, currentProgress, getSyncMessage(currentProgress));
-      }, 140);
-
-      await new Promise(r => setTimeout(r, 600));
-      setSyncStatus(true, 30, "ارتباط با موفقیت بر روی ردیف رادیویی برقرار شد. بازیابی فایل config.json...");
-      
-      await new Promise(r => setTimeout(r, 800));
-      setSyncStatus(true, 70, "دریافت بسته‌ها کامل شد. موتور تولیدگر در حال تفصیر آرایه‌های قالب JSON است...");
-
-      await new Promise(r => setTimeout(r, 700));
-      
+    if (typeof window !== "undefined") {
       const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
       if (!savedSegments) {
         handleApplyEspConfig(DEFAULT_ESP_CONFIG);
       }
-      
-      setSyncStatus(false, 100, "انتقال داده‌ها کامل شد.");
-    };
-
-    const getSyncMessage = (prog: number) => {
-      if (prog < 30) return "در حال جستجوی تراشه ESP32 در شبکه محلی پادشاهی...";
-      if (prog < 70) return "ارتباط با موفقیت بر روی ردیف رادیویی برقرار شد. بازیابی فایل config.json...";
-      return "دریافت بسته‌ها کامل شد. موتور تولیدگر در حال تفصیر آرایه‌های قالب JSON است...";
-    };
-
-    startSyncSequence();
-
-    return () => {
-      if (progressInterval) clearInterval(progressInterval);
-    };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

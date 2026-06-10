@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, ChevronLeft } from "lucide-react";
-import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
 
 interface CuneiformSectionProps {
   cuneiformOpacity: number;
@@ -27,7 +26,7 @@ export default function CuneiformSection({
   const isExpanded = hideHeader ? true : expandedSection === "cuneiform";
 
   const renderContent = () => (
-    <div className="space-y-4 text-right">
+    <div className="space-y-4 text-right font-sans">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
         با استفاده از ابزارهای زیر می‌توانید میزان پدیداری و هویت رنگ کتیبه سنگی خط میخی هخامنشی متحرک در پس‌زمینه را سفارشی‌سازی کنید:
       </p>
@@ -53,7 +52,7 @@ export default function CuneiformSection({
       </div>
 
       {/* Interactive Grid Color picker */}
-      <div className="space-y-1.5 text-right w-full">
+      <div className="space-y-2 text-right w-full">
         <label className="text-[10px] theme-text-secondary font-bold block">رنگ نگاره‌های خط میخی:</label>
         <div className="grid grid-cols-2 gap-2">
           {[
@@ -61,23 +60,30 @@ export default function CuneiformSection({
             { id: "accent4", name: "رنگ چهارم (سبز)", color: "var(--accent4)" },
             { id: "white", name: "سفید شاهنشاهی", color: "#ffffff" },
             { id: "muted", name: "خاکستری کتبیه‌ای", color: "#718096" }
-          ].map((mode) => (
-            <button
-              key={mode.id}
-              onClick={() => setCuneiformColor(mode.id as "accent3" | "accent4" | "white" | "muted")}
-              className="p-2 text-right transition-all border text-[10px] font-sans flex items-center justify-between hover:border-accent3 cursor-pointer"
-              style={{
-                clipPath: BUTTON_CLIP,
-                borderColor: cuneiformColor === mode.id ? "var(--accent3)" : "var(--border-color)",
-                backgroundColor: cuneiformColor === mode.id ? "var(--accent3-transparent)" : "transparent"
-              }}
-            >
-              <span className={cuneiformColor === mode.id ? "text-accent3 font-black" : "theme-text-secondary"} style={cuneiformColor === mode.id ? { color: "var(--accent3)" } : {}}>
-                {mode.name}
-              </span>
-              <div className="w-2.5 h-2.5 rounded-none" style={{ backgroundColor: mode.color, clipPath: "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)" }} />
-            </button>
-          ))}
+          ].map((mode) => {
+            const isSelected = cuneiformColor === mode.id;
+            return (
+              <motion.button
+                key={mode.id}
+                onClick={() => setCuneiformColor(mode.id as "accent3" | "accent4" | "white" | "muted")}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`p-3 text-right transition-all border text-[10px] rounded-xl flex items-center justify-between cursor-pointer ${
+                  isSelected
+                    ? "border-[var(--accent3)] bg-[var(--accent3-transparent)] shadow-[0_0_12px_var(--accent3-transparent)] font-bold text-[var(--accent3)]"
+                    : "border-[var(--border-color)] hover:border-[var(--accent3)]/50 bg-black/10 hover:bg-black/20"
+                }`}
+              >
+                <div 
+                  className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-md transition-transform duration-300 hover:scale-110" 
+                  style={{ backgroundColor: mode.color }} 
+                />
+                <span className={isSelected ? "text-accent3" : "theme-text-secondary"} style={isSelected ? { color: "var(--accent3)" } : {}}>
+                  {mode.name}
+                </span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -85,20 +91,17 @@ export default function CuneiformSection({
 
   if (hideHeader) {
     return (
-      <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-xl text-right">
+      <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-2xl text-right">
         {renderContent()}
       </div>
     );
   }
 
   return (
-    <div
-      className="border border-accent3-medium overflow-hidden transition-all duration-300"
-      style={{ clipPath: ACCORDION_CLIP }}
-    >
+    <div className="border border-accent3-medium overflow-hidden transition-all duration-300 rounded-2xl">
       <button
         onClick={() => toggleSection && toggleSection("cuneiform")}
-        className="w-full py-3 px-4 bg-[var(--card-bg-solid)] flex items-center justify-between text-right cursor-pointer"
+        className="w-full py-3 px-4 bg-[var(--card-bg-solid)] flex items-center justify-between text-right cursor-pointer hover:bg-[var(--card-hover-bg)] transition-colors"
       >
         <ChevronLeft
           className="w-4 h-4 text-accent3 transition-transform duration-300"
