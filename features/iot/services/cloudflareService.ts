@@ -1,6 +1,6 @@
 import { EspConfig } from "@/features/iot/services/esp32Config";
 
-const DEFAULT_WORKER_URL = "https://my-iot-worker.YOUR_SUBDOMAIN.workers.dev";
+const DEFAULT_WORKER_URL = "https://durable-object-worker.kamyarahangar157.workers.dev";
 
 export function getCloudflareWorkerUrl(): string {
   if (typeof window !== "undefined") {
@@ -89,7 +89,7 @@ function deserializeFromCloudflare(cfData: any): EspConfig {
  */
 export function isCloudflareEnabled(): boolean {
   const url = getCloudflareWorkerUrl();
-  return url !== "" && !url.includes("YOUR_SUBDOMAIN") && url !== DEFAULT_WORKER_URL;
+  return url !== "" && !url.includes("YOUR_SUBDOMAIN");
 }
 
 /**

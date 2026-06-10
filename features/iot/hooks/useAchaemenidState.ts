@@ -10,7 +10,8 @@ import {
   isCloudflareEnabled,
   fetchConfigFromCloudflare,
   saveConfigToCloudflare,
-  updatePinOnCloudflare
+  updatePinOnCloudflare,
+  fetchPinsFromCloudflare
 } from "@/features/iot/services/cloudflareService";
 import { persianSymbols, PersianSymbol } from "@/features/encyclopedia/data/symbols";
 import {
@@ -116,7 +117,23 @@ export function useAchaemenidState() {
   const { data: iotData, refetch: refetchIot } = useQuery({
     queryKey: ["iotState", segments.map(s => s.pin).join(",")],
     queryFn: async () => {
-      // Offline fallback & direct read from local storage cache
+      // 1. If Cloudflare is enabled, try to fetch pins from Cloudflare
+      if (isCloudflareEnabled()) {
+        try {
+          const cfPins = await fetchPinsFromCloudflare(segments);
+          if (cfPins) {
+            // Save to localStorage cache as offline backup
+            if (typeof window !== "undefined") {
+              localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(cfPins));
+            }
+            return { pins: cfPins };
+          }
+        } catch (e) {
+          console.error("Error fetching pins from Cloudflare:", e);
+        }
+      }
+
+      // 2. Offline fallback & direct read from local storage cache
       if (typeof window !== "undefined") {
         const cached = localStorage.getItem("achaemenid_dashboard_pins_cache");
         if (cached) {
@@ -129,7 +146,7 @@ export function useAchaemenidState() {
       }
       return { pins: pinsState };
     },
-    refetchInterval: false, // Absolutely NO background polling of pin state
+    refetchInterval: isCloudflareEnabled() && !lowDataMode ? 3000 : false, // Poll every 3 seconds if cloudflare is active and low data mode is off
   });
 
   // Automatically sync incoming Server updates into our Local Store & cached cache
