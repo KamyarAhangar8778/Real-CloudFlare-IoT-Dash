@@ -3,7 +3,8 @@
 import React from "react";
 import { useSortable, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Layers, Plus, Trash2, GripVertical } from "lucide-react";
+import { Layers, Plus, Trash2, GripVertical, Columns2, LayoutGrid } from "lucide-react";
+import { AnimatePresence } from "motion/react";
 
 interface SortableGroupProps {
   id: string; // Group Name
@@ -14,10 +15,11 @@ interface SortableGroupProps {
   onAddPlaceholder: (groupId: string) => void;
   onDeleteGroup: (groupId: string) => void;
   parentGroupsCols?: number;
+  animationsEnabled?: boolean;
   children: React.ReactNode;
 }
 
-export default function SortableGroup({ id, items, segmentCount, maxCols, onColsChange, onAddPlaceholder, onDeleteGroup, parentGroupsCols = 1, children }: SortableGroupProps) {
+export default function SortableGroup({ id, items, segmentCount, maxCols, onColsChange, onAddPlaceholder, onDeleteGroup, parentGroupsCols = 1, animationsEnabled = true, children }: SortableGroupProps) {
   const {
     attributes,
     listeners,
@@ -35,7 +37,7 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: animationsEnabled ? (transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)") : "none",
     zIndex: isDragging ? 50 : "auto",
     opacity: isDragging ? 0.8 : 1,
   };
@@ -70,71 +72,59 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
 
         <div className={`flex items-center shrink-0 ${parentGroupsCols === 3 ? "gap-1" : "gap-3"}`}>
            {/* Layout selector */}
-           <div className={`${parentGroupsCols === 3 ? "hidden select-none pointer-events-none" : "hidden sm:flex"} items-center gap-1.5 p-1 bg-black/30 border border-[var(--border-color)] backdrop-blur-sm`} style={{ clipPath: "polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)" }}>
+           <div className={`${parentGroupsCols === 3 ? "hidden select-none pointer-events-none" : "hidden sm:flex"} items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-0.5 rounded-xl text-xs gap-0.5 shrink-0 shadow-sm`}>
               <button
                 onClick={() => onColsChange(1)}
-                className={`p-1.5 flex items-center justify-center transition-colors ${maxCols === 1 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)]' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px)" }}
-                title="تک ستونه"
+                aria-label="تک ستون"
+                className={`p-1 rounded-lg transition-all cursor-pointer select-none ${maxCols === 1 ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"}`}
+                title="نمایش تک ستونه"
               >
-                <div className="w-4 h-3 flex flex-col gap-[2px]">
-                  <div className="w-full h-full bg-current rounded-[1px]" />
-                </div>
+                <Columns2 className="w-3.5 h-3.5 rotate-90" />
               </button>
               <button
                 onClick={() => onColsChange(2)}
-                className={`p-1.5 flex items-center justify-center transition-colors ${maxCols === 2 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)]' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px)" }}
-                title="دو ستونه"
+                aria-label="دو ستون"
+                className={`p-1 rounded-lg transition-all cursor-pointer select-none ${maxCols === 2 ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"}`}
+                title="نمایش دو ستونه"
               >
-                <div className="w-4 h-3 flex gap-[2px]">
-                  <div className="w-1/2 h-full bg-current rounded-[1px]" />
-                  <div className="w-1/2 h-full bg-current rounded-[1px]" />
-                </div>
+                <LayoutGrid className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => onColsChange(3)}
-                className={`p-1.5 flex items-center justify-center transition-colors ${maxCols === 3 ? 'text-[var(--accent3)] bg-[var(--accent3-transparent)]' : 'text-gray-500 hover:text-gray-300'}`}
-                style={{ clipPath: "polygon(3px 0, calc(100% - 3px) 0, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 0 calc(100% - 3px), 0 3px)" }}
-                title="سه ستونه"
+                aria-label="سه ستون"
+                className={`p-1 rounded-lg transition-all cursor-pointer select-none ${maxCols === 3 ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold" : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"}`}
+                title="نمایش سه ستونه"
               >
-                <div className="w-4 h-3 flex gap-[2px]">
-                  <div className="w-1/3 h-full bg-current rounded-[1px]" />
-                  <div className="w-1/3 h-full bg-current rounded-[1px]" />
-                  <div className="w-1/3 h-full bg-current rounded-[1px]" />
-                </div>
+                <LayoutGrid className="w-3.5 h-3.5 scale-x-110" />
               </button>
            </div>
 
           {/* Add Placeholder Handle */}
           <button
              onClick={() => onAddPlaceholder(id)}
-             className={parentGroupsCols === 3 ? "p-1 hover:bg-[var(--accent3-transparent)] text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm" : "p-1.5 hover:bg-[var(--accent3-transparent)] text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm"}
-             style={{ clipPath: "polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)" }}
-             title="اضافه کردن فضای خالی"
+             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] transition-all cursor-pointer rounded-lg shadow-sm"
+             title="اضافه کردن سگمنت (پایه خالی) به این گروه"
           >
-             <Plus className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
+             <Plus className="w-4 h-4" />
           </button>
 
           {/* Delete Group Handle */}
           <button
              onClick={() => onDeleteGroup(id)}
-             className={parentGroupsCols === 3 ? "p-1 hover:bg-[var(--accent3-transparent)] text-[var(--text-muted)] hover:text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm" : "p-1.5 hover:bg-[var(--accent3-transparent)] text-[var(--text-muted)] hover:text-[var(--accent3)] cursor-pointer transition-colors backdrop-blur-sm"}
-             style={{ clipPath: "polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)" }}
-             title="پاک کردن گروه و تمام محتوای درون آن"
+             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-red-500 hover:text-red-500 transition-all cursor-pointer rounded-lg shadow-sm"
+             title="حذف کامل این گروه و تمامی سگمنت‌های داخل آن"
           >
-             <Trash2 className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
+             <Trash2 className="w-4 h-4" />
           </button>
 
           {/* Group Drag Handle */}
           <div 
             {...attributes} 
             {...listeners}
-            className={parentGroupsCols === 3 ? "p-1 hover:bg-[var(--accent3-transparent)] text-[var(--accent3-heavy)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors backdrop-blur-sm" : "p-1.5 hover:bg-[var(--accent3-transparent)] text-[var(--accent3-heavy)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors backdrop-blur-sm"}
-            style={{ clipPath: "polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px)" }}
-            title="جابه‌جایی کل گروه"
+            className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-all rounded-lg shadow-sm"
+            title="کشیدن کل گروه برای جابه‌جایی"
           >
-            <GripVertical className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
+            <GripVertical className="w-4 h-4" />
           </div>
         </div>
       </div>
@@ -151,7 +141,9 @@ export default function SortableGroup({ id, items, segmentCount, maxCols, onCols
                 max-width: 100%;
               }
             `}} />
-            {children}
+            <AnimatePresence mode="popLayout">
+              {children}
+            </AnimatePresence>
           </div>
         </SortableContext>
       </div>

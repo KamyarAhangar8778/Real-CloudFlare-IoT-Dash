@@ -30,6 +30,10 @@ interface ModulesDrawerProps {
   onAddSegment: (type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push") => void;
   segments: Segment[];
   onRemoveSegment: (id: string) => void;
+  isDark: boolean;
+  accent3: string;
+  accent4: string;
+  animationsEnabled?: boolean;
 }
 
 const ESP32_COMMON_PINS = [
@@ -60,6 +64,10 @@ export default function ModulesDrawer({
   onAddSegment,
   segments,
   onRemoveSegment,
+  isDark,
+  accent3,
+  accent4,
+  animationsEnabled = true,
 }: ModulesDrawerProps) {
   const [selectedType, setSelectedType] = useState("gpio_toggle");
   const [selectedPin, setSelectedPin] = useState("2");
@@ -106,6 +114,17 @@ export default function ModulesDrawer({
     onClose();
   };
 
+  const backdropBackground = isDark
+    ? `radial-gradient(circle at center, ${accent3}15 0%, ${accent4}08 50%, rgba(5,6,9,0.65) 100%)`
+    : `radial-gradient(circle at center, ${accent3}0a 0%, ${accent4}05 50%, rgba(244,245,247,0.7) 100%)`;
+
+  const backdropStyle: React.CSSProperties = {
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    background: backdropBackground,
+    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -116,16 +135,17 @@ export default function ModulesDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 cursor-pointer"
+            style={backdropStyle}
+            className="fixed inset-0 z-50 cursor-pointer"
           />
 
-          {/* Left-Floating Modules Drawer (chiseled, elegant, high-contrast dark style) */}
+          {/* Left-Floating Modules Drawer (chiseled, elegant, high-contrast dark style with rounded corners) */}
           <motion.div
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 24, stiffness: 200 }}
-            className="fixed top-0 left-0 h-full w-full max-w-sm bg-gradient-to-b from-[var(--drawer-gradient-from)] to-[var(--drawer-gradient-to)] border-r border-accent3-medium shadow-2xl z-50 overflow-y-auto px-6 py-8 text-right flex flex-col justify-between transition-colors duration-500"
+            className="fixed top-0 left-0 h-full w-full max-w-sm bg-gradient-to-b from-[var(--drawer-gradient-from)] to-[var(--drawer-gradient-to)] border-r border-accent3-medium rounded-r-[2.5rem] shadow-2xl z-50 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] px-6 py-8 text-right flex flex-col justify-between transition-colors duration-500"
           >
             {/* Drawer Content */}
             <div className="space-y-6">
@@ -144,13 +164,14 @@ export default function ModulesDrawer({
                     </p>
                   </div>
                 </div>
-                <button
+                <motion.button
                   onClick={onClose}
-                  className="p-1.5 theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 transition-all cursor-pointer"
-                  style={{ clipPath: BUTTON_CLIP }}
+                  whileHover={animationsEnabled ? { scale: 1.15, rotate: 90 } : undefined}
+                  whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
+                  className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </motion.button>
               </div>
 
               {/* Form to Add New Segment */}
@@ -185,8 +206,10 @@ export default function ModulesDrawer({
                       نوع عملکرد کلید کنترل:
                     </label>
                     <div className="grid grid-cols-2 gap-2">
-                      <button
+                      <motion.button
                         type="button"
+                        whileHover={animationsEnabled ? { scale: 1.03 } : undefined}
+                        whileTap={animationsEnabled ? { scale: 0.97 } : undefined}
                         onClick={() => setButtonMode("switch")}
                         className={`py-2 text-[10px] font-bold font-sans transition-all border cursor-pointer ${
                           buttonMode === "switch"
@@ -196,9 +219,11 @@ export default function ModulesDrawer({
                         style={{ clipPath: BUTTON_CLIP }}
                       >
                         سوییچ (دائمی Toggle)
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         type="button"
+                        whileHover={animationsEnabled ? { scale: 1.03 } : undefined}
+                        whileTap={animationsEnabled ? { scale: 0.97 } : undefined}
                         onClick={() => setButtonMode("push")}
                         className={`py-2 text-[10px] font-bold font-sans transition-all border cursor-pointer ${
                           buttonMode === "push"
@@ -208,7 +233,7 @@ export default function ModulesDrawer({
                         style={{ clipPath: BUTTON_CLIP }}
                       >
                         شستی (لحظه‌ای Shasti)
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
 
@@ -290,13 +315,15 @@ export default function ModulesDrawer({
                     <p className="text-[10px] text-red-500 font-sans mt-2">{errorText}</p>
                   )}
 
-                  <button
+                  <motion.button
                     type="submit"
-                    className="w-full py-2.5 bg-accent3 text-black font-sans font-black text-xs hover:bg-opacity-90 active:scale-95 transition-all duration-300 cursor-pointer text-center"
+                    whileHover={animationsEnabled ? { scale: 1.02 } : undefined}
+                    whileTap={animationsEnabled ? { scale: 0.98 } : undefined}
+                    className="w-full py-2.5 bg-accent3 text-black font-sans font-black text-xs hover:bg-opacity-90 transition-all duration-300 cursor-pointer text-center"
                     style={{ clipPath: BUTTON_CLIP, backgroundColor: "var(--accent3)" }}
                   >
                     + تأیید و ایجاد سگمنت جدید
-                  </button>
+                  </motion.button>
                 </div>
               </form>
 

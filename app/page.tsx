@@ -91,6 +91,7 @@ function AchaemenidDashboard() {
     handleSetPinState,
     handleBypassSync,
     handleDragStart,
+    handleDragOver,
     handleDragEnd,
   } = useAchaemenidState();
 
@@ -126,6 +127,7 @@ function AchaemenidDashboard() {
           cuneiformOpacity={cuneiformOpacity}
           cuneiformColorValue={cuneiformColorValue}
           accent3={accent3}
+          animationsEnabled={animationsEnabled}
         />
 
         {/* Main Flexible Container Grid (Supports responsive top header / left sidebar dynamically) */}
@@ -186,6 +188,7 @@ function AchaemenidDashboard() {
                 lowDataMode={lowDataMode}
                 animationsEnabled={animationsEnabled}
                 refetchIot={refetchIot}
+                headerPosition={headerPosition}
               />
             )}
 
@@ -214,6 +217,7 @@ function AchaemenidDashboard() {
                     activeGroupId={activeGroupId}
                     animationsEnabled={animationsEnabled}
                     handleDragStart={handleDragStart}
+                    handleDragOver={handleDragOver}
                     handleDragEnd={handleDragEnd}
                     handleGroupColsChange={handleGroupColsChange}
                     handleAddPlaceholder={handleAddPlaceholder}
@@ -238,9 +242,11 @@ function AchaemenidDashboard() {
 
             {/* Elegant Footer */}
             <footer 
-              className="text-center text-[10px] theme-text-muted font-sans border border-[var(--border-color)] bg-[var(--card-bg-solid)] py-4 px-6 mt-12 mb-4 mx-auto max-w-4xl shadow-sm hover:shadow-md rounded-xl transition-all duration-300"
+              className="text-center text-[10px] theme-text-secondary font-sans border border-[var(--border-color)] bg-[var(--card-bg)]/80 backdrop-blur-md py-4 px-6 mt-12 mb-4 mx-auto max-w-4xl shadow-sm hover:shadow-lg rounded-xl transition-all duration-300 footer-animated-border"
             >
-              سامانه هوشمند و داشبورد تعاملی مانیتورینگ صنعت اینترنت اشیاء (الهام گرفته از طراحی کلودفلر)
+              <span className="footer-animated-text block">
+                سامانه هوشمند و داشبورد تعاملی مانیتورینگ صنعت اینترنت اشیاء (الهام گرفته از طراحی کلودفلر)
+              </span>
             </footer>
           </div>
         </div>
@@ -277,6 +283,10 @@ function AchaemenidDashboard() {
           onAddSegment={handleAddSegment}
           segments={segments}
           onRemoveSegment={handleRemoveSegment}
+          isDark={isDark}
+          accent3={accent3}
+          accent4={accent4}
+          animationsEnabled={animationsEnabled}
         />
 
         {/* Custom ESP32 Sync and Packet Importer system */}

@@ -219,6 +219,17 @@ export default function EspSyncDrawer({
     reader.readAsText(file);
   };
 
+  const backdropBackground = isDark
+    ? `radial-gradient(circle at center, ${accent3}15 0%, ${accent4}08 50%, rgba(5,6,9,0.65) 100%)`
+    : `radial-gradient(circle at center, ${accent3}0a 0%, ${accent4}05 50%, rgba(244,245,247,0.7) 100%)`;
+
+  const backdropStyle: React.CSSProperties = {
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    background: backdropBackground,
+    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -232,7 +243,8 @@ export default function EspSyncDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            style={backdropStyle}
+            className="absolute inset-0"
           />
 
           {/* Sidebar Drawer Panel */}
@@ -241,7 +253,7 @@ export default function EspSyncDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 150 }}
-            className="relative w-full max-w-[580px] h-full theme-card-bg-solid border-l border-accent3-medium/30 shadow-2xl flex flex-col overflow-hidden text-right"
+            className="relative w-full max-w-[580px] h-full theme-card-bg-solid border-l border-accent3-medium/30 rounded-l-[2.5rem] shadow-2xl flex flex-col overflow-hidden [&::-webkit-scrollbar]:hidden [scrollbar-width:none] text-right"
             dir="rtl"
           >
             {/* Elegant Header Slant */}
@@ -268,12 +280,14 @@ export default function EspSyncDrawer({
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--card-hover-bg)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
+                  whileHover={animationsEnabled ? { scale: 1.15, rotate: 90 } : undefined}
+                  whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
+                  className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </motion.button>
               </div>
 
               {/* Royal Tab Selector */}

@@ -113,7 +113,7 @@ export const IoTControlCard: React.FC<IoTControlCardProps> = ({
           <button
             onClick={handleToggleLed}
             disabled={loading}
-            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 focus:outline-none hover:scale-110 active:scale-95 hover:brightness-110 ${
               localLed ? "bg-accent3" : "bg-[#1c1d29]"
             }`}
             style={localLed ? { backgroundColor: "var(--accent3)" } : {}}
@@ -182,7 +182,7 @@ export const IoTControlCard: React.FC<IoTControlCardProps> = ({
           <button
             onClick={handleToggleRelay}
             disabled={loading}
-            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 focus:outline-none hover:scale-110 active:scale-95 hover:brightness-110 ${
               localRelay ? "bg-accent3" : "bg-[#1c1d29]"
             }`}
             style={localRelay ? { backgroundColor: "var(--accent3)" } : {}}

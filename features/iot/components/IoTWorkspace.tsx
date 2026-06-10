@@ -6,6 +6,7 @@ import {
   closestCenter, 
   DragOverlay,
   DragStartEvent,
+  DragOverEvent,
   DragEndEvent
 } from "@dnd-kit/core";
 import { 
@@ -30,6 +31,7 @@ interface IoTWorkspaceProps {
   animationsEnabled?: boolean;
   
   handleDragStart: (event: DragStartEvent) => void;
+  handleDragOver: (event: DragOverEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
   handleGroupColsChange: (groupName: string, cols: number) => void;
   handleAddPlaceholder: (groupId: string) => void;
@@ -53,6 +55,7 @@ export default function IoTWorkspace({
   activeGroupId,
   animationsEnabled,
   handleDragStart,
+  handleDragOver,
   handleDragEnd,
   handleGroupColsChange,
   handleAddPlaceholder,
@@ -68,6 +71,7 @@ export default function IoTWorkspace({
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       <SortableContext 
@@ -92,6 +96,7 @@ export default function IoTWorkspace({
                   onAddPlaceholder={handleAddPlaceholder}
                   onDeleteGroup={handleRemoveGroup}
                   parentGroupsCols={groupsCols}
+                  animationsEnabled={animationsEnabled}
                 >
                   {groupSegments.map((seg) => (
                     <SortableSegmentCard

@@ -8,6 +8,7 @@ interface CuneiformBackgroundProps {
   cuneiformOpacity: number;
   cuneiformColorValue: string;
   accent3: string;
+  animationsEnabled?: boolean;
 }
 
 export default function CuneiformBackground({
@@ -16,6 +17,7 @@ export default function CuneiformBackground({
   cuneiformOpacity,
   cuneiformColorValue,
   accent3,
+  animationsEnabled = true,
 }: CuneiformBackgroundProps) {
   return (
     <>
@@ -30,12 +32,12 @@ export default function CuneiformBackground({
         style={{ opacity: cuneiformOpacity }}
       >
         <div 
-          className="absolute inset-0 cuneiform-scroll-container"
+          className={`absolute inset-0 cuneiform-scroll-container ${animationsEnabled ? "cuneiform-scroll-animated" : ""}`}
           style={{
             backgroundImage: isDark ? "url('/Backgrand-Transition-Dark.jpg')" : "url('/Backgrand-Transition-Light.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
+            backgroundSize: "400px 400px",
+            backgroundPosition: "0 0",
+            backgroundRepeat: "repeat",
             mixBlendMode: isDark ? "screen" : "multiply",
             filter: cuneiformColor === "muted" ? "grayscale(100%)" :
                     cuneiformColor === "accent4" ? "hue-rotate(120deg) saturate(1.8)" :

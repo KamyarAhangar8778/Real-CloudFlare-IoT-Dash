@@ -14,6 +14,7 @@ import {
   useSensors,
   DragEndEvent,
   DragStartEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -444,6 +445,72 @@ export function useAchaemenidState() {
     }
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (active.data.current?.type === "Group" || over.data.current?.type === "Group") {
+      return;
+    }
+
+    const activeSeg = segments.find(s => s.id === activeId);
+    if (!activeSeg) return;
+
+    const overSeg = segments.find(s => s.id === overId);
+
+    if (overSeg) {
+      const activeGroup = activeSeg.group || "Test";
+      const overGroup = overSeg.group || "Test";
+
+      if (activeGroup !== overGroup) {
+        setSegments((prev) => {
+          const activeIndex = prev.findIndex(s => s.id === activeId);
+          const overIndex = prev.findIndex(s => s.id === overId);
+          if (activeIndex !== -1 && overIndex !== -1) {
+            const updated = [...prev];
+            updated[activeIndex] = { ...updated[activeIndex], group: overGroup };
+            const [moved] = updated.splice(activeIndex, 1);
+            updated.splice(overIndex, 0, moved);
+            return updated;
+          }
+          return prev;
+        });
+      } else {
+        setSegments((prev) => {
+          const activeIndex = prev.findIndex(s => s.id === activeId);
+          const overIndex = prev.findIndex(s => s.id === overId);
+          if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+            return arrayMove(prev, activeIndex, overIndex);
+          }
+          return prev;
+        });
+      }
+    } else {
+      const overIdStr = overId.toString();
+      let targetGroup = "";
+      if (overIdStr.startsWith("group-")) {
+        targetGroup = overIdStr.replace("group-", "");
+      } else if (groupsOrder.includes(overIdStr)) {
+        targetGroup = overIdStr;
+      }
+
+      if (targetGroup && (activeSeg.group || "Test") !== targetGroup) {
+        setSegments((prev) => {
+          const activeIndex = prev.findIndex(s => s.id === activeId);
+          if (activeIndex !== -1) {
+            const updated = [...prev];
+            updated[activeIndex] = { ...updated[activeIndex], group: targetGroup };
+            return updated;
+          }
+          return prev;
+        });
+      }
+    }
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveSegmentId(null);
     setActiveGroupId(null);
@@ -462,14 +529,8 @@ export function useAchaemenidState() {
 
     if (!over) {
       if (typeof window !== "undefined") {
-        setSegments((prev) => {
-          localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(prev));
-          return prev;
-        });
-        setGroupsOrder((prev) => {
-          localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(prev));
-          return prev;
-        });
+        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(segments));
+        localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(groupsOrder));
       }
       return;
     }
@@ -499,30 +560,8 @@ export function useAchaemenidState() {
     }
 
     if (type === "Segment") {
-      const activeId = active.id;
-      const overId = over.id;
-
-      if (activeId !== overId) {
-        setSegments((prev) => {
-          const activeSeg = prev.find(s => s.id === activeId);
-          const overSeg = prev.find(s => s.id === overId);
-          
-          if (activeSeg && overSeg && (activeSeg.group || "Test") === (overSeg.group || "Test")) {
-            const activeIndex = prev.findIndex(s => s.id === activeId);
-            const overIndex = prev.findIndex(s => s.id === overId);
-            
-            let newSegs = prev;
-            if (overIndex !== -1 && activeIndex !== -1) {
-              newSegs = arrayMove(prev, activeIndex, overIndex);
-            }
-            
-            if (typeof window !== "undefined") {
-              localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(newSegs));
-            }
-            return newSegs;
-          }
-          return prev;
-        });
+      if (typeof window !== "undefined") {
+        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(segments));
       }
     }
   };
@@ -588,6 +627,7 @@ export function useAchaemenidState() {
     handleSetPinState,
     handleBypassSync,
     handleDragStart,
+    handleDragOver,
     handleDragEnd,
   };
 }

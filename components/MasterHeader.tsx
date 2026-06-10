@@ -152,7 +152,7 @@ export default function MasterHeader({
               >
                 <div className="flex items-center gap-2.5">
                   <div className="p-1.5 rounded-lg bg-[var(--accent4-transparent)] text-[var(--accent4)]">
-                    <Layers className="w-4 h-4" />
+                    <Layers className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`} />
                   </div>
                   <span className="text-xs font-semibold">پالایه و ماژول‌ها</span>
                 </div>
@@ -168,7 +168,7 @@ export default function MasterHeader({
               >
                 <div className="flex items-center gap-2.5">
                   <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
-                    <Cpu className="w-4 h-4" />
+                    <Cpu className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_2.5s_ease-in-out_infinite]" : ""}`} />
                   </div>
                   <span className="text-xs font-semibold">همگام‌ساز تراشه</span>
                 </div>
@@ -205,7 +205,7 @@ export default function MasterHeader({
                 {isDark ? "حالت تیره" : "حالت روشن"}
               </span>
               <div className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
-                {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
+                {isDark ? <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} /> : <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} />}
               </div>
             </button>
           </div>
@@ -219,11 +219,11 @@ export default function MasterHeader({
   return (
     <div 
       id="horizontal-master-header" 
-      className="w-full flex flex-col lg:flex-row gap-4 items-stretch relative z-20 text-right font-sans" 
+      className="w-full flex flex-col md:flex-row gap-4 items-stretch relative z-20 text-right font-sans" 
       dir="rtl"
     >
       {/* 🏛️ Right Island (Compact Title Box) - Small Island */}
-      <div className="lg:w-1/3 xl:w-1/4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex items-center justify-between lg:justify-start gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
+      <div className="md:w-1/3 xl:w-1/4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex items-center justify-between md:justify-start gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
             <Image 
@@ -246,13 +246,13 @@ export default function MasterHeader({
         </div>
 
         {/* Mobile-only Theme Toggle located in title island for quick reach */}
-        <div className="lg:hidden flex items-center gap-1 bg-[var(--bg-main)] p-1 border border-[var(--border-color)] rounded-lg">
+        <div className="md:hidden flex items-center gap-1 bg-[var(--bg-main)] p-1 border border-[var(--border-color)] rounded-lg">
           <button
             onClick={() => setIsDark(!isDark)}
             className="p-1.5 text-[var(--text-secondary)] hover:text-[var(--accent4)] rounded transition-all"
             title="تغییر تم پوسته"
           >
-            {isDark ? <Moon className="w-4 h-4 text-indigo-400" /> : <Sun className="w-4 h-4 text-orange-400" />}
+            {isDark ? <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} /> : <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} />}
           </button>
         </div>
       </div>
@@ -326,7 +326,7 @@ export default function MasterHeader({
               className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97]"
               title="مدیریت ماژول‌ها و ابزارها"
             >
-              <Layers className="w-3.5 h-3.5 text-[var(--accent4)]" />
+              <Layers className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`} />
               <span>ماژول‌ها</span>
             </button>
 
@@ -336,7 +336,7 @@ export default function MasterHeader({
               className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97]"
               title="همگام‌سازی بی سیم ESP32"
             >
-              <Cpu className="w-3.5 h-3.5 text-[var(--accent3)]" />
+              <Cpu className={`w-3.5 h-3.5 text-[var(--accent3)] ${animationsEnabled ? "animate-[pulse_2.5s_ease-in-out_infinite]" : ""}`} />
               <span>تراشه</span>
             </button>
 
@@ -355,7 +355,7 @@ export default function MasterHeader({
               className="hidden md:flex p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all active:scale-[0.97]"
               title="تغییر رنگ پوسته"
             >
-              {isDark ? <Sun className="w-4 h-4 text-orange-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
+              {isDark ? <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} /> : <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} />}
             </button>
 
           </div>

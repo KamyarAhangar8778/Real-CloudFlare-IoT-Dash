@@ -63,15 +63,15 @@ export default function StabilitySection({
           </div>
           
           {/* Modern Premium Toggle Switch */}
-          <div className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-all duration-300 shrink-0 ${
+          <div className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
             animationsEnabled 
-              ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' 
-              : isDark 
-                ? 'bg-slate-800 border border-slate-705' 
-                : 'bg-slate-200 border border-slate-300'
+              ? "bg-[var(--accent4)] shadow-[0_0_8px_var(--accent4-transparent)]" 
+              : isDark
+                ? "bg-black/30 border border-slate-800/40"
+                : "bg-slate-200 border border-slate-300"
           }`}>
-            <div 
-              className={`w-5 h-5 rounded-full bg-white shadow-md transform ${
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
                 animationsEnabled 
                   ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-x-5" 
                   : "translate-x-0"
@@ -117,18 +117,18 @@ export default function StabilitySection({
           </div>
           
           {/* Modern Premium Toggle Switch */}
-          <div className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-all duration-300 shrink-0 ${
+          <div className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
             lowDataMode 
-              ? 'bg-amber-500 shadow-[0_0_8px_rgba(212,175,55,0.4)]' 
-              : isDark 
-                ? 'bg-slate-800 border border-slate-705' 
-                : 'bg-slate-200 border border-slate-300'
+              ? "bg-[var(--accent4)] shadow-[0_0_8px_var(--accent4-transparent)]" 
+              : isDark
+                ? "bg-black/30 border border-slate-800/40"
+                : "bg-slate-200 border border-slate-300"
           }`}>
-            <div 
-              className={`w-5 h-5 rounded-full bg-white shadow-md transform ${
+            <span
+              className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
                 animationsEnabled 
-                  ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-x-5" 
-                  : "translate-x-0"
+                  ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" 
+                  : ""
               } ${
                 lowDataMode ? "-translate-x-5" : "translate-x-0"
               }`}

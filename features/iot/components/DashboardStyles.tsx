@@ -22,7 +22,7 @@ export default function DashboardStyles({
 
   return (
     <style dangerouslySetInnerHTML={{ __html: `
-      @import url('https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&family=Cairo:wght@200..1000&family=Amiri:ital,wght@0,400..700;1,400..700&family=Changa:wght@200..800&family=Reem+Kufi:wght@400..700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&family=Cairo:wght@200..1000&family=Amiri:ital,wght@0,400..700;1,400..700&family=Changa:wght@200..800&family=Reem+Kufi:wght@400..700&family=Tajawal:wght@200..900&display=swap');
 
       /* Custom cursor personalizations */
       html, body {
@@ -79,6 +79,7 @@ export default function DashboardStyles({
         --font-amiri: 'Amiri', serif;
         --font-changa: 'Changa', sans-serif;
         --font-reem: 'Reem Kufi', sans-serif;
+        --font-tajawal: 'Tajawal', sans-serif;
 
         --selected-font: ${
           selectedFont === "vazir" ? "var(--font-vazir)" :
@@ -89,7 +90,8 @@ export default function DashboardStyles({
           selectedFont === "cairo" ? "var(--font-cairo)" :
           selectedFont === "amiri" ? "var(--font-amiri)" :
           selectedFont === "changa" ? "var(--font-changa)" :
-          selectedFont === "reem" ? "var(--font-reem)" : "var(--font-vazir)"
+          selectedFont === "reem" ? "var(--font-reem)" :
+          selectedFont === "tajawal" ? "var(--font-tajawal)" : "var(--font-vazir)"
         };
 
         --accent3: ${accent3};
@@ -202,9 +204,49 @@ export default function DashboardStyles({
         background-size: 200% auto;
       }
 
-      /* Static background image to eliminate frame-rate drops and constant page repaints */
+      /* Dynamic seamless background image scrolling */
       .cuneiform-scroll-container {
-        background-position: center;
+        background-position: 0 0;
+      }
+      @keyframes cuneiform-slide {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -400px 400px;
+        }
+      }
+      .cuneiform-scroll-animated {
+        animation: cuneiform-slide 45s linear infinite !important;
+      }
+
+      @keyframes footer-border-glow {
+        0%, 100% {
+          border-color: var(--border-color);
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        50% {
+          border-color: var(--accent3-medium);
+          box-shadow: 0 0 12px var(--accent3-transparent);
+        }
+      }
+      .footer-animated-border {
+        animation: footer-border-glow 6s ease-in-out infinite;
+      }
+
+      @keyframes footer-text-glow {
+        0%, 100% {
+          opacity: 0.8;
+          color: var(--text-muted);
+        }
+        50% {
+          opacity: 1;
+          color: var(--text-secondary);
+          text-shadow: 0 0 4px var(--accent3-transparent);
+        }
+      }
+      .footer-animated-text {
+        animation: footer-text-glow 6s ease-in-out infinite;
       }
     `}} />
   );

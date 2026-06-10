@@ -2,8 +2,8 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Type, ChevronLeft } from "lucide-react";
-import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
+import { Type, ChevronLeft, Check } from "lucide-react";
+import { ACCORDION_CLIP, BUTTON_CLIP } from "@/lib/presets";
 
 interface TypographySectionProps {
   selectedFont: string;
@@ -12,6 +12,19 @@ interface TypographySectionProps {
   toggleSection?: (section: string) => void;
   hideHeader?: boolean;
 }
+
+const FONTS_LIST = [
+  { id: "vazir", name: "وزیرمتن", family: "'Vazirmatn'", desc: "پایه مدرن" },
+  { id: "lalezar", name: "لاله‌زار", family: "'Lalezar'", desc: "حماسی برجسته" },
+  { id: "cairo", name: "کایرو", family: "'Cairo'", desc: "هندسی متعادل" },
+  { id: "amiri", name: "امیری", family: "'Amiri'", desc: "کتابت سنتی" },
+  { id: "changa", name: "چنگا", family: "'Changa'", desc: "تکنو خشن" },
+  { id: "reem", name: "ریم کوفی", family: "'Reem Kufi'", desc: "کوفی باستانی" },
+  { id: "tajawal", name: "تجول", family: "'Tajawal'", desc: "اداری قرآنی" },
+  { id: "playfair", name: "پلی‌فیر", family: "'Playfair Display'", desc: "لاتین کلاسیک" },
+  { id: "space", name: "اسپیس", family: "'Space Grotesk'", desc: "آینده‌نگار" },
+  { id: "mono", name: "جت‌برینز", family: "'JetBrains Mono'", desc: "فنی هکری" }
+];
 
 export default function TypographySection({
   selectedFont,
@@ -25,68 +38,56 @@ export default function TypographySection({
   const renderContent = () => (
     <div className="space-y-4 text-right">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
-        قلم و هویت کتبی کتیبه‌های داشبورد را متناسب با سلیقه خود انتخاب کنید. تغییر خط به صورت لحظه‌ای روی کل بورد اعمال خواهد شد:
+        یکی از قلم‌های زیر را برای بورد خود انتخاب نمایید. پیش‌نمایش زنده هر قلم با متن زیر نمایش داده شده است:
       </p>
 
-      {/* Centralized Premium Unified Preview Block */}
-      <div 
-        className="theme-card-bg border border-accent3-medium p-4 text-center my-2 select-none relative overflow-hidden flex flex-col items-center justify-center gap-1 min-h-[75px]"
-        style={{ clipPath: BUTTON_CLIP }}
-      >
-        <div className="absolute top-1 right-2 w-1 h-1 bg-accent3/40" style={{ clipPath: "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)" }} />
-        <div className="absolute bottom-1 left-2 w-1 h-1 bg-accent3/40" style={{ clipPath: "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)" }} />
-        
-        <span className="text-[9px] theme-text-muted font-sans tracking-wide uppercase">DYNAMIC SCRIBE SYSTEM PREVIEW</span>
-        
-        {/* Live Dynamic Font display text */}
-        <span 
-          className="text-lg md:text-xl font-bold tracking-tight text-accent3 transition-all duration-300"
-          style={{ 
-            fontFamily: 
-              selectedFont === "vazir" ? "'Vazirmatn'" :
-              selectedFont === "lalezar" ? "'Lalezar'" :
-              selectedFont === "mono" ? "'JetBrains Mono'" :
-              selectedFont === "playfair" ? "'Playfair Display'" :
-              selectedFont === "cairo" ? "'Cairo'" :
-              selectedFont === "amiri" ? "'Amiri'" :
-              selectedFont === "changa" ? "'Changa'" :
-              selectedFont === "reem" ? "'Reem Kufi'" : "'Space Grotesk'"
-          }}
-        >
-          هخامنش | Achaemenid
-        </span>
-      </div>
+      {/* Grid: 2 rows of 5 columns on large screen, wrapping nicely on smaller screens */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 pt-1">
+        {FONTS_LIST.map((font) => {
+          const isSelected = selectedFont === font.id;
+          return (
+            <motion.button
+              key={font.id}
+              onClick={() => setSelectedFont(font.id)}
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`relative flex flex-col justify-between text-right p-3.5 min-h-[110px] border transition-all duration-300 rounded-2xl cursor-pointer ${
+                isSelected
+                  ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] shadow-[0_0_15px_var(--accent3-transparent)]"
+                  : "bg-black/25 hover:bg-black/40 border-[var(--border-color)] hover:border-[var(--accent3)]/40"
+              }`}
+            >
+              {/* Top Meta info */}
+              <div className="flex items-center justify-between w-full gap-1">
+                <span className={`text-[8.5px] font-sans font-bold tracking-tight ${isSelected ? "text-[var(--accent3)]" : "theme-text-muted"}`}>
+                  {font.desc}
+                </span>
+                <span className="font-sans font-black text-[10px] theme-text-primary">
+                  {font.name}
+                </span>
+              </div>
 
-      {/* Clean/Compact Royal Dropdown Picker */}
-      <div className="space-y-1.5 text-right">
-        <label className="text-[9px] theme-text-tertiary block font-bold">
-          قلم سلطنتی فعال بورد را انتخاب کنید:
-        </label>
-        <div
-          className="relative flex items-center bg-black/40 border border-accent3-medium/60 text-right w-full"
-          style={{ clipPath: BUTTON_CLIP }}
-        >
-          <select
-            value={selectedFont}
-            onChange={(e) => setSelectedFont(e.target.value)}
-            className="w-full bg-slate-900/40 text-xs py-3.5 pr-4 pl-8 theme-text-primary text-right focus:outline-none cursor-pointer appearance-none font-sans"
-            dir="rtl"
-          >
-            <option value="vazir" className="bg-slate-950 font-sans">قلم وزیرمتن (پیش‌فرض مدرن)</option>
-            <option value="lalezar" className="bg-slate-950 font-sans">قلم لاله‌زار (حماسی برجسته)</option>
-            <option value="cairo" className="bg-slate-950 font-sans">قلم کایرو (Cairo - هندسی متعادل)</option>
-            <option value="amiri" className="bg-slate-950 font-sans">قلم امیری (Amiri - کتابت و دیوانی)</option>
-            <option value="changa" className="bg-slate-950 font-sans">قلم چنگا (Changa - تکنو هندسی)</option>
-            <option value="reem" className="bg-slate-950 font-sans">قلم ریم کوفی (Reem Kufi - باستانی عربی)</option>
-            <option value="playfair" className="bg-slate-950 font-sans">قلم پلی‌فیر (Playfair - لاتین کلاسیک)</option>
-            <option value="space" className="bg-slate-950 font-sans">قلم اسپیس (Space - آینده‌نگار دیجیتال)</option>
-            <option value="mono" className="bg-slate-950 font-sans">قلم جت‌برینز (Mono - فنی هکری)</option>
-          </select>
-          {/* Native Arrow overlay replacement */}
-          <div className="absolute left-3 pointer-events-none text-accent3">
-            <ChevronLeft className="w-4 h-4 translate-y-[1px]" style={{ transform: "rotate(-90deg)" }} />
-          </div>
-        </div>
+              {/* Central Dynamic Scribe Preview Text */}
+              <div className="w-full py-2 flex items-center justify-center overflow-hidden">
+                <span
+                  className={`text-[12px] font-bold text-center leading-relaxed transition-colors duration-300 ${
+                    isSelected ? "text-[var(--accent3)]" : "theme-text-secondary group-hover:theme-text-primary"
+                  }`}
+                  style={{ fontFamily: font.family }}
+                >
+                  درود بر شما، به داشبورد خودتون خوش اومدین!!
+                </span>
+              </div>
+
+              {/* Small Checkmark selection marker */}
+              {isSelected && (
+                <div className="absolute bottom-1.5 left-2 text-[var(--accent3)]">
+                  <Check className="w-3.5 h-3.5 stroke-[3px]" />
+                </div>
+              )}
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );

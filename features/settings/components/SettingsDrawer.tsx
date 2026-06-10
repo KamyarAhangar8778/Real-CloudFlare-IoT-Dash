@@ -118,6 +118,19 @@ export default function SettingsDrawer({
     setActiveTab(SETTINGS_TABS[prevIndex].id);
   };
 
+  const backdropBackground = isAdjusting
+    ? "rgba(5, 6, 9, 0.08)"
+    : isDark
+      ? `radial-gradient(circle at center, ${accent3}15 0%, ${accent4}08 50%, rgba(5,6,9,0.65) 100%)`
+      : `radial-gradient(circle at center, ${accent3}0a 0%, ${accent4}05 50%, rgba(244,245,247,0.7) 100%)`;
+
+  const backdropStyle: React.CSSProperties = {
+    backdropFilter: isAdjusting ? "blur(1px)" : "blur(16px)",
+    WebkitBackdropFilter: isAdjusting ? "blur(1px)" : "blur(16px)",
+    background: backdropBackground,
+    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -128,11 +141,8 @@ export default function SettingsDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className={`fixed inset-0 z-50 cursor-pointer transition-all duration-700 ease-in-out ${
-              isAdjusting
-                ? "bg-black/10 backdrop-blur-none"
-                : "bg-black/80 backdrop-blur-md"
-            }`}
+            style={backdropStyle}
+            className="fixed inset-0 z-50 cursor-pointer"
           />
 
           {/* Elegant Right-Floating Settings Drawer */}
@@ -147,12 +157,14 @@ export default function SettingsDrawer({
             <div className="space-y-6">
               {/* Drawer Header */}
               <div className="flex items-center justify-between border-b border-accent3-medium pb-4">
-                <button
+                <motion.button
                   onClick={onClose}
-                  className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 transition-all cursor-pointer focus:outline-none"
+                  whileHover={animationsEnabled ? { scale: 1.15, rotate: 90 } : undefined}
+                  whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
+                  className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </motion.button>
                 <div className="flex items-center gap-2.5">
                   <div>
                     <h4 className="font-sans font-black text-sm text-accent3" style={{ color: "var(--accent3)" }}>
@@ -179,8 +191,10 @@ export default function SettingsDrawer({
                   <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent3 to-transparent opacity-80" />
 
                   {/* Right Arrow (RTL: Move to Previous Tab) */}
-                  <button
+                  <motion.button
                     onClick={handlePrev}
+                    whileHover={animationsEnabled ? { scale: 1.12, rotate: 3 } : undefined}
+                    whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
                     className={`p-1.5 rounded-xl border transition-all duration-300 cursor-pointer shrink-0 ${
                       isDark 
                         ? "border-accent3-medium/30 bg-black/50 text-accent3 hover:text-accent4 hover:border-accent4" 
@@ -189,7 +203,7 @@ export default function SettingsDrawer({
                     title="بخش قبلی"
                   >
                     <ChevronRight className="w-4 h-4" />
-                  </button>
+                  </motion.button>
 
                   {/* Centered Active Tab Label alongside adjacent previews */}
                   {(() => {
@@ -200,17 +214,19 @@ export default function SettingsDrawer({
                     return (
                       <div className="flex-1 grid grid-cols-12 gap-1 items-center justify-center text-center px-1 select-none overflow-hidden min-h-[58px]">
                         {/* Previous Tab Preview (RTL Right Side, Col Span 3) */}
-                        <button
+                        <motion.button
                           onClick={handlePrev}
-                          className="col-span-3 text-right group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-105 overflow-hidden"
+                          whileHover={animationsEnabled ? { scale: 1.06, y: -1 } : undefined}
+                          whileTap={animationsEnabled ? { scale: 0.95 } : undefined}
+                          className="col-span-3 text-right group focus:outline-none cursor-pointer transition-all duration-300 overflow-hidden"
                           title={SETTINGS_TABS[prevIndex].title}
                         >
-                          <span className={`block text-[8px] font-sans font-medium truncate opacity-30 group-hover:opacity-60 transition-opacity ${
+                          <span className={`block text-[8px] font-sans font-medium truncate opacity-30 group-hover:opacity-75 transition-opacity ${
                             isDark ? "text-gray-400" : "text-slate-500"
                           }`}>
                             {SETTINGS_TABS[prevIndex].compactTitle}
                           </span>
-                        </button>
+                        </motion.button>
 
                         {/* Center Active Tab Label (Col Span 6) */}
                         <div className="col-span-6 flex flex-col items-center justify-center overflow-hidden">
@@ -243,24 +259,28 @@ export default function SettingsDrawer({
                         </div>
 
                         {/* Next Tab Preview (RTL Left Side, Col Span 3) */}
-                        <button
+                        <motion.button
                           onClick={handleNext}
-                          className="col-span-3 text-left group focus:outline-none cursor-pointer transition-all duration-300 hover:scale-105 overflow-hidden"
+                          whileHover={animationsEnabled ? { scale: 1.06, y: -1 } : undefined}
+                          whileTap={animationsEnabled ? { scale: 0.95 } : undefined}
+                          className="col-span-3 text-left group focus:outline-none cursor-pointer transition-all duration-300 overflow-hidden"
                           title={SETTINGS_TABS[nextIndex].title}
                         >
-                          <span className={`block text-[8px] font-sans font-medium truncate opacity-30 group-hover:opacity-60 transition-opacity ${
+                          <span className={`block text-[8px] font-sans font-medium truncate opacity-30 group-hover:opacity-75 transition-opacity ${
                             isDark ? "text-gray-400" : "text-slate-500"
                           }`}>
                             {SETTINGS_TABS[nextIndex].compactTitle}
                           </span>
-                        </button>
+                        </motion.button>
                       </div>
                     );
                   })()}
 
                   {/* Left Arrow (RTL: Move to Next Tab) */}
-                  <button
+                  <motion.button
                     onClick={handleNext}
+                    whileHover={animationsEnabled ? { scale: 1.12, rotate: -3 } : undefined}
+                    whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
                     className={`p-1.5 rounded-xl border transition-all duration-300 cursor-pointer shrink-0 ${
                       isDark 
                         ? "border-accent3-medium/30 bg-black/50 text-accent3 hover:text-accent4 hover:border-accent4" 
@@ -269,7 +289,7 @@ export default function SettingsDrawer({
                     title="بخش بعدی"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                  </button>
+                  </motion.button>
                 </div>
 
                 {/* Micro diamond indicators with corrected light theme contrast */}
@@ -277,9 +297,11 @@ export default function SettingsDrawer({
                   {SETTINGS_TABS.map((tab, idx) => {
                     const isActive = tab.id === activeTab;
                     return (
-                      <button
+                      <motion.button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
+                        whileHover={animationsEnabled ? { scale: 1.35, rotate: 15 } : undefined}
+                        whileTap={animationsEnabled ? { scale: 0.85 } : undefined}
                         className="transition-all duration-300 p-1 focus:outline-none cursor-pointer"
                         title={tab.title}
                       >
@@ -295,7 +317,7 @@ export default function SettingsDrawer({
                             boxShadow: isActive ? "0 0 6px var(--accent3)" : "none"
                           }}
                         />
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>

@@ -51,53 +51,79 @@ export default function SortableSegmentCard({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: animationsEnabled 
+      ? (transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)") 
+      : "none",
     zIndex: isDragging ? 50 : "auto",
-    opacity: isDragging ? 0.7 : 1,
+    opacity: isDragging ? 0.35 : 1,
+    scale: isDragging ? 0.96 : 1,
   };
 
   const densityFactor = groupMaxCols * parentGroupsCols;
   const isUltraCompact = densityFactor >= 6;
   const isCompact = densityFactor === 4 || densityFactor === 3;
 
+  if (isDragging) {
+    return (
+      <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
+        <div 
+          className={`w-full border-2 border-dashed border-[var(--accent3-medium)]/35 bg-[var(--card-bg)]/20 backdrop-blur-md rounded-2xl transition-all duration-300 ${
+            isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
+          } flex items-center justify-center`}
+        >
+          <div className="w-5 h-5 rounded-full border-2 border-[var(--accent3-medium)]/20 border-t-[var(--accent3)] animate-spin opacity-40" />
+        </div>
+      </div>
+    );
+  }
+
   if (segment.type === "placeholder") {
     return (
       <div ref={setNodeRef} style={style} className="touch-none w-full relative">
-        <div className="absolute top-2 left-2 z-20 flex gap-1.5">
-           <button
-             onClick={() => onRemove(segment.id)}
-             onPointerDown={(e) => e.stopPropagation()}
-             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] transition-colors cursor-pointer rounded-lg shadow-sm"
-             title="حذف جایگاه خالی"
-           >
-             <X className="w-3.5 h-3.5" />
-           </button>
-           <div 
-             {...attributes} 
-             {...listeners}
-             className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors rounded-lg shadow-sm"
-             title="کشیدن جایگاه"
-           >
-             <GripVertical className="w-3.5 h-3.5" />
-           </div>
-        </div>
-        <button
-          onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
-          className={`w-full h-full border-2 border-dashed border-accent3-medium/30 hover:border-emerald-500/80 bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 cursor-pointer text-center group rounded-2xl ${
-            isUltraCompact ? "p-3 min-h-[90px]" : isCompact ? "p-4 min-h-[128px]" : "p-6 min-h-[178px]"
-          }`}
+        <motion.div
+          className="w-full h-full relative"
+          layout={animationsEnabled ? "position" : false}
+          transition={animationsEnabled ? { type: "spring", stiffness: 380, damping: 32 } : undefined}
+          initial={animationsEnabled ? { opacity: 0, scale: 0.93, y: 10 } : false}
+          animate={animationsEnabled ? { opacity: 1, scale: 1, y: 0 } : false}
+          exit={animationsEnabled ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } } : undefined}
         >
-          <div className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors" style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}>
-            <Plus className="w-4 h-4" />
+          <div className="absolute top-2 left-2 z-20 flex gap-1.5">
+             <button
+               onClick={() => onRemove(segment.id)}
+               onPointerDown={(e) => e.stopPropagation()}
+               className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] transition-colors cursor-pointer rounded-lg shadow-sm"
+               title="حذف جایگاه خالی"
+             >
+               <X className="w-3.5 h-3.5" />
+             </button>
+             <div 
+               {...attributes} 
+               {...listeners}
+               className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors rounded-lg shadow-sm"
+               title="کشیدن جایگاه"
+             >
+               <GripVertical className="w-3.5 h-3.5" />
+             </div>
           </div>
-          {!isUltraCompact && (
-            <div>
-              <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary group-hover:text-[var(--accent3)] transition-colors">
-                {isCompact ? "تعیین سگمنت" : "جایگذاری سگمنت در اینجا"}
-              </span>
+          <button
+            onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
+            className={`w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 cursor-pointer text-center group rounded-2xl ${
+              isUltraCompact ? "p-3 min-h-[90px]" : isCompact ? "p-4 min-h-[128px]" : "p-6 min-h-[178px]"
+            }`}
+          >
+            <div className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors" style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}>
+              <Plus className="w-4 h-4" />
             </div>
-          )}
-        </button>
+            {!isUltraCompact && (
+              <div>
+                <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary group-hover:text-[var(--accent3)] transition-colors">
+                  {isCompact ? "تعیین سگمنت" : "جایگذاری سگمنت در اینجا"}
+                </span>
+              </div>
+            )}
+          </button>
+        </motion.div>
       </div>
     );
   }
@@ -143,7 +169,12 @@ export default function SortableSegmentCard({
   return (
     <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
       <motion.div
-        whileHover={{ y: -1.2, scale: 1.001 }}
+        layout={animationsEnabled ? "position" : false}
+        transition={animationsEnabled ? { type: "spring", stiffness: 380, damping: 32 } : undefined}
+        initial={animationsEnabled ? { opacity: 0, scale: 0.93, y: 10 } : false}
+        animate={animationsEnabled ? { opacity: 1, scale: 1, y: 0 } : false}
+        exit={animationsEnabled ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } } : undefined}
+        whileHover={animationsEnabled ? { y: -1.5, scale: 1.002 } : undefined}
         className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl overflow-hidden ${
           isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
         }`}
@@ -234,7 +265,7 @@ export default function SortableSegmentCard({
               <div className="flex items-center justify-center w-full">
                 <button
                   {...buttonProps}
-                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none shadow-inner select-none ${
+                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none shadow-inner select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
                     isPinOn 
                       ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
                       : "bg-black/50 border border-slate-800"
@@ -262,7 +293,7 @@ export default function SortableSegmentCard({
 
                 <button
                   {...buttonProps}
-                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none ${
+                  className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
                     isPinOn 
                       ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
                       : "bg-black/30 border border-slate-800/40"
@@ -306,7 +337,7 @@ export default function SortableSegmentCard({
                   
                   <button
                     {...buttonProps}
-                    className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none ${
+                    className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
                       isPinOn 
                         ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]" 
                         : "bg-black/30 border border-slate-800/40"
