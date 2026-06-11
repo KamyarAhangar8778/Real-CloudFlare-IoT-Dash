@@ -174,20 +174,6 @@ export async function fetchPinsFromCloudflare(segments: any[]): Promise<Record<s
   const baseUrl = getCloudflareWorkerUrl().replace(/\/$/, "");
   
   try {
-    // 1. Try a batch fetch first if supported (GET /pins)
-    const res = await fetch(`${baseUrl}/pins`, {
-      method: "GET",
-      headers: { "Accept": "application/json" }
-    });
-    
-    if (res.ok) {
-      const data = await res.json();
-      if (data && typeof data === "object") {
-        return data;
-      }
-    }
-    
-    // 2. Fall back to individual requests in parallel for active segment pins
     const pinsToFetch = Array.from(new Set(segments.map(s => s.pin).filter(Boolean))) as string[];
     const result: Record<string, boolean> = {};
     
@@ -197,7 +183,6 @@ export async function fetchPinsFromCloudflare(segments: any[]): Promise<Record<s
           const pinRes = await fetch(`${baseUrl}/pins/${pin}`);
           if (pinRes.ok) {
             const data = await pinRes.json();
-            // Expected format: {"value": boolean} or {"pin": "x", "value": boolean}
             if (data && typeof data.value === "boolean") {
               result[pin] = data.value;
             }
