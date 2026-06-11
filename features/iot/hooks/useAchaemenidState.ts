@@ -94,7 +94,7 @@ export function useAchaemenidState() {
   const [targetPlaceholderId, setTargetPlaceholderId] = useState<string | null>(null);
 
   const [mounted, setMounted] = useState(false);
-  const [isFullyReady, setIsFullyReady] = useState(true);
+  const [isFullyReady, setIsFullyReady] = useState(false);
 
   useEffect(() => {
     setMounted(true);
