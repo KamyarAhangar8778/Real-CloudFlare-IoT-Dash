@@ -1,10 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Activity, ChevronLeft, WifiOff } from "lucide-react";
+import { Activity, ChevronLeft, WifiOff, Globe, Server, CloudLightning, ShieldCheck } from "lucide-react";
 import { BUTTON_CLIP, ACCORDION_CLIP } from "@/lib/presets";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { 
+  getCloudflareWorkerUrl, 
+  setCloudflareWorkerUrl, 
+  isCloudflareEnabled 
+} from "@/features/iot/services/cloudflareService";
 
 interface StabilitySectionProps {
   animationsEnabled: boolean;
@@ -25,11 +30,20 @@ export default function StabilitySection({
 }: StabilitySectionProps) {
   const isExpanded = hideHeader ? true : expandedSection === "animations";
   const { lowDataMode, setLowDataMode } = useIoTStore();
+  const [cfUrl, setCfUrl] = useState(() => getCloudflareWorkerUrl());
+
+  const handleCfUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setCfUrl(val);
+    setCloudflareWorkerUrl(val);
+  };
+
+  const isCfConnected = isCloudflareEnabled();
 
   const renderContent = () => (
     <div className="space-y-4 text-right">
       {/* Module 1: Animations Toggle */}
-      <div className="space-y-2">
+      <div className="space-y-2 border-b border-accent3-medium/10 pb-4">
         <p className="text-[10px] theme-text-tertiary leading-relaxed">
           اگر دستگاه شما با تاخیر یا بار پردازشی بالایی مواجه است، انیمیشن‌های سنگین یا ترنزیشن‌های حرکتی را متوقف کنید:
         </p>
@@ -82,7 +96,7 @@ export default function StabilitySection({
       </div>
 
       {/* Module 2: Low-Data Mode Toggle */}
-      <div className="border-t border-accent3-medium/10 pt-4 space-y-2">
+      <div className="border-b border-accent3-medium/10 pb-4 space-y-2">
         <p className="text-[10px] theme-text-tertiary leading-relaxed">
           اگر در مصرف اینترنت با محدودیت حجم روبرو هستید، سامانه را در حالت کم‌مصرف قرار دهید تا دریافت‌های خودکار متوقف شده و مصرف پس‌زمینه کاملاً مهار گردد:
         </p>
@@ -135,6 +149,52 @@ export default function StabilitySection({
             />
           </div>
         </button>
+      </div>
+
+      {/* Module 3: Cloudflare Integration Section */}
+      <div className="pt-2 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] theme-text-tertiary">Cloudflare Workers KV & Durable Objects</span>
+          <span className="font-bold text-[11px] text-accent3">اتصال هوشمند کلودفلر</span>
+        </div>
+        
+        <p className="text-[10px] theme-text-tertiary leading-relaxed">
+          برای ذخیره‌سازی ابری و دائم ساختار چیدمان (Cloudflare KV) و نظارت بر شیرها و سوییچ‌ها (Durable Objects)، آدرس ورکر خود را وارد کنید:
+        </p>
+
+        <div className="relative mt-1">
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <Globe className="h-4 w-4 text-accent3 opacity-70" />
+          </div>
+          <input
+            type="text"
+            dir="ltr"
+            value={cfUrl}
+            onChange={handleCfUrlChange}
+            placeholder="https://my-iot-worker.subdomain.workers.dev"
+            className="block w-full py-2.5 pr-10 pl-3 border border-accent3-medium/30 rounded-xl bg-black/40 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-accent3 font-mono transition-all"
+          />
+        </div>
+
+        {/* Status Indicator Bar */}
+        <div className={`p-3 rounded-xl border flex items-center justify-between text-right text-[10px] ${
+          isCfConnected
+            ? "bg-emerald-950/20 border-emerald-500/40 text-emerald-400"
+            : "bg-slate-950/40 border-slate-800 text-slate-400"
+        }`}>
+          <div className="flex items-center gap-1.5 justify-end w-full">
+            <span className="font-bold">
+              {isCfConnected 
+                ? "سیستم روی حالت ذخیره‌سازی کلودفلر (ابر زنده) تنظیم شده است." 
+                : "پخش آفلاین / حافظه محلی فعال است (ورکر تنظیم نشده است)."}
+            </span>
+            {isCfConnected ? (
+              <CloudLightning className="w-3.5 h-3.5 text-emerald-400 animate-pulse animate-[pulse_2s_infinite]" />
+            ) : (
+              <Server className="w-3.5 h-3.5 text-slate-400" />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

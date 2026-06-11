@@ -8,7 +8,6 @@ import {
   Layers, 
   Sun, 
   Moon, 
-  Cpu, 
   PanelTop, 
   PanelLeft,
   LayoutGrid,
@@ -22,7 +21,6 @@ interface MasterHeaderProps {
   setIsDark: (val: boolean) => void;
   setIsModulesMenuOpen: (val: boolean) => void;
   setIsMenuOpen: (val: boolean) => void;
-  setIsEspDrawerOpen: (val: boolean) => void;
   headerAnimationType: "fade" | "chase";
   headerTitle: string;
   groupsCols: number;
@@ -37,7 +35,6 @@ export default function MasterHeader({
   setIsDark,
   setIsModulesMenuOpen,
   setIsMenuOpen,
-  setIsEspDrawerOpen,
   headerAnimationType,
   headerTitle,
   groupsCols,
@@ -158,22 +155,6 @@ export default function MasterHeader({
                 </div>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
                   Modules
-                </span>
-              </button>
-
-              {/* ESP Config Sync Trigger */}
-              <button
-                onClick={() => setIsEspDrawerOpen(true)}
-                className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
-                    <Cpu className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_2.5s_ease-in-out_infinite]" : ""}`} />
-                  </div>
-                  <span className="text-xs font-semibold">همگام‌ساز تراشه</span>
-                </div>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
-                  ESP32
                 </span>
               </button>
 
@@ -328,16 +309,6 @@ export default function MasterHeader({
             >
               <Layers className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`} />
               <span>ماژول‌ها</span>
-            </button>
-
-            {/* Sync trigger */}
-            <button
-              onClick={() => setIsEspDrawerOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97]"
-              title="همگام‌سازی بی سیم ESP32"
-            >
-              <Cpu className={`w-3.5 h-3.5 text-[var(--accent3)] ${animationsEnabled ? "animate-[pulse_2.5s_ease-in-out_infinite]" : ""}`} />
-              <span>تراشه</span>
             </button>
 
             {/* General system Settings trigger */}

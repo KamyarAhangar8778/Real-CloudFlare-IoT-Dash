@@ -7,7 +7,6 @@ import dynamic from "next/dynamic";
 // Next.js dynamic chunks for optimal first-contentful-paint (FCP) and tiny initial bundle size
 const SettingsDrawer = dynamic(() => import("@/features/settings/components/SettingsDrawer"), { ssr: false });
 const ModulesDrawer = dynamic(() => import("@/features/iot/components/ModulesDrawer"), { ssr: false });
-const EspSyncDrawer = dynamic(() => import("@/features/iot/components/EspSyncDrawer"), { ssr: false });
 
 import MasterHeader from "@/components/MasterHeader";
 import WelcomePortal from "@/features/iot/components/WelcomePortal";
@@ -58,8 +57,6 @@ function AchaemenidDashboard() {
     setCuneiformOpacity,
     cuneiformColor,
     setCuneiformColor,
-    isEspDrawerOpen,
-    setIsEspDrawerOpen,
     headerPosition,
     setHeaderPosition,
     segments,
@@ -145,7 +142,6 @@ function AchaemenidDashboard() {
                 setIsDark={setIsDark} 
                 setIsModulesMenuOpen={setIsModulesMenuOpen} 
                 setIsMenuOpen={setIsMenuOpen} 
-                setIsEspDrawerOpen={setIsEspDrawerOpen}
                 headerAnimationType={headerAnimationType}
                 headerTitle={headerTitle}
                 groupsCols={groupsCols}
@@ -170,7 +166,6 @@ function AchaemenidDashboard() {
                   setIsDark={setIsDark} 
                   setIsModulesMenuOpen={setIsModulesMenuOpen} 
                   setIsMenuOpen={setIsMenuOpen} 
-                  setIsEspDrawerOpen={setIsEspDrawerOpen}
                   headerAnimationType={headerAnimationType}
                   headerTitle={headerTitle}
                   groupsCols={groupsCols}
@@ -287,27 +282,6 @@ function AchaemenidDashboard() {
           accent3={accent3}
           accent4={accent4}
           animationsEnabled={animationsEnabled}
-        />
-
-        {/* Custom ESP32 Sync and Packet Importer system */}
-        <EspSyncDrawer
-          isOpen={isEspDrawerOpen}
-          onClose={() => setIsEspDrawerOpen(false)}
-          isDark={isDark}
-          accent3={accent3}
-          accent4={accent4}
-          selectedFont={selectedFont}
-          animationsEnabled={animationsEnabled}
-          headerAnimationType={headerAnimationType}
-          headerTitle={headerTitle}
-          cuneiformOpacity={cuneiformOpacity}
-          cuneiformColor={cuneiformColor}
-          segments={segments}
-          groupsOrder={groupsOrder}
-          groupConfigs={groupConfigs}
-          groupsCols={groupsCols}
-          pinsState={pinsState}
-          onApplyConfig={handleApplyEspConfig}
         />
       </div>
     </MotionConfig>

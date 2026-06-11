@@ -6,6 +6,12 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { EspConfig, DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
+import {
+  isCloudflareEnabled,
+  fetchConfigFromCloudflare,
+  saveConfigToCloudflare,
+  updatePinOnCloudflare
+} from "@/features/iot/services/cloudflareService";
 import { persianSymbols, PersianSymbol } from "@/features/encyclopedia/data/symbols";
 import {
   KeyboardSensor,
@@ -106,10 +112,11 @@ export function useAchaemenidState() {
     cuneiformColor === "white" ? (isDark ? "#ffffff" : "#1e293b") :
     (isDark ? "#475569" : "#94a3b8");
 
-  // NextJS + TanStack Query for modern client fetching (with Low Data Mode Support)
+  // NextJS + TanStack Query for modern client fetching
   const { data: iotData, refetch: refetchIot } = useQuery({
-    queryKey: ["iotState"],
+    queryKey: ["iotState", segments.map(s => s.pin).join(",")],
     queryFn: async () => {
+      // Offline fallback & direct read from local storage cache
       if (typeof window !== "undefined") {
         const cached = localStorage.getItem("achaemenid_dashboard_pins_cache");
         if (cached) {
@@ -122,7 +129,7 @@ export function useAchaemenidState() {
       }
       return { pins: pinsState };
     },
-    refetchInterval: false,
+    refetchInterval: false, // Absolutely NO background polling of pin state
   });
 
   // Automatically sync incoming Server updates into our Local Store & cached cache
@@ -161,20 +168,100 @@ export function useAchaemenidState() {
     applyEspConfig(config);
   };
 
-  // Initial synchronization simulation on dashboard startup - wait for ESP packet
+  // Initial synchronization simulation on dashboard startup - load from Cloudflare if active
   useEffect(() => {
-    // Instantly sync for fast development and bypass any loading screen
-    setSyncStatus(false, 100, "انتقال داده‌ها کامل شد.");
-    setIsFullyReady(true);
-    
-    if (typeof window !== "undefined") {
-      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
-      if (!savedSegments) {
-        handleApplyEspConfig(DEFAULT_ESP_CONFIG);
+    const initCloudflareSync = async () => {
+      if (isCloudflareEnabled()) {
+        setSyncStatus(true, 15, "در حال برقراری ارتباط زنده با سرور کلودفلر...");
+        try {
+          const cfConfig = await fetchConfigFromCloudflare();
+          if (cfConfig) {
+            handleApplyEspConfig(cfConfig);
+            setSyncStatus(false, 100, "همگام‌سازی چیدمان و تنظیمات از کلودفلر انجام شد.");
+            setIsFullyReady(true);
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to fetch initial configuration from Cloudflare:", e);
+        }
       }
-    }
+
+      // Offline / Local storage fallback startup
+      setSyncStatus(false, 100, "انتقال داده‌های محلی کامل شد.");
+      setIsFullyReady(true);
+      
+      if (typeof window !== "undefined") {
+        const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
+        if (!savedSegments) {
+          handleApplyEspConfig(DEFAULT_ESP_CONFIG);
+        }
+      }
+    };
+
+    initCloudflareSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Synchronize configuration schema to Cloudflare Worker secure KV store
+  const triggerCloudflarePush = async () => {
+    if (!isCloudflareEnabled() || !isFullyReady) return;
+    
+    const currentConfig: EspConfig = {
+      version: "1.2.0-Achaemenid",
+      device: {
+        name: "سامانه مرزی پاسارگاد",
+        chip: "ESP32-S3-WROOM-1",
+        firmware: "v3.4.1-Achaemenid-OS",
+        reboot_count: 0,
+        last_boot: new Date().toISOString()
+      },
+      preferences: {
+        theme_mode: isDark ? "dark" : "light",
+        accent_color_3: accent3,
+        accent_color_4: accent4,
+        font_family: selectedFont,
+        animations_enabled: animationsEnabled,
+        header_animation: headerAnimationType,
+        header_title: headerTitle,
+        cuneiform_opacity: cuneiformOpacity,
+        cuneiform_color: cuneiformColor
+      },
+      layout: {
+        groups_order: groupsOrder,
+        groups_cols: groupsCols,
+        group_configs: groupConfigs
+      },
+      segments: segments
+    };
+    
+    await saveConfigToCloudflare(currentConfig);
+  };
+
+  // Debounced push of layout configuration to Cloudflare on local state change
+  useEffect(() => {
+    if (!isFullyReady) return;
+    
+    const handler = setTimeout(() => {
+      triggerCloudflarePush();
+    }, 1200);
+    return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isDark,
+    accent3,
+    accent4,
+    selectedFont,
+    animationsEnabled,
+    headerAnimationType,
+    headerTitle,
+    cuneiformOpacity,
+    cuneiformColor,
+    groupsOrder,
+    groupsCols,
+    groupConfigs,
+    segments,
+    isFullyReady
+  ]);
 
   // Load segments from localStorage
   useEffect(() => {
@@ -374,6 +461,16 @@ export function useAchaemenidState() {
         }
         return next;
       });
+
+      // Synchronize live pin value with Cloudflare Durable Objects if connected
+      if (isCloudflareEnabled()) {
+        try {
+          await updatePinOnCloudflare(pin, pinState);
+        } catch (e) {
+          console.error(`Failed to sync pin ${pin} value to Cloudflare:`, e);
+        }
+      }
+
       refetchIot();
     } catch (err) {
       console.error("Failed to update pin state in local storage", err);
