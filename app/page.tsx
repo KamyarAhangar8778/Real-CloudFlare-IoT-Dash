@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
-import { DashboardContext } from "./DashboardContext";
-import DashboardContainer from "./DashboardContainer";
+import { DashboardContext } from "@/features/dashboard/context/DashboardContext";
+import DashboardContainer from "@/features/dashboard/components/DashboardContainer";
 
 export default function Home() {
   return (

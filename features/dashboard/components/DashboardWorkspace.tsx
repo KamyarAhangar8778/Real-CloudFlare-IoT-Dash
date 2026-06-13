@@ -3,7 +3,7 @@
 import React from "react";
 import WelcomePortal from "@/features/iot/components/WelcomePortal";
 import IoTWorkspace from "@/features/iot/components/IoTWorkspace";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 
 export default function DashboardWorkspace() {
   const {

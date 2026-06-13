@@ -3,7 +3,7 @@
 import React from "react";
 import LowDataModeBanner from "@/features/iot/components/LowDataModeBanner";
 import EncyclopediaSection from "@/features/encyclopedia/components/EncyclopediaSection";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import DashboardWorkspace from "./DashboardWorkspace";
 
 export default function DashboardMain() {

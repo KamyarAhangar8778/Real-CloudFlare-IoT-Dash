@@ -2,7 +2,7 @@
 
 import React from "react";
 import MasterHeader from "@/components/MasterHeader";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 
 interface DashboardHeaderProps {
   position: "left" | "topOrMobile";

@@ -5,7 +5,7 @@ import { MotionConfig } from "motion/react";
 import SyncOverlay from "@/features/iot/components/SyncOverlay";
 import DashboardStyles from "@/features/iot/components/DashboardStyles";
 import CuneiformBackground from "@/features/iot/components/CuneiformBackground";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import DashboardHeader from "./DashboardHeader";
 import DashboardMain from "./DashboardMain";
 import DashboardDrawers from "./DashboardDrawers";

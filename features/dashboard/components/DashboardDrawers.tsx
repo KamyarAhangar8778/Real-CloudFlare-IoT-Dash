@@ -2,7 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
-import { useDashboard } from "./DashboardContext";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 
 const SettingsDrawer = dynamic(() => import("@/features/settings/components/SettingsDrawer"), { ssr: false });
 const ModulesDrawer = dynamic(() => import("@/features/iot/components/ModulesDrawer"), { ssr: false });
