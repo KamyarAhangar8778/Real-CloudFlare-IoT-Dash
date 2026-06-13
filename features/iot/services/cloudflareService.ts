@@ -2,18 +2,14 @@ import { EspConfig } from "@/features/iot/services/esp32Config";
 
 const DEFAULT_WORKER_URL = "https://durable-object-worker.kamyarahangar157.workers.dev";
 
+let inMemoryWorkerUrl = typeof process !== "undefined" && process.env ? (process.env.NEXT_PUBLIC_CLOUDFLARE_WORKER_URL || DEFAULT_WORKER_URL) : DEFAULT_WORKER_URL;
+
 export function getCloudflareWorkerUrl(): string {
-  if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("cloudflare_worker_url");
-    if (saved) return saved;
-  }
-  return process.env.NEXT_PUBLIC_CLOUDFLARE_WORKER_URL || DEFAULT_WORKER_URL;
+  return inMemoryWorkerUrl;
 }
 
 export function setCloudflareWorkerUrl(url: string) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("cloudflare_worker_url", url);
-  }
+  inMemoryWorkerUrl = url;
 }
 
 /**

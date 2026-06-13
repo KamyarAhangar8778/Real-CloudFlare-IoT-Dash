@@ -122,10 +122,6 @@ export function useAchaemenidState() {
         try {
           const cfPins = await fetchPinsFromCloudflare(segments);
           if (cfPins) {
-            // Save to localStorage cache as offline backup
-            if (typeof window !== "undefined") {
-              localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(cfPins));
-            }
             return { pins: cfPins };
           }
         } catch (e) {
@@ -133,17 +129,6 @@ export function useAchaemenidState() {
         }
       }
 
-      // 2. Offline fallback & direct read from local storage cache
-      if (typeof window !== "undefined") {
-        const cached = localStorage.getItem("achaemenid_dashboard_pins_cache");
-        if (cached) {
-          try {
-            return { pins: JSON.parse(cached) };
-          } catch (e) {
-            console.error("Error parsing local pins cache", e);
-          }
-        }
-      }
       return { pins: pinsState };
     },
     refetchInterval: isCloudflareEnabled() && !lowDataMode ? 3000 : false, // Poll every 3 seconds if cloudflare is active and low data mode is off
@@ -203,16 +188,10 @@ export function useAchaemenidState() {
         }
       }
 
-      // Offline / Local storage fallback startup
+      // Offline fallback startup
       setSyncStatus(false, 100, "انتقال داده‌های محلی کامل شد.");
       setIsFullyReady(true);
-      
-      if (typeof window !== "undefined") {
-        const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
-        if (!savedSegments) {
-          handleApplyEspConfig(DEFAULT_ESP_CONFIG);
-        }
-      }
+      handleApplyEspConfig(DEFAULT_ESP_CONFIG);
     };
 
     initCloudflareSync();
@@ -280,75 +259,8 @@ export function useAchaemenidState() {
     isFullyReady
   ]);
 
-  // Load segments from localStorage
+  // No mount-time loading from localStorage is needed as state is kept in memory only
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
-      const savedGroups = localStorage.getItem("achaemenid_dashboard_groups");
-      const savedConfigs = localStorage.getItem("achaemenid_dashboard_group_configs");
-      let initialSegments: any[] = [];
-      if (savedSegments) {
-        try {
-          initialSegments = JSON.parse(savedSegments);
-          setSegments(initialSegments);
-        } catch (e) {
-          console.error("Error loading segments", e);
-        }
-      }
-      
-      if (savedGroups) {
-         try {
-            setGroupsOrder(JSON.parse(savedGroups));
-         } catch(e) {
-            console.error("Error loading groups", e);
-         }
-      } else if (initialSegments.length > 0) {
-         const uniqueGroups = Array.from(new Set(initialSegments.map((s: any) => s.group || "Test"))) as string[];
-         setGroupsOrder(uniqueGroups);
-      }
-
-      if (savedConfigs) {
-         try {
-            setGroupConfigs(JSON.parse(savedConfigs));
-         } catch(e) {
-            console.error("Error loading group configs", e);
-         }
-      }
-
-      const savedGroupsCols = localStorage.getItem("achaemenid_dashboard_groups_cols");
-      if (savedGroupsCols) {
-         setGroupsCols(parseInt(savedGroupsCols, 10) || 1);
-      }
-
-      const savedHeaderAnim = localStorage.getItem("achaemenid_header_anim");
-      if (savedHeaderAnim === "fade" || savedHeaderAnim === "chase") {
-        setHeaderAnimationType(savedHeaderAnim);
-      }
-
-      const savedLowDataMode = localStorage.getItem("achaemenid_low_data_mode");
-      if (savedLowDataMode) {
-        setLowDataMode(savedLowDataMode === "true");
-      }
-
-      const savedHeaderTitle = localStorage.getItem("achaemenid_header_title");
-      if (savedHeaderTitle) {
-        setHeaderTitle(savedHeaderTitle);
-      }
-
-      const savedHeaderPos = localStorage.getItem("cloudflare_layout_header_position");
-      if (savedHeaderPos === "top" || savedHeaderPos === "left") {
-        setHeaderPosition(savedHeaderPos);
-      }
-
-      const savedPinsState = localStorage.getItem("achaemenid_dashboard_pins_cache");
-      if (savedPinsState) {
-        try {
-          setPinsState(JSON.parse(savedPinsState));
-        } catch (e) {
-          console.error("Error loading cached pins state", e);
-        }
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -367,11 +279,7 @@ export function useAchaemenidState() {
     
     setGroupsOrder(prev => {
       if (!prev.includes(finalGroup)) {
-        const newGroups = [...prev, finalGroup];
-        if (typeof window !== "undefined") {
-          localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(newGroups));
-        }
-        return newGroups;
+        return [...prev, finalGroup];
       }
       return prev;
     });
@@ -392,9 +300,6 @@ export function useAchaemenidState() {
     }
     
     setSegments(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
-    }
 
     if (pinsState[pin] === undefined) {
       updatePinOnServer(pin, false);
@@ -413,9 +318,6 @@ export function useAchaemenidState() {
     
     const updated = [...segments, placeholderSeg];
     setSegments(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
-    }
   };
 
   const handleSetupPlaceholder = (id: string) => {
@@ -425,46 +327,27 @@ export function useAchaemenidState() {
 
   const handleGroupColsChange = (group: string, maxCols: number) => {
     setGroupConfigs(prev => {
-      const updated = { ...prev, [group]: { ...prev[group], maxCols } };
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_group_configs", JSON.stringify(updated));
-      }
-      return updated;
+      return { ...prev, [group]: { ...prev[group], maxCols } };
     });
   };
 
   const handleRemoveSegment = (id: string) => {
     const updated = segments.filter((s) => s.id !== id);
     setSegments(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
-    }
   };
 
   const handleUpdateSegmentMode = (id: string, mode: "switch" | "push") => {
     setSegments((prev) => {
-      const next = prev.map((s) => (s.id === id ? { ...s, mode } : s));
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(next));
-      }
-      return next;
+      return prev.map((s) => (s.id === id ? { ...s, mode } : s));
     });
   };
 
   const handleRemoveGroup = (groupId: string) => {
     setGroupsOrder((prev) => {
-      const updated = prev.filter((g) => g !== groupId);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(updated));
-      }
-      return updated;
+      return prev.filter((g) => g !== groupId);
     });
     setSegments((prev) => {
-      const updated = prev.filter((s) => (s.group || "Test") !== groupId);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
-      }
-      return updated;
+      return prev.filter((s) => (s.group || "Test") !== groupId);
     });
   };
 
@@ -472,11 +355,7 @@ export function useAchaemenidState() {
     try {
       setIsLoadingIoT(true);
       setPinsState((prev) => {
-        const next = { ...prev, [pin]: pinState };
-        if (typeof window !== "undefined") {
-          localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(next));
-        }
-        return next;
+        return { ...prev, [pin]: pinState };
       });
 
       // Synchronize live pin value with Cloudflare Durable Objects if connected
@@ -508,12 +387,7 @@ export function useAchaemenidState() {
   };
 
   const handleBypassSync = () => {
-    if (typeof window !== "undefined") {
-      const savedSegments = localStorage.getItem("achaemenid_dashboard_segments");
-      if (!savedSegments) {
-        handleApplyEspConfig(DEFAULT_ESP_CONFIG);
-      }
-    }
+    handleApplyEspConfig(DEFAULT_ESP_CONFIG);
     setSyncStatus(false, 100, "تایید هویت مستقل.");
     setIsFullyReady(true);
   };
@@ -612,10 +486,6 @@ export function useAchaemenidState() {
     }
 
     if (!over) {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(segments));
-        localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(groupsOrder));
-      }
       return;
     }
 
@@ -631,22 +501,12 @@ export function useAchaemenidState() {
           const overIndex = prev.indexOf(overIdStr);
           
           if (activeIndex !== -1 && overIndex !== -1) {
-            const newGroups = arrayMove(prev, activeIndex, overIndex);
-            if (typeof window !== "undefined") {
-              localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(newGroups));
-            }
-            return newGroups;
+            return arrayMove(prev, activeIndex, overIndex);
           }
           return prev;
         });
       }
       return;
-    }
-
-    if (type === "Segment") {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(segments));
-      }
     }
   };
 

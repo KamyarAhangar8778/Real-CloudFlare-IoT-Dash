@@ -14,9 +14,6 @@ export default function LayoutPositionSwitcher({
 }: LayoutPositionSwitcherProps) {
   const handleTogglePosition = (pos: "top" | "left") => {
     setHeaderPosition(pos);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cloudflare_layout_header_position", pos);
-    }
   };
 
   if (variant === "vertical") {

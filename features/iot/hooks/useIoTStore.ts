@@ -46,9 +46,6 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   setSegments: (segments) => {
     set((state) => {
       const next = typeof segments === "function" ? segments(state.segments) : segments;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(next));
-      }
       return { segments: next };
     });
   },
@@ -56,9 +53,6 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   setGroupsOrder: (groupsOrder) => {
     set((state) => {
       const next = typeof groupsOrder === "function" ? groupsOrder(state.groupsOrder) : groupsOrder;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(next));
-      }
       return { groupsOrder: next };
     });
   },
@@ -66,26 +60,17 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   setGroupConfigs: (groupConfigs) => {
     set((state) => {
       const next = typeof groupConfigs === "function" ? groupConfigs(state.groupConfigs) : groupConfigs;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_group_configs", JSON.stringify(next));
-      }
       return { groupConfigs: next };
     });
   },
 
   setGroupsCols: (groupsCols) => {
     set({ groupsCols });
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_dashboard_groups_cols", String(groupsCols));
-    }
   },
 
   setPinsState: (pins) => {
     set((state) => {
       const nextPins = typeof pins === "function" ? pins(state.pinsState) : pins;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(nextPins));
-      }
       return { pinsState: nextPins };
     });
   },
@@ -95,9 +80,6 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
       const updated = state.segments.map((seg) =>
         seg.id === id ? { ...seg, mode } : seg
       );
-      if (typeof window !== "undefined") {
-        localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(updated));
-      }
       return { segments: updated };
     });
   },
@@ -108,9 +90,6 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   setLowDataMode: (enabled) => {
     set({ lowDataMode: enabled });
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_low_data_mode", String(enabled));
-    }
   },
 
   applyEspConfig: (config) => {
@@ -133,20 +112,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     if (Object.keys(importedPins).length > 0) {
       set((state) => {
         const next = { ...state.pinsState, ...importedPins };
-        if (typeof window !== "undefined") {
-          localStorage.setItem("achaemenid_dashboard_pins_cache", JSON.stringify(next));
-        }
         return { pinsState: next };
       });
-    }
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_dashboard_segments", JSON.stringify(config.segments));
-      localStorage.setItem("achaemenid_dashboard_groups", JSON.stringify(config.layout.groups_order));
-      localStorage.setItem("achaemenid_dashboard_group_configs", JSON.stringify(config.layout.group_configs));
-      localStorage.setItem("achaemenid_dashboard_groups_cols", String(config.layout.groups_cols || 1));
-      localStorage.setItem("achaemenid_header_anim", config.preferences.header_animation);
-      localStorage.setItem("achaemenid_header_title", config.preferences.header_title);
     }
   },
 }));

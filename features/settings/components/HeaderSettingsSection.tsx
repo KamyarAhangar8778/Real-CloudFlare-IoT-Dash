@@ -31,31 +31,19 @@ export default function HeaderSettingsSection({
 
   const handleSelectOption = (type: "fade" | "chase") => {
     setHeaderAnimationType(type);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_header_anim", type);
-    }
   };
 
   const handleTitleChange = (val: string) => {
     setHeaderTitle(val);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_header_title", val);
-    }
   };
 
   const handleResetTitle = () => {
     const defaultTitle = "سامانه هوشمند پادشاهی بومی";
     setHeaderTitle(defaultTitle);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("achaemenid_header_title", defaultTitle);
-    }
   };
 
   const handlePositionChange = (pos: "top" | "left") => {
     setHeaderPosition(pos);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cloudflare_layout_header_position", pos);
-    }
   };
 
   const renderContent = () => (
