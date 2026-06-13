@@ -1,0 +1,75 @@
+import React from "react";
+import { SegmentData } from "./types";
+import PinToggle from "./PinToggle";
+
+interface CardBodyProps {
+  segment: SegmentData;
+  isPinOn: boolean;
+  isCompact: boolean;
+  isUltraCompact: boolean;
+  mode: "switch" | "push";
+  buttonProps: any;
+  animationsEnabled?: boolean;
+}
+
+export default function CardBody({
+  segment,
+  isPinOn,
+  isCompact,
+  isUltraCompact,
+  mode,
+  buttonProps,
+  animationsEnabled = true,
+}: CardBodyProps) {
+  return (
+    <div className={`${isUltraCompact ? "p-2 flex-grow flex items-center justify-center" : isCompact ? "p-3 flex-1 flex items-center" : "p-4 flex-1"}`}>
+      {isUltraCompact ? (
+        <div className="flex items-center justify-center w-full">
+          <PinToggle
+            isPinOn={isPinOn}
+            buttonProps={buttonProps}
+            animationsEnabled={animationsEnabled}
+            isUltraCompact={true}
+          />
+        </div>
+      ) : isCompact ? (
+        <div className="flex items-center justify-between w-full bg-[var(--card-bg-solid)] p-2 border border-[var(--border-color)] rounded-xl">
+          <span className="text-[10px] font-sans font-bold theme-text-secondary">
+            {mode === "push" ? `پالس ${segment.pin}` : `پایه ${segment.pin}`}
+          </span>
+          <PinToggle
+            isPinOn={isPinOn}
+            buttonProps={buttonProps}
+            animationsEnabled={animationsEnabled}
+          />
+        </div>
+      ) : (
+        <div className="flex items-center justify-between bg-[var(--card-bg-solid)] p-4 border border-[var(--border-color)] rounded-xl">
+          <span className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border rounded-lg ${
+            isPinOn ? "border-[var(--accent4)] text-[var(--accent4)] bg-[var(--accent4-transparent)]" : "border-gray-500 text-gray-400"
+          }`}>
+            {mode === "push" 
+              ? (isPinOn ? "پالس فعال HIGH" : "آماده تحریک LOW") 
+              : (isPinOn ? "روشن / فعال" : "خاموش / غیرفعال")}
+          </span>
+
+          <div className="flex items-center gap-3 text-right">
+            <div>
+              <span className="block text-xs font-sans font-bold theme-text-primary">
+                {mode === "push" ? `شستی پایه ${segment.pin}` : `سوئیچ پایه ${segment.pin}`}
+              </span>
+              <span className="block text-[9px] theme-text-muted mt-0.5">
+                {mode === "push" ? "GPIO Pin Pulse" : "GPIO Pin Trigger"}
+              </span>
+            </div>
+            <PinToggle
+              isPinOn={isPinOn}
+              buttonProps={buttonProps}
+              animationsEnabled={animationsEnabled}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
