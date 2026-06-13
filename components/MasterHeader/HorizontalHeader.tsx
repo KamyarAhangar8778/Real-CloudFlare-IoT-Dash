@@ -1,5 +1,4 @@
 import React from "react";
-import ImperialClock from "@/features/encyclopedia/components/ImperialClock";
 import { MasterHeaderProps } from "./types";
 import BrandBox from "./BrandBox";
 import LayoutPositionSwitcher from "./LayoutPositionSwitcher";
@@ -25,12 +24,6 @@ export default function HorizontalHeader(props: MasterHeaderProps) {
 
       {/* 🚀 Left Island (Flexible actions controls box) - Large Island */}
       <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
-        {/* Inside Left Island, right-aligned section: Live Clock Capsule */}
-        <div className="hidden sm:flex items-center justify-center shrink-0">
-          <div className="px-5 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full text-xs font-semibold">
-            <ImperialClock />
-          </div>
-        </div>
 
         {/* Inside Left Island, left-aligned section: ROW of Action controls */}
         <div className="flex items-center flex-wrap justify-center gap-3 w-full md:w-auto md:justify-end border-t border-[var(--border-color)] pt-3 md:pt-0 md:border-t-0">

@@ -55,11 +55,10 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     cuneiform_color: "accent3"
   },
   layout: {
-    groups_order: ["بخش فرماندهی", "سنسورهای پیرامونی"],
+    groups_order: ["بخش فرماندهی"],
     groups_cols: 1,
     group_configs: {
-      "بخش فرماندهی": { maxCols: 3 },
-      "سنسورهای پیرامونی": { maxCols: 4 }
+      "بخش فرماندهی": { maxCols: 3 }
     }
   },
   segments: [
@@ -83,20 +82,6 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
       pin: "12",
       title: "پمپ حوض‌های پردیس",
       group: "بخش فرماندهی"
-    },
-    {
-      id: "temp_sens",
-      type: "دماسنج آذرخش",
-      pin: "15",
-      title: "سنسور حرارتی فرّ",
-      group: "سنسورهای پیرامونی"
-    },
-    {
-      id: "moist_sens",
-      type: "رطوبت انبار شاهی",
-      pin: "16",
-      title: "کنتور رطوبت انبار",
-      group: "سنسورهای پیرامونی"
     }
   ]
 };

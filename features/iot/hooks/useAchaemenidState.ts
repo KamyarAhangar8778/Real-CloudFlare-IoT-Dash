@@ -2,7 +2,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { EspConfig, DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
@@ -13,7 +12,6 @@ import {
   updatePinOnCloudflare,
   fetchPinsFromCloudflare
 } from "@/features/iot/services/cloudflareService";
-import { persianSymbols, PersianSymbol } from "@/features/encyclopedia/data/symbols";
 import {
   KeyboardSensor,
   PointerSensor,
@@ -29,24 +27,9 @@ import {
 } from "@dnd-kit/sortable";
 
 export function useAchaemenidState() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  // Sync state with URL Query Params (Server-First state synchronization)
-  const symbolParam = searchParams.get("symbol") || "";
-  const selectedSymbol = persianSymbols.find((s) => s.id === symbolParam) || persianSymbols[0];
-
-  const setSelectedSymbol = (sym: PersianSymbol) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("symbol", sym.id);
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModulesMenuOpen, setIsModulesMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
-  const [isSymbolsSectionExpanded, setIsSymbolsSectionExpanded] = useState(false);
 
   // Dynamic 3rd and 4th theme color accents (Defaults to Gold & Emerald)
   const [accent3, setAccent3] = useState("#D4AF37");
@@ -511,16 +494,12 @@ export function useAchaemenidState() {
   };
 
   return {
-    selectedSymbol,
-    setSelectedSymbol,
     isMenuOpen,
     setIsMenuOpen,
     isModulesMenuOpen,
     setIsModulesMenuOpen,
     isDark,
     setIsDark,
-    isSymbolsSectionExpanded,
-    setIsSymbolsSectionExpanded,
     accent3,
     setAccent3,
     accent4,

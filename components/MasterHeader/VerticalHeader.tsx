@@ -1,5 +1,4 @@
 import React from "react";
-import ImperialClock from "@/features/encyclopedia/components/ImperialClock";
 import { MasterHeaderProps } from "./types";
 import BrandBox from "./BrandBox";
 import LayoutPositionSwitcher from "./LayoutPositionSwitcher";
@@ -20,10 +19,6 @@ export default function VerticalHeader(props: MasterHeaderProps) {
       {/* 🚀 Controls & Widgets Island - Floating Large Island */}
       <div className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-5 rounded-2xl shadow-sm flex flex-col justify-between gap-6 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
         <div className="space-y-5">
-          {/* Live Clock Capsule (Vertical) */}
-          <div className="p-3 bg-[var(--bg-main)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-300">
-            <ImperialClock />
-          </div>
 
           {/* Interactive Layout Modifiers Grid */}
           <div className="space-y-3">
