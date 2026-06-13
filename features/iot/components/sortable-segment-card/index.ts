@@ -1,2 +1,2 @@
-export { default } from "./index";
+export { default } from "./SortableSegmentCard";
 export * from "./types";

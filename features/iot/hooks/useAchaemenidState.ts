@@ -77,6 +77,7 @@ export function useAchaemenidState() {
     ...store,
     isLoadingIoT,
     mounted,
+    refetchIot,
     isFullyReady,
     setIsFullyReady,
     ...dnd,
