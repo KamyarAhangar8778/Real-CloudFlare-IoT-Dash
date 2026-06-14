@@ -20,13 +20,17 @@ export const initMqtt = () => {
   }
 };
 
-export const publishPinCommand = (pinId: string, value: boolean) => {
+export const publishPinCommand = (pinId: string, value: boolean, timer?: number) => {
   if (!client) {
     initMqtt();
   }
   
   if (client?.connected) {
-    const payload = JSON.stringify({ id: pinId, value });
+    const payloadObj: any = { id: pinId, value };
+    if (timer !== undefined) {
+      payloadObj.timer = timer;
+    }
+    const payload = JSON.stringify(payloadObj);
     client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
     console.log(`[MQTT] Published command: ${payload}`);
   } else {

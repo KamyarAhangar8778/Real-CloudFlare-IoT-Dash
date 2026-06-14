@@ -20,7 +20,7 @@ export interface IoTWorkspaceProps {
   handleRemoveGroup: (groupId: string) => void;
   handleRemoveSegment: (id: string) => void;
   handleTogglePin: (pin: string) => void;
-  handleSetPinState: (pin: string, state: boolean) => void;
+  handleSetPinState: (pin: string, state: boolean, preventMqtt?: boolean) => void;
   handleUpdateSegmentMode: (id: string, mode: "switch" | "push") => void;
   handleUpdateSegmentAutoOff: (id: string, autoOff: number) => void;
   handleSetupPlaceholder: (id: string) => void;

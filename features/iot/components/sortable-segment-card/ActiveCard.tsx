@@ -50,7 +50,9 @@ export default function ActiveCard({
   React.useEffect(() => {
     if (countdown === null) return;
     if (countdown <= 0) {
-      onSetPinState?.(segment.pin, false);
+      if (mode === "switch" || mode === "push") {
+        onSetPinState?.(segment.pin, false, true);
+      }
       setCountdown(null);
       return;
     }
