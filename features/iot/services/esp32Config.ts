@@ -17,6 +17,8 @@ export interface EspConfig {
     header_title: string;
     cuneiform_opacity: number;
     cuneiform_color: "accent3" | "accent4" | "white" | "muted";
+    header_position?: "top" | "left";
+    manual_save_mode?: boolean;
   };
   layout: {
     groups_order: string[];
@@ -54,7 +56,9 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     header_animation: "fade",
     header_title: "سامانه هوشمند پادشاهی هخامنش",
     cuneiform_opacity: 0.08,
-    cuneiform_color: "accent3"
+    cuneiform_color: "accent3",
+    header_position: "top",
+    manual_save_mode: false
   },
   layout: {
     groups_order: ["بخش فرماندهی"],

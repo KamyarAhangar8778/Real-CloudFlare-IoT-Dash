@@ -12,16 +12,22 @@ export default function DashboardMain() {
     animationsEnabled,
     refetchIot,
     headerPosition,
+    manualSaveMode,
+    unsavedChangesCount,
+    triggerCloudflarePush,
   } = useDashboard();
 
   return (
     <>
-      {segments.length > 0 && (
+      {(segments.length > 0 && (lowDataMode || (manualSaveMode && unsavedChangesCount > 0))) && (
         <LowDataModeBanner
           lowDataMode={lowDataMode}
           animationsEnabled={animationsEnabled}
           refetchIot={refetchIot}
           headerPosition={headerPosition}
+          manualSaveMode={manualSaveMode}
+          unsavedChangesCount={unsavedChangesCount}
+          triggerCloudflarePush={triggerCloudflarePush}
         />
       )}
 

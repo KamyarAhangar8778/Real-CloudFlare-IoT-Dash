@@ -1,4 +1,4 @@
-const DEFAULT_WORKER_URL = "https://durable-object-worker.kamyarahangar157.workers.dev";
+const DEFAULT_WORKER_URL = "https://api.agkalaa.ir";
 
 let inMemoryWorkerUrl = DEFAULT_WORKER_URL;
 

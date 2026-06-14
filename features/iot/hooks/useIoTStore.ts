@@ -19,6 +19,8 @@ interface IoTStoreState {
   syncProgress: number;
   syncMessage: string;
   lowDataMode: boolean;
+  manualSaveMode: boolean;
+  unsavedChangesCount: number;
 
   // Actions
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
@@ -33,6 +35,9 @@ interface IoTStoreState {
   showToast: (message: string, type: "success" | "error") => void;
   clearToast: () => void;
   applyEspConfig: (config: EspConfig) => void;
+  setManualSaveMode: (enabled: boolean) => void;
+  incrementUnsavedChanges: () => void;
+  resetUnsavedChanges: () => void;
 }
 
 export const useIoTStore = create<IoTStoreState>((set, get) => ({
@@ -45,6 +50,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   syncProgress: 0,
   syncMessage: "در حال جستجوی تراشه ESP32 در شبکه محلی پادشاهی...",
   lowDataMode: false,
+  manualSaveMode: false,
+  unsavedChangesCount: 0,
   toast: null,
 
   setSegments: (segments) => {
@@ -102,6 +109,18 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   clearToast: () => {
     set({ toast: null });
+  },
+
+  setManualSaveMode: (enabled) => {
+    set({ manualSaveMode: enabled });
+  },
+
+  incrementUnsavedChanges: () => {
+    set((state) => ({ unsavedChangesCount: state.unsavedChangesCount + 1 }));
+  },
+
+  resetUnsavedChanges: () => {
+    set({ unsavedChangesCount: 0 });
   },
 
   applyEspConfig: (config) => {

@@ -29,6 +29,12 @@ export function useAchaemenidState() {
     aesthetic.setHeaderTitle(config.preferences.header_title);
     aesthetic.setCuneiformOpacity(config.preferences.cuneiform_opacity);
     aesthetic.setCuneiformColor(config.preferences.cuneiform_color);
+    if (config.preferences.header_position) {
+      aesthetic.setHeaderPosition(config.preferences.header_position);
+    }
+    if (config.preferences.manual_save_mode !== undefined) {
+      store.setManualSaveMode(config.preferences.manual_save_mode);
+    }
     store.applyEspConfig(config);
   };
 
@@ -44,7 +50,7 @@ export function useAchaemenidState() {
     handleApplyEspConfig,
   });
 
-  useCloudflarePush({
+  const { triggerCloudflarePush } = useCloudflarePush({
     isFullyReady,
     ...aesthetic,
   });
@@ -102,5 +108,6 @@ export function useAchaemenidState() {
     workerUrl,
     setWorkerUrl,
     handleRetrySync,
+    triggerCloudflarePush,
   };
 }

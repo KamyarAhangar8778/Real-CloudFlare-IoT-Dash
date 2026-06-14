@@ -20,6 +20,7 @@ interface UseCloudflarePushProps {
   headerTitle: string;
   cuneiformOpacity: number;
   cuneiformColor: "accent3" | "accent4" | "white" | "muted";
+  headerPosition: "top" | "left";
 }
 
 export function useCloudflarePush({
@@ -32,9 +33,10 @@ export function useCloudflarePush({
   headerAnimationType,
   headerTitle,
   cuneiformOpacity,
-  cuneiformColor
+  cuneiformColor,
+  headerPosition
 }: UseCloudflarePushProps) {
-  const { segments, groupsOrder, groupConfigs, groupsCols, showToast } = useIoTStore();
+  const { segments, groupsOrder, groupConfigs, groupsCols, showToast, manualSaveMode, incrementUnsavedChanges, resetUnsavedChanges } = useIoTStore();
   const isFirstRender = useRef(true);
 
   const triggerCloudflarePush = useCallback(async () => {
@@ -58,7 +60,9 @@ export function useCloudflarePush({
         header_animation: headerAnimationType,
         header_title: headerTitle,
         cuneiform_opacity: cuneiformOpacity,
-        cuneiform_color: cuneiformColor
+        cuneiform_color: cuneiformColor,
+        header_position: headerPosition,
+        manual_save_mode: manualSaveMode
       },
       layout: {
         groups_order: groupsOrder,
@@ -72,11 +76,12 @@ export function useCloudflarePush({
     const result = await saveConfigToCloudflare(currentConfig);
     if (result.success) {
       showToast(result.message, "success");
+      resetUnsavedChanges();
     } else {
       showToast(result.message, "error");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, segments, groupsOrder, groupConfigs, groupsCols, showToast]);
+  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, headerPosition, manualSaveMode, segments, groupsOrder, groupConfigs, groupsCols, showToast, resetUnsavedChanges]);
 
   useEffect(() => {
     if (!isFullyReady) return;
@@ -88,11 +93,15 @@ export function useCloudflarePush({
     }
 
     const handler = setTimeout(() => {
-      triggerCloudflarePush();
+      if (manualSaveMode) {
+        incrementUnsavedChanges();
+      } else {
+        triggerCloudflarePush();
+      }
     }, 1200);
     return () => clearTimeout(handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, segments, groupsOrder, groupConfigs, groupsCols]);
+  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, headerPosition, segments, groupsOrder, groupConfigs, groupsCols]);
 
   return {
     triggerCloudflarePush,
