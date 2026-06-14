@@ -20,6 +20,7 @@ export default function ActiveCard({
   onTogglePin,
   onSetPinState,
   onUpdateSegmentMode,
+  onUpdateSegmentAutoOff,
   parentGroupsCols,
   groupMaxCols,
   animationsEnabled = true,
@@ -85,7 +86,7 @@ export default function ActiveCard({
           attributes={attributes}
           listeners={listeners}
           countdown={countdown}
-          onUpdateSegmentAutoOff={props.onUpdateSegmentAutoOff}
+          onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
         />
 
         <CardBody
