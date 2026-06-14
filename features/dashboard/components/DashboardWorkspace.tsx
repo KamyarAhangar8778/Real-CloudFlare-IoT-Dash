@@ -32,6 +32,7 @@ export default function DashboardWorkspace() {
     handleTogglePin,
     handleSetPinState,
     handleUpdateSegmentMode,
+    handleUpdateSegmentAutoOff,
     handleSetupPlaceholder,
   } = useDashboard();
 
