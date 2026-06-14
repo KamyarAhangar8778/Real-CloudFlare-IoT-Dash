@@ -17,7 +17,7 @@ export function useSegmentManagement({
   const [targetPlaceholderId, setTargetPlaceholderId] = useState<string | null>(null);
 
   const handleAddSegment = (
-    type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push"
+    type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push", auto_off?: number
   ) => {
     const randomId = Math.random().toString(36).substring(2, 9);
     const finalGroup = group || "Test";
@@ -28,6 +28,7 @@ export function useSegmentManagement({
       title: title || `کنترل پایه دیجیتال (GPIO ${pin})`,
       group: finalGroup,
       mode: mode || "switch",
+      auto_off: auto_off || 0,
     };
 
     setGroupsOrder(prev => prev.includes(finalGroup) ? prev : [...prev, finalGroup]);

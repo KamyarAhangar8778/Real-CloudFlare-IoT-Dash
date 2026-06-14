@@ -5,6 +5,7 @@ export interface SegmentData {
   title: string;
   group?: string;
   mode?: "switch" | "push";
+  auto_off?: number;
 }
 
 export interface SortableSegmentCardProps {

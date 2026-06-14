@@ -63,17 +63,19 @@ export default function CardHeader({
             >
               سوئیچ
             </button>
-            <button
-              onClick={() => onUpdateSegmentMode(segment.id, "push")}
-              className={`px-2.5 py-1 text-[9.5px] font-sans font-extrabold transition-all duration-150 cursor-pointer select-none rounded-full ${
-                mode === "push"
-                  ? "bg-[var(--accent3)] text-black font-black shadow-[0_1px_3px_rgba(0,0,0,0.15)]"
-                  : "text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
-              }`}
-              title="حالت شستی لحظه‌ای"
-            >
-              شستی
-            </button>
+            {(!segment.auto_off || segment.auto_off === 0) && (
+              <button
+                onClick={() => onUpdateSegmentMode(segment.id, "push")}
+                className={`px-2.5 py-1 text-[9.5px] font-sans font-extrabold transition-all duration-150 cursor-pointer select-none rounded-full ${
+                  mode === "push"
+                    ? "bg-[var(--accent3)] text-black font-black shadow-[0_1px_3px_rgba(0,0,0,0.15)]"
+                    : "text-slate-600 hover:text-slate-900 dark:text-gray-400 dark:hover:text-white"
+                }`}
+                title="حالت شستی لحظه‌ای"
+              >
+                شستی
+              </button>
+            )}
           </div>
         )}
       </div>
