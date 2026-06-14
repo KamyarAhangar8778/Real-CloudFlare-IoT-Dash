@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { publishAddSegmentCommand, publishDeleteSegmentCommand } from "@/features/iot/services/mqttService";
 
 interface UseSegmentManagementProps {
   setIsModulesMenuOpen: (open: boolean) => void;
@@ -49,6 +50,9 @@ export function useSegmentManagement({
     if (pinsState[pin] === undefined) {
       updatePinOnServer(pin, false);
     }
+    
+    // ارسال دستور ساخت سگمنت جدید به ESP
+    publishAddSegmentCommand(newSeg.id, newSeg.type, parseInt(newSeg.pin), false);
   };
 
   const handleAddPlaceholder = (groupId: string) => {
@@ -73,6 +77,7 @@ export function useSegmentManagement({
 
   const handleRemoveSegment = (id: string) => {
     setSegments(segments.filter((s) => s.id !== id));
+    publishDeleteSegmentCommand(id);
   };
 
   const handleUpdateSegmentMode = (id: string, mode: "switch" | "push") => {

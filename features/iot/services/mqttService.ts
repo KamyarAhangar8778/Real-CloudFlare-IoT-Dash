@@ -33,3 +33,21 @@ export const publishPinCommand = (pinId: string, value: boolean) => {
     console.warn("[MQTT] Client not connected. Cannot publish.");
   }
 };
+
+export const publishAddSegmentCommand = (id: string, type: string, pin: number, value: boolean) => {
+  if (!client) initMqtt();
+  if (client?.connected) {
+    const payload = JSON.stringify({ command: "add_segment", id, type, pin, value });
+    client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
+    console.log(`[MQTT] Published add_segment: ${payload}`);
+  }
+};
+
+export const publishDeleteSegmentCommand = (id: string) => {
+  if (!client) initMqtt();
+  if (client?.connected) {
+    const payload = JSON.stringify({ command: "delete_segment", id });
+    client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
+    console.log(`[MQTT] Published delete_segment: ${payload}`);
+  }
+};
