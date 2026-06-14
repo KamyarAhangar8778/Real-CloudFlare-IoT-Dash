@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.553.0",
     "motion": "^12.23.24",
+    "mqtt": "^5.15.1",
     "next": "^15.4.9",
     "next-safe-action": "^8.5.3",
     "postcss": "^8.5.6",

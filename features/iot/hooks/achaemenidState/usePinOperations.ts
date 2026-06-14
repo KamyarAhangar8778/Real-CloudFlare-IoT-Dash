@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { isCloudflareEnabled, updatePinOnCloudflare } from "@/features/iot/services/cloudflareService";
+import { publishPinCommand, initMqtt } from "@/features/iot/services/mqttService";
 
 interface UsePinOperationsProps {
   refetchIot: () => void;
@@ -12,10 +13,17 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
   const { pinsState, setPinsState, showToast } = useIoTStore();
   const [isLoadingIoT, setIsLoadingIoT] = useState(false);
 
+  useEffect(() => {
+    initMqtt();
+  }, []);
+
   const updatePinOnServer = async (pin: string, pinState: boolean) => {
     setIsLoadingIoT(true);
     try {
       setPinsState((prev) => ({ ...prev, [pin]: pinState }));
+      
+      // انتشار فرمان سریعاً در MQTT (سرعت بالا بدون منتظر ماندن برای سرور)
+      publishPinCommand(pin, pinState);
 
       if (isCloudflareEnabled()) {
         try {
