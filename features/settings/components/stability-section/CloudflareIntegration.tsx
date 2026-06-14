@@ -1,25 +1,88 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Globe, CloudLightning, Server } from "lucide-react";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { 
   getCloudflareWorkerUrl, 
   setCloudflareWorkerUrl, 
   isCloudflareEnabled 
 } from "@/features/iot/services/cloudflareService";
+import { saveConfigToCloudflare } from "@/features/iot/services/cloudflare/api";
+import type { EspConfig } from "@/features/iot/services/esp32Config";
 
 interface CloudflareIntegrationProps {
   isDark?: boolean;
 }
 
-export default function CloudflareIntegration({ isDark = true }: CloudflareIntegrationProps) {
+export default function CloudflareIntegration({ isDark: _isDark = true }: CloudflareIntegrationProps) {
   const [cfUrl, setCfUrl] = useState(() => getCloudflareWorkerUrl());
+  const { segments, groupsOrder, groupConfigs, groupsCols, showToast } = useIoTStore();
+  const pushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCfUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setCfUrl(val);
     setCloudflareWorkerUrl(val);
   };
+
+  // وقتی URL تغییر می‌کند، بعد از 2 ثانیه push کن تا در KV ذخیره شود
+  useEffect(() => {
+    // فقط وقتی URL معتبر باشه push کن
+    if (!cfUrl || cfUrl.includes("YOUR_SUBDOMAIN") || cfUrl.length < 10) return;
+
+    if (pushTimerRef.current) {
+      clearTimeout(pushTimerRef.current);
+    }
+
+    pushTimerRef.current = setTimeout(async () => {
+      if (!isCloudflareEnabled()) return;
+
+      // ساخت یک config حداقل برای ذخیره URL
+      const currentConfig: EspConfig = {
+        version: "1.2.0-Achaemenid",
+        device: {
+          name: "سامانه مرزی پاسارگاد",
+          chip: "ESP32-S3-WROOM-1",
+          firmware: "v3.4.1-Achaemenid-OS",
+          reboot_count: 0,
+          last_boot: new Date().toISOString(),
+        },
+        preferences: {
+          theme_mode: "dark",
+          accent_color_3: "#D4AF37",
+          accent_color_4: "#10B981",
+          font_family: "vazir",
+          animations_enabled: true,
+          header_animation: "fade",
+          header_title: "سامانه هوشمند پادشاهی هخامنش",
+          cuneiform_opacity: 0.08,
+          cuneiform_color: "accent3",
+        },
+        layout: {
+          groups_order: groupsOrder,
+          groups_cols: groupsCols,
+          group_configs: groupConfigs,
+        },
+        segments: segments,
+        worker_url: cfUrl,
+      };
+
+      const result = await saveConfigToCloudflare(currentConfig);
+      if (result.success) {
+        showToast("آدرس ورکر جدید با موفقیت ذخیره شد.", "success");
+      } else {
+        showToast("خطا در ذخیره آدرس ورکر جدید.", "error");
+      }
+    }, 2000);
+
+    return () => {
+      if (pushTimerRef.current) {
+        clearTimeout(pushTimerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cfUrl]);
 
   const isCfConnected = isCloudflareEnabled();
 

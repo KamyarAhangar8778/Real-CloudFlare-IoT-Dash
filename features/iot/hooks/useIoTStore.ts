@@ -29,6 +29,9 @@ interface IoTStoreState {
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
+  toast: { message: string; type: "success" | "error" } | null;
+  showToast: (message: string, type: "success" | "error") => void;
+  clearToast: () => void;
   applyEspConfig: (config: EspConfig) => void;
 }
 
@@ -42,6 +45,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   syncProgress: 0,
   syncMessage: "در حال جستجوی تراشه ESP32 در شبکه محلی پادشاهی...",
   lowDataMode: false,
+  toast: null,
 
   setSegments: (segments) => {
     set((state) => {
@@ -90,6 +94,14 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   setLowDataMode: (enabled) => {
     set({ lowDataMode: enabled });
+  },
+
+  showToast: (message, type) => {
+    set({ toast: { message, type } });
+  },
+
+  clearToast: () => {
+    set({ toast: null });
   },
 
   applyEspConfig: (config) => {

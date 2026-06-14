@@ -1,6 +1,15 @@
 const DEFAULT_WORKER_URL = "https://durable-object-worker.kamyarahangar157.workers.dev";
 
-let inMemoryWorkerUrl = typeof process !== "undefined" && process.env ? (process.env.NEXT_PUBLIC_CLOUDFLARE_WORKER_URL || DEFAULT_WORKER_URL) : DEFAULT_WORKER_URL;
+let inMemoryWorkerUrl = DEFAULT_WORKER_URL;
+
+if (typeof window !== "undefined") {
+  const saved = localStorage.getItem("cloudflare_worker_url");
+  if (saved) {
+    inMemoryWorkerUrl = saved;
+  }
+} else if (typeof process !== "undefined" && process.env) {
+  inMemoryWorkerUrl = process.env.NEXT_PUBLIC_CLOUDFLARE_WORKER_URL || DEFAULT_WORKER_URL;
+}
 
 export function getCloudflareWorkerUrl(): string {
   return inMemoryWorkerUrl;
@@ -8,6 +17,9 @@ export function getCloudflareWorkerUrl(): string {
 
 export function setCloudflareWorkerUrl(url: string) {
   inMemoryWorkerUrl = url;
+  if (typeof window !== "undefined") {
+    localStorage.setItem("cloudflare_worker_url", url);
+  }
 }
 
 /**
@@ -17,3 +29,4 @@ export function isCloudflareEnabled(): boolean {
   const url = getCloudflareWorkerUrl();
   return url !== "" && !url.includes("YOUR_SUBDOMAIN");
 }
+

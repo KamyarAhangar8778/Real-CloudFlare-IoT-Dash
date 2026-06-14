@@ -1,4 +1,5 @@
 import { EspConfig } from "@/features/iot/services/esp32Config";
+import { getCloudflareWorkerUrl } from "./config";
 
 /**
  * Maps our dashboard-stored state schema to the agreed Cloudflare config format.
@@ -30,7 +31,9 @@ export function serializeToCloudflare(config: any): any {
       group_configs: config.layout?.group_configs || {}
     },
     // Map 'segments' list from our dashboard to 'segments_definition' key
-    segments_definition: config.segments || []
+    segments_definition: config.segments || [],
+    // آدرس ورکر فعلی را ذخیره کن تا بعد از refresh باقی بماند
+    worker_url: config.worker_url || getCloudflareWorkerUrl(),
   };
 }
 
@@ -64,6 +67,9 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
       group_configs: cfData.layout?.group_configs || {}
     },
     // Load from 'segments_definition' and fall back to 'segments'
-    segments: cfData.segments_definition || cfData.segments || []
+    segments: cfData.segments_definition || cfData.segments || [],
+    // آدرس ورکر ذخیره‌شده
+    worker_url: cfData.worker_url || undefined,
   };
 }
+

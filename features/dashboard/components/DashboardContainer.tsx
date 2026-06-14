@@ -9,6 +9,7 @@ import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import DashboardHeader from "./DashboardHeader";
 import DashboardMain from "./DashboardMain";
 import DashboardDrawers from "./DashboardDrawers";
+import ToastNotification from "@/features/iot/components/ToastNotification";
 
 export default function DashboardContainer() {
   const {
@@ -25,6 +26,9 @@ export default function DashboardContainer() {
     syncProgress,
     syncMessage,
     handleBypassSync,
+    workerUrl,
+    setWorkerUrl,
+    handleRetrySync,
   } = useDashboard();
 
   return (
@@ -37,6 +41,9 @@ export default function DashboardContainer() {
           syncMessage={syncMessage}
           syncProgress={syncProgress}
           onBypass={handleBypassSync}
+          workerUrl={workerUrl}
+          setWorkerUrl={setWorkerUrl}
+          onRetry={handleRetrySync}
         />
 
         {/* Dynamic Theme CSS-in-JS Injector Component */}
@@ -84,6 +91,9 @@ export default function DashboardContainer() {
 
         {/* Dynamic drawers */}
         <DashboardDrawers />
+
+        {/* Toast notifications */}
+        <ToastNotification />
       </div>
     </MotionConfig>
   );

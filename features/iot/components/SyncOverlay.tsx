@@ -10,6 +10,9 @@ interface SyncOverlayProps {
   syncMessage: string;
   syncProgress: number;
   onBypass: () => void;
+  workerUrl: string;
+  setWorkerUrl: (url: string) => void;
+  onRetry: () => void;
 }
 
 export default function SyncOverlay({
@@ -17,6 +20,9 @@ export default function SyncOverlay({
   syncMessage,
   syncProgress,
   onBypass,
+  workerUrl,
+  setWorkerUrl,
+  onRetry,
 }: SyncOverlayProps) {
   return (
     <AnimatePresence>
@@ -64,15 +70,35 @@ export default function SyncOverlay({
               {syncProgress}% • CONNECTED ON STANDALONE_PORT
             </div>
 
-            <div className="pt-6">
-              <button
-                onClick={onBypass}
-                className="px-4 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all text-[10px] font-bold cursor-pointer"
-                style={{ clipPath: BUTTON_CLIP }}
-              >
-                دور زدن و ورود آفلاین (Standalone)
-              </button>
+            {/* Input field for Cloudflare Worker URL during stage 1 initialization */}
+            <div className="w-80 mt-6 p-4 rounded-2xl border border-slate-800/80 bg-black/45 backdrop-blur-md space-y-3">
+              <div className="text-right text-[10px] font-bold text-cyan-400">
+                پیکربندی ورکر کلودفلر (مرحله اول)
+              </div>
+              <input
+                type="text"
+                dir="ltr"
+                value={workerUrl}
+                onChange={(e) => setWorkerUrl(e.target.value)}
+                placeholder="https://my-iot-worker.subdomain.workers.dev"
+                className="block w-full py-2 px-3 border border-slate-850 focus:border-cyan-500 rounded-xl bg-slate-950/80 text-[10px] text-white placeholder-slate-600 focus:outline-none font-mono transition-all text-center"
+              />
+              <div className="flex gap-2 justify-stretch">
+                <button
+                  onClick={onRetry}
+                  className="flex-1 py-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 hover:border-cyan-500/80 text-cyan-300 hover:text-cyan-100 rounded-lg text-[9px] font-bold transition-all cursor-pointer"
+                >
+                  تلاش مجدد همگام‌سازی
+                </button>
+                <button
+                  onClick={onBypass}
+                  className="flex-1 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-lg text-[9px] font-bold transition-all cursor-pointer"
+                >
+                  ورود آفلاین
+                </button>
+              </div>
             </div>
+
           </div>
         </motion.div>
       )}

@@ -32,6 +32,8 @@ export interface EspConfig {
     state?: boolean;
     mode?: "switch" | "push";
   }>;
+  /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
+  worker_url?: string;
 }
 
 export const DEFAULT_ESP_CONFIG: EspConfig = {

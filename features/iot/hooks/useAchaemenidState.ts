@@ -32,7 +32,14 @@ export function useAchaemenidState() {
     store.applyEspConfig(config);
   };
 
-  const { isFullyReady, setIsFullyReady, handleBypassSync } = useCloudflareInit({
+  const {
+    isFullyReady,
+    setIsFullyReady,
+    handleBypassSync,
+    workerUrl,
+    setWorkerUrl,
+    handleRetrySync,
+  } = useCloudflareInit({
     mounted,
     handleApplyEspConfig,
   });
@@ -92,5 +99,8 @@ export function useAchaemenidState() {
     handleTogglePin,
     handleSetPinState,
     handleBypassSync,
+    workerUrl,
+    setWorkerUrl,
+    handleRetrySync,
   };
 }

@@ -29,11 +29,18 @@ export async function fetchConfigFromCloudflare(): Promise<EspConfig | null> {
   }
 }
 
+/** نتیجه استاندارد ACK از سرور */
+export interface AckResult {
+  success: boolean;
+  message: string;
+}
+
 /**
  * Save configuration to Cloudflare Worker.
+ * پاسخ ACK از سرور دریافت و به عنوان نتیجه برگردانده می‌شود.
  */
-export async function saveConfigToCloudflare(config: EspConfig): Promise<boolean> {
-  if (!isCloudflareEnabled()) return false;
+export async function saveConfigToCloudflare(config: EspConfig): Promise<AckResult> {
+  if (!isCloudflareEnabled()) return { success: false, message: "اتصال کلودفلر غیرفعال است." };
   const baseUrl = getCloudflareWorkerUrl().replace(/\/$/, "");
   const payload = serializeToCloudflare(config);
 
@@ -46,18 +53,25 @@ export async function saveConfigToCloudflare(config: EspConfig): Promise<boolean
       body: JSON.stringify(payload),
     });
 
-    return res.ok;
+    const data = await res.json() as any;
+
+    if (res.ok && data?.ack) {
+      return { success: true, message: data.message || "تنظیمات با موفقیت ذخیره شد." };
+    }
+
+    return { success: false, message: data?.error || "خطا در ذخیره تنظیمات." };
   } catch (error) {
     console.error("Cloudflare saveConfig error:", error);
-    return false;
+    return { success: false, message: "تغییرات بنا به دلایل فنی ذخیره نشد." };
   }
 }
 
 /**
  * Update pin state on Durable Objects via Cloudflare Worker.
+ * پاسخ ACK از سرور دریافت و به عنوان نتیجه برگردانده می‌شود.
  */
-export async function updatePinOnCloudflare(pin: string, value: boolean): Promise<boolean> {
-  if (!isCloudflareEnabled()) return false;
+export async function updatePinOnCloudflare(pin: string, value: boolean): Promise<AckResult> {
+  if (!isCloudflareEnabled()) return { success: false, message: "اتصال کلودفلر غیرفعال است." };
   const baseUrl = getCloudflareWorkerUrl().replace(/\/$/, "");
 
   try {
@@ -69,13 +83,18 @@ export async function updatePinOnCloudflare(pin: string, value: boolean): Promis
       body: JSON.stringify({ value }),
     });
 
-    return res.ok;
+    const data = await res.json() as any;
+
+    if (res.ok && data?.ack) {
+      return { success: true, message: data.message || `وضعیت پین ${pin} ذخیره شد.` };
+    }
+
+    return { success: false, message: data?.error || `خطا در ذخیره وضعیت پین ${pin}.` };
   } catch (error) {
     console.error(`Cloudflare updatePinOnCloudflare error for pin ${pin}:`, error);
-    return false;
+    return { success: false, message: `تغییرات پین ${pin} بنا به دلایل فنی ذخیره نشد.` };
   }
 }
-
 /**
  * Fetch states for all configured pins from Durable Objects.
  */

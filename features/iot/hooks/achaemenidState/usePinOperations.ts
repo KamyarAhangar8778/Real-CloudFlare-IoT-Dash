@@ -9,25 +9,32 @@ interface UsePinOperationsProps {
 }
 
 export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
-  const { pinsState, setPinsState } = useIoTStore();
+  const { pinsState, setPinsState, showToast } = useIoTStore();
   const [isLoadingIoT, setIsLoadingIoT] = useState(false);
 
   const updatePinOnServer = async (pin: string, pinState: boolean) => {
+    setIsLoadingIoT(true);
     try {
-      setIsLoadingIoT(true);
       setPinsState((prev) => ({ ...prev, [pin]: pinState }));
 
       if (isCloudflareEnabled()) {
         try {
-          await updatePinOnCloudflare(pin, pinState);
+          const result = await updatePinOnCloudflare(pin, pinState);
+          if (result.success) {
+            showToast(result.message, "success");
+          } else {
+            showToast(result.message, "error");
+          }
         } catch (e) {
           console.error(`Failed to sync pin ${pin} value to Cloudflare:`, e);
+          showToast(`تغییرات پین ${pin} بنا به دلایل فنی ذخیره نشد.`, "error");
         }
       }
 
-      refetchIot();
-    } catch (err) {
-      console.error("Failed to update pin state", err);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await refetchIot();
+    } catch (error) {
+      console.error("Failed to update pin value:", error);
     } finally {
       setIsLoadingIoT(false);
     }
