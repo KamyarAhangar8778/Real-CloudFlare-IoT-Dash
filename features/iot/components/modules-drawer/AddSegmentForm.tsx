@@ -27,10 +27,6 @@ export default function AddSegmentForm({
   const [useCustomPinInput, setUseCustomPinInput] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [buttonMode, setButtonMode] = useState<"switch" | "push">("switch");
-
-  const [isAutoOffEnabled, setIsAutoOffEnabled] = useState(false);
-  const [autoOffDelay, setAutoOffDelay] = useState(5); // Default 5 seconds
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorText("");
@@ -46,16 +42,11 @@ export default function AddSegmentForm({
       return;
     }
 
-    const finalMode = isAutoOffEnabled ? "switch" : buttonMode;
-    const finalAutoOff = isAutoOffEnabled ? autoOffDelay : 0;
-
-    onAddSegment(selectedType, targetPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`, groupName.trim() || "Test", finalMode, finalAutoOff);
+    onAddSegment(selectedType, targetPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`, groupName.trim() || "Test", buttonMode, 0);
     setCustomTitle("");
     setGroupName("Test");
     setCustomPin("");
     setButtonMode("switch");
-    setIsAutoOffEnabled(false);
-    setAutoOffDelay(5);
     setErrorText("");
     onClose();
   };
@@ -77,46 +68,7 @@ export default function AddSegmentForm({
             <option value="gpio_toggle" className="bg-slate-900">خاموش و روشن کردن یک پایه (GPIO Control)</option>
           </select>
         </div>
-
-        <div className="space-y-3 pt-2 border-t border-[var(--border-color)]">
-          <label className="flex items-center gap-2 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={isAutoOffEnabled}
-              onChange={(e) => setIsAutoOffEnabled(e.target.checked)}
-              className="w-4 h-4 rounded text-[var(--accent3)] focus:ring-[var(--accent3)] bg-black/20 border-[var(--border-color)]"
-            />
-            <span className="text-xs font-sans text-[var(--text-primary)] group-hover:text-[var(--accent3)] transition-colors">
-              فعال‌سازی خاموشی خودکار (Auto-Off)
-            </span>
-          </label>
-          
-          {isAutoOffEnabled && (
-            <motion.div
-              initial={animationsEnabled ? { opacity: 0, height: 0 } : false}
-              animate={animationsEnabled ? { opacity: 1, height: "auto" } : false}
-              className="pl-6 space-y-2"
-            >
-              <div className="flex justify-between items-center text-[10px] theme-text-tertiary">
-                <span>زمان تاخیر (ثانیه):</span>
-                <span className="font-bold text-[var(--accent3)]">{autoOffDelay} ثانیه</span>
-              </div>
-              <input
-                type="range"
-                min="1"
-                max="60"
-                value={autoOffDelay}
-                onChange={(e) => setAutoOffDelay(Number(e.target.value))}
-                className="w-full accent-[var(--accent3)] h-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
-              />
-            </motion.div>
-          )}
-        </div>
-
-        {!isAutoOffEnabled && (
-          <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
-        )}
-        
+        <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
         <PinSelector useCustomPinInput={useCustomPinInput} setUseCustomPinInput={setUseCustomPinInput} customPin={customPin} setCustomPin={setCustomPin} selectedPin={selectedPin} setSelectedPin={setSelectedPin} />
         <FormDetailsInput customTitle={customTitle} setCustomTitle={setCustomTitle} groupName={groupName} setGroupName={setGroupName} />
         {errorText && <p className="text-[10px] text-red-500 font-sans mt-2">{errorText}</p>}

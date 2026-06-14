@@ -33,6 +33,7 @@ export default function WorkspaceDragOverlay({
   handleTogglePin,
   handleSetPinState,
   handleUpdateSegmentMode,
+  handleUpdateSegmentAutoOff,
 }: WorkspaceDragOverlayProps) {
   return (
     <DragOverlay>
@@ -50,6 +51,7 @@ export default function WorkspaceDragOverlay({
                 onTogglePin={handleTogglePin}
                 onSetPinState={handleSetPinState}
                 onUpdateSegmentMode={handleUpdateSegmentMode}
+                onUpdateSegmentAutoOff={props.handleUpdateSegmentAutoOff}
                 isLoadingIoT={isLoadingIoT}
                 parentGroupsCols={groupsCols}
                 groupMaxCols={originalGroupCols}

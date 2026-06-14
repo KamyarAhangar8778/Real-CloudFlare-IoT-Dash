@@ -28,6 +28,7 @@ export default function WorkspaceGrid({
   handleTogglePin,
   handleSetPinState,
   handleUpdateSegmentMode,
+  handleUpdateSegmentAutoOff,
   handleSetupPlaceholder,
 }: WorkspaceGridProps) {
   return (
@@ -64,6 +65,7 @@ export default function WorkspaceGrid({
                     onTogglePin={handleTogglePin}
                     onSetPinState={handleSetPinState}
                     onUpdateSegmentMode={handleUpdateSegmentMode}
+                    onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
                     isLoadingIoT={isLoadingIoT}
                     onSetupPlaceholder={handleSetupPlaceholder}
                     parentGroupsCols={groupsCols}

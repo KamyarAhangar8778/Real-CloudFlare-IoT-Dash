@@ -69,6 +69,7 @@ export function useAchaemenidState() {
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentAutoOff,
     handleRemoveGroup,
   } = useSegmentManagement({
     setIsModulesMenuOpen: menu.setIsModulesMenuOpen,
@@ -101,6 +102,7 @@ export function useAchaemenidState() {
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentAutoOff,
     handleRemoveGroup,
     handleTogglePin,
     handleSetPinState,

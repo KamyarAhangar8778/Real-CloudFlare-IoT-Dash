@@ -22,5 +22,6 @@ export interface IoTWorkspaceProps {
   handleTogglePin: (pin: string) => void;
   handleSetPinState: (pin: string, state: boolean) => void;
   handleUpdateSegmentMode: (id: string, mode: "switch" | "push") => void;
+  handleUpdateSegmentAutoOff: (id: string, autoOff: number) => void;
   handleSetupPlaceholder: (id: string) => void;
 }

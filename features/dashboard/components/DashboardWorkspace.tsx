@@ -69,6 +69,7 @@ export default function DashboardWorkspace() {
             handleTogglePin={handleTogglePin}
             handleSetPinState={handleSetPinState}
             handleUpdateSegmentMode={handleUpdateSegmentMode}
+            handleUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
             handleSetupPlaceholder={handleSetupPlaceholder}
           />
         </div>

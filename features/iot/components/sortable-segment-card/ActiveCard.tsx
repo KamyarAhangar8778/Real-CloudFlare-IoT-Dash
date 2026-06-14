@@ -36,6 +36,29 @@ export default function ActiveCard({
     onSetPinState,
   });
 
+  const [countdown, setCountdown] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    if (isPinOn && segment.auto_off && segment.auto_off > 0) {
+      setCountdown(segment.auto_off);
+    } else {
+      setCountdown(null);
+    }
+  }, [isPinOn, segment.auto_off]);
+
+  React.useEffect(() => {
+    if (countdown === null) return;
+    if (countdown <= 0) {
+      onSetPinState?.(segment.pin, false);
+      setCountdown(null);
+      return;
+    }
+    const timerId = setTimeout(() => {
+      setCountdown((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+    return () => clearTimeout(timerId);
+  }, [countdown, segment.pin, onSetPinState]);
+
   return (
     <motion.div
       layout={animationsEnabled ? "position" : false}
@@ -61,6 +84,8 @@ export default function ActiveCard({
           onUpdateSegmentMode={onUpdateSegmentMode}
           attributes={attributes}
           listeners={listeners}
+          countdown={countdown}
+          onUpdateSegmentAutoOff={props.onUpdateSegmentAutoOff}
         />
 
         <CardBody

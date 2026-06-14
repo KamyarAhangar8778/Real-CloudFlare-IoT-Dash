@@ -85,6 +85,10 @@ export function useSegmentManagement({
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, mode } : s)));
   };
 
+  const handleUpdateSegmentAutoOff = (id: string, auto_off: number) => {
+    setSegments(prev => prev.map((s) => (s.id === id ? { ...s, auto_off } : s)));
+  };
+
   const handleRemoveGroup = (groupId: string) => {
     setGroupsOrder(prev => prev.filter((g) => g !== groupId));
     setSegments(prev => prev.filter((s) => (s.group || "Test") !== groupId));
@@ -98,6 +102,7 @@ export function useSegmentManagement({
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentAutoOff,
     handleRemoveGroup,
   };
 }

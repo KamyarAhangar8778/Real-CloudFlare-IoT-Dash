@@ -15,6 +15,7 @@ export interface SortableSegmentCardProps {
   onTogglePin: (pin: string) => void;
   onSetPinState?: (pin: string, state: boolean) => void;
   onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
+  onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
   isLoadingIoT: boolean;
   onSetupPlaceholder?: (id: string) => void;
   parentGroupsCols?: number;
