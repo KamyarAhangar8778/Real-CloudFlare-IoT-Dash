@@ -42,7 +42,7 @@ export default function AddSegmentForm({
       return;
     }
 
-    onAddSegment(selectedType, targetPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`, groupName.trim() || "Test", buttonMode, 0);
+    onAddSegment(selectedType, targetPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`, groupName.trim() || "Test", buttonMode);
     setCustomTitle("");
     setGroupName("Test");
     setCustomPin("");
