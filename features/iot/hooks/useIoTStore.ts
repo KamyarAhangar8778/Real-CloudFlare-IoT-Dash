@@ -10,6 +10,7 @@ interface IoTStoreState {
     group: string;
     state?: boolean;
     mode?: "switch" | "push";
+    auto_off?: number;
   }>;
   groupsOrder: string[];
   groupConfigs: Record<string, { maxCols: number }>;

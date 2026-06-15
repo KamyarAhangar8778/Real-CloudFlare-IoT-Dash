@@ -4,6 +4,7 @@ export interface SegmentData {
   pin: string;
   title: string;
   group?: string;
+  state?: boolean;
   mode?: "switch" | "push";
   auto_off?: number;
 }
