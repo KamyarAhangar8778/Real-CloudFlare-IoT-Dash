@@ -3,7 +3,13 @@
 import React from "react";
 import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
 import { DashboardContext } from "@/features/dashboard/context/DashboardContext";
-import DashboardContainer from "@/features/dashboard/components/DashboardContainer";
+import dynamic from "next/dynamic";
+
+// Dynamically import DashboardContainer to reduce initial bundle size and speed up initial render.
+const DashboardContainer = dynamic(
+  () => import("@/features/dashboard/components/DashboardContainer"),
+  { ssr: false },
+);
 
 export default function Home() {
   return (
