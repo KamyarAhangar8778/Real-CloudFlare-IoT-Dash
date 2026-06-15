@@ -69,6 +69,7 @@ export function useAchaemenidState() {
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentRule,
     handleUpdateSegmentAutoOff,
     handleRemoveGroup,
   } = useSegmentManagement({
@@ -102,6 +103,7 @@ export function useAchaemenidState() {
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentRule,
     handleUpdateSegmentAutoOff,
     handleRemoveGroup,
     handleTogglePin,

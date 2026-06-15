@@ -89,6 +89,10 @@ export function useSegmentManagement({
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, auto_off } : s)));
   };
 
+  const handleUpdateSegmentRule = (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => {
+    setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
+  };
+
   const handleRemoveGroup = (groupId: string) => {
     setGroupsOrder(prev => prev.filter((g) => g !== groupId));
     setSegments(prev => prev.filter((s) => (s.group || "Test") !== groupId));
@@ -102,7 +106,9 @@ export function useSegmentManagement({
     handleGroupColsChange,
     handleRemoveSegment,
     handleUpdateSegmentMode,
+    handleUpdateSegmentRule,
     handleUpdateSegmentAutoOff,
     handleRemoveGroup,
   };
 }
+

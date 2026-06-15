@@ -66,9 +66,12 @@ export default function AddSegmentForm({
             className="w-full h-10 px-3 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all cursor-pointer font-sans"
           >
             <option value="gpio_toggle" className="bg-slate-900">خاموش و روشن کردن یک پایه (GPIO Control)</option>
+            <option value="input" className="bg-slate-900">ورودی دیجیتال 0 و 1 (Input Logic)</option>
           </select>
         </div>
-        <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
+        {selectedType === "gpio_toggle" && (
+          <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
+        )}
         <PinSelector useCustomPinInput={useCustomPinInput} setUseCustomPinInput={setUseCustomPinInput} customPin={customPin} setCustomPin={setCustomPin} selectedPin={selectedPin} setSelectedPin={setSelectedPin} />
         <FormDetailsInput customTitle={customTitle} setCustomTitle={setCustomTitle} groupName={groupName} setGroupName={setGroupName} />
         {errorText && <p className="text-[10px] text-red-500 font-sans mt-2">{errorText}</p>}

@@ -11,6 +11,7 @@ interface IoTStoreState {
     state?: boolean;
     mode?: "switch" | "push";
     auto_off?: number;
+    rule?: { targetPin: string; triggerState: boolean; actionState: boolean };
   }>;
   groupsOrder: string[];
   groupConfigs: Record<string, { maxCols: number }>;
@@ -30,6 +31,7 @@ interface IoTStoreState {
   setGroupsCols: (cols: number) => void;
   setPinsState: (pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
+  updateSegmentRule: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
   toast: { message: string; type: "success" | "error" } | null;
@@ -91,6 +93,15 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     set((state) => {
       const updated = state.segments.map((seg) =>
         seg.id === id ? { ...seg, mode } : seg
+      );
+      return { segments: updated };
+    });
+  },
+
+  updateSegmentRule: (id, rule) => {
+    set((state) => {
+      const updated = state.segments.map((seg) =>
+        seg.id === id ? { ...seg, rule } : seg
       );
       return { segments: updated };
     });

@@ -33,6 +33,7 @@ export default function DashboardWorkspace() {
     handleSetPinState,
     handleUpdateSegmentMode,
     handleUpdateSegmentAutoOff,
+    handleUpdateSegmentRule,
     handleSetupPlaceholder,
   } = useDashboard();
 
@@ -71,6 +72,7 @@ export default function DashboardWorkspace() {
             handleSetPinState={handleSetPinState}
             handleUpdateSegmentMode={handleUpdateSegmentMode}
             handleUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
+            handleUpdateSegmentRule={handleUpdateSegmentRule}
             handleSetupPlaceholder={handleSetupPlaceholder}
           />
         </div>
