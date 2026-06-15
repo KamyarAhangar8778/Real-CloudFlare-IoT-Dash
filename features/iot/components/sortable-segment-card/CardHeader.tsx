@@ -22,6 +22,7 @@ export default function CardHeader({
   isPinOn,
   isUltraCompact,
   mode,
+  onRemove,
   onUpdateSegmentMode,
   onUpdateSegmentAutoOff,
   onUpdateSegmentRule,
