@@ -43,41 +43,45 @@ export default function DashboardDrawers() {
 
   return (
     <>
-      <SettingsDrawer
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accent3={accent3}
-        setAccent3={setAccent3}
-        accent4={accent4}
-        setAccent4={setAccent4}
-        selectedFont={selectedFont}
-        setSelectedFont={setSelectedFont}
-        animationsEnabled={animationsEnabled}
-        setAnimationsEnabled={setAnimationsEnabled}
-        headerAnimationType={headerAnimationType}
-        setHeaderAnimationType={setHeaderAnimationType}
-        headerTitle={headerTitle}
-        setHeaderTitle={setHeaderTitle}
-        cuneiformOpacity={cuneiformOpacity}
-        setCuneiformOpacity={setCuneiformOpacity}
-        cuneiformColor={cuneiformColor}
-        setCuneiformColor={setCuneiformColor}
-        isDark={isDark}
-        headerPosition={headerPosition}
-        setHeaderPosition={setHeaderPosition}
-      />
+      {isMenuOpen && (
+        <SettingsDrawer
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          accent3={accent3}
+          setAccent3={setAccent3}
+          accent4={accent4}
+          setAccent4={setAccent4}
+          selectedFont={selectedFont}
+          setSelectedFont={setSelectedFont}
+          animationsEnabled={animationsEnabled}
+          setAnimationsEnabled={setAnimationsEnabled}
+          headerAnimationType={headerAnimationType}
+          setHeaderAnimationType={setHeaderAnimationType}
+          headerTitle={headerTitle}
+          setHeaderTitle={setHeaderTitle}
+          cuneiformOpacity={cuneiformOpacity}
+          setCuneiformOpacity={setCuneiformOpacity}
+          cuneiformColor={cuneiformColor}
+          setCuneiformColor={setCuneiformColor}
+          isDark={isDark}
+          headerPosition={headerPosition}
+          setHeaderPosition={setHeaderPosition}
+        />
+      )}
 
-      <ModulesDrawer
-        isOpen={isModulesMenuOpen}
-        onClose={() => setIsModulesMenuOpen(false)}
-        onAddSegment={handleAddSegment}
-        segments={segments}
-        onRemoveSegment={handleRemoveSegment}
-        isDark={isDark}
-        accent3={accent3}
-        accent4={accent4}
-        animationsEnabled={animationsEnabled}
-      />
+      {isModulesMenuOpen && (
+        <ModulesDrawer
+          isOpen={isModulesMenuOpen}
+          onClose={() => setIsModulesMenuOpen(false)}
+          onAddSegment={handleAddSegment}
+          segments={segments}
+          onRemoveSegment={handleRemoveSegment}
+          isDark={isDark}
+          accent3={accent3}
+          accent4={accent4}
+          animationsEnabled={animationsEnabled}
+        />
+      )}
     </>
   );
 }

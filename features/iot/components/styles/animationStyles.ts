@@ -40,20 +40,22 @@ export function getAnimationStyles({ isDark }: AnimationStylesParams): string {
       background-size: 200% auto;
     }
 
-    /* Dynamic seamless background image scrolling */
+    /* Dynamic seamless background image scrolling (GPU Accelerated) */
     .cuneiform-scroll-container {
-      background-position: 0 0;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
     }
     @keyframes cuneiform-slide {
       from {
-        background-position: 0 0;
+        transform: translate3d(0, 0, 0);
       }
       to {
-        background-position: -400px 400px;
+        transform: translate3d(400px, -400px, 0);
       }
     }
     .cuneiform-scroll-animated {
       animation: cuneiform-slide 45s linear infinite !important;
+      will-change: transform;
     }
 
     @keyframes footer-border-glow {
