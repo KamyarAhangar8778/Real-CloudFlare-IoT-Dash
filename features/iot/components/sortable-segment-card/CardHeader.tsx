@@ -9,6 +9,7 @@ interface CardHeaderProps {
   isUltraCompact: boolean;
   mode: "switch" | "push";
   onRemove: (id: string) => void;
+  onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
   onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
   onUpdateSegmentRule?: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
   countdown?: number | null;
