@@ -31,7 +31,11 @@ export default function PlaceholderCard({
       transition={animationsEnabled ? { type: "spring", stiffness: 380, damping: 32 } : undefined}
       initial={animationsEnabled ? { opacity: 0, scale: 0.93, y: 10 } : false}
       animate={animationsEnabled ? { opacity: 1, scale: 1, y: 0 } : false}
-      exit={animationsEnabled ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } } : undefined}
+      exit={
+        animationsEnabled
+          ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } }
+          : undefined
+      }
     >
       <div className="absolute top-2 left-2 z-20 flex gap-1.5">
         <button
@@ -54,10 +58,17 @@ export default function PlaceholderCard({
       <button
         onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
         className={`w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 cursor-pointer text-center group rounded-2xl ${
-          isUltraCompact ? "p-3 min-h-[90px]" : isCompact ? "p-4 min-h-[128px]" : "p-6 min-h-[178px]"
+          isUltraCompact
+            ? "p-3 min-h-[90px]"
+            : isCompact
+              ? "p-4 min-h-[128px]"
+              : "p-6 min-h-[178px]"
         }`}
       >
-        <div className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors" style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}>
+        <div
+          className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors"
+          style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
+        >
           <Plus className="w-4 h-4" />
         </div>
         {!isUltraCompact && (

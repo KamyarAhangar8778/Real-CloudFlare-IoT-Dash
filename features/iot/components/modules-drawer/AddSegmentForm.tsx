@@ -7,7 +7,13 @@ import PinSelector from "./PinSelector";
 import FormDetailsInput from "./FormDetailsInput";
 
 interface AddSegmentFormProps {
-  onAddSegment: (type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push") => void;
+  onAddSegment: (
+    type: string,
+    pin: string,
+    title?: string,
+    group?: string,
+    mode?: "switch" | "push",
+  ) => void;
   onClose: () => void;
   segments: Segment[];
   animationsEnabled: boolean;
@@ -42,7 +48,13 @@ export default function AddSegmentForm({
       return;
     }
 
-    onAddSegment(selectedType, targetPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`, groupName.trim() || "Test", buttonMode);
+    onAddSegment(
+      selectedType,
+      targetPin,
+      customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${targetPin})`,
+      groupName.trim() || "Test",
+      buttonMode,
+    );
     setCustomTitle("");
     setGroupName("Test");
     setCustomPin("");
@@ -59,18 +71,38 @@ export default function AddSegmentForm({
           <span className="text-xs font-bold font-sans">افزودن سگمنت جدید</span>
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] theme-text-tertiary font-bold block">نوع سگمنت مانیتورینگ:</label>
+          <label className="text-[10px] theme-text-tertiary font-bold block">
+            نوع سگمنت مانیتورینگ:
+          </label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             className="w-full h-10 px-3 text-xs bg-black/20 text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all cursor-pointer font-sans"
           >
-            <option value="gpio_toggle" className="bg-slate-900">خاموش و روشن کردن یک پایه (GPIO Control)</option>
+            <option value="gpio_toggle" className="bg-slate-900">
+              خاموش و روشن کردن یک پایه (GPIO Control)
+            </option>
           </select>
         </div>
-        <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
-        <PinSelector useCustomPinInput={useCustomPinInput} setUseCustomPinInput={setUseCustomPinInput} customPin={customPin} setCustomPin={setCustomPin} selectedPin={selectedPin} setSelectedPin={setSelectedPin} />
-        <FormDetailsInput customTitle={customTitle} setCustomTitle={setCustomTitle} groupName={groupName} setGroupName={setGroupName} />
+        <ButtonModeSelector
+          buttonMode={buttonMode}
+          setButtonMode={setButtonMode}
+          animationsEnabled={animationsEnabled}
+        />
+        <PinSelector
+          useCustomPinInput={useCustomPinInput}
+          setUseCustomPinInput={setUseCustomPinInput}
+          customPin={customPin}
+          setCustomPin={setCustomPin}
+          selectedPin={selectedPin}
+          setSelectedPin={setSelectedPin}
+        />
+        <FormDetailsInput
+          customTitle={customTitle}
+          setCustomTitle={setCustomTitle}
+          groupName={groupName}
+          setGroupName={setGroupName}
+        />
         {errorText && <p className="text-[10px] text-red-500 font-sans mt-2">{errorText}</p>}
         <motion.button
           type="submit"

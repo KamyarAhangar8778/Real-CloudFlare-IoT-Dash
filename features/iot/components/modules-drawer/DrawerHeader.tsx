@@ -15,7 +15,10 @@ export default function DrawerHeader({ onClose, animationsEnabled }: DrawerHeade
           <Layers className="w-4 h-4" />
         </div>
         <div>
-          <h4 className="font-sans font-black text-sm text-accent3" style={{ color: "var(--accent3)" }}>
+          <h4
+            className="font-sans font-black text-sm text-accent3"
+            style={{ color: "var(--accent3)" }}
+          >
             منوی مدیریت ماژول‌ها و سگمنت‌ها
           </h4>
           <p className="text-[9px] theme-text-muted font-sans tracking-wide uppercase">

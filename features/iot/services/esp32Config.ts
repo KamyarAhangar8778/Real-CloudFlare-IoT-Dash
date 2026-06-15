@@ -11,7 +11,7 @@ export interface EspConfig {
     theme_mode: "dark" | "light";
     accent_color_3: string; // Golden primary color
     accent_color_4: string; // Secondary status/emerald color
-    font_family: string;   // e.g. "vazir", "lalezar", "cairo", "mono"
+    font_family: string; // e.g. "vazir", "lalezar", "cairo", "mono"
     animations_enabled: boolean;
     header_animation: "fade" | "chase";
     header_title: string;
@@ -45,7 +45,7 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     chip: "ESP32-S3-WROOM-1",
     firmware: "v3.4.1-Achaemenid-OS",
     reboot_count: 14,
-    last_boot: "2026-05-26T20:55:00Z"
+    last_boot: "2026-05-26T20:55:00Z",
   },
   preferences: {
     theme_mode: "dark",
@@ -58,14 +58,14 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     cuneiform_opacity: 0.08,
     cuneiform_color: "accent3",
     header_position: "top",
-    manual_save_mode: false
+    manual_save_mode: false,
   },
   layout: {
     groups_order: ["بخش فرماندهی"],
     groups_cols: 1,
     group_configs: {
-      "بخش فرماندهی": { maxCols: 3 }
-    }
+      "بخش فرماندهی": { maxCols: 3 },
+    },
   },
   segments: [
     {
@@ -73,23 +73,23 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
       type: "روشنایی تالار آپادانا",
       pin: "2",
       title: "روشنایی تالار آپادانا",
-      group: "بخش فرماندهی"
+      group: "بخش فرماندهی",
     },
     {
       id: "main_gate",
       type: "دروازه ملل کلاچ",
       pin: "4",
       title: "دروازه ملل کلاچ",
-      group: "بخش فرماندهی"
+      group: "بخش فرماندهی",
     },
     {
       id: "water_pump",
       type: "پمپ آب پردیس شاهنشاهی",
       pin: "12",
       title: "پمپ حوض‌های پردیس",
-      group: "بخش فرماندهی"
-    }
-  ]
+      group: "بخش فرماندهی",
+    },
+  ],
 };
 
 /**
@@ -108,6 +108,6 @@ export function validateEspConfig(config: any): config is EspConfig {
   if (typeof prefs.accent_color_3 !== "string") return false;
   if (typeof prefs.accent_color_4 !== "string") return false;
   if (typeof prefs.font_family !== "string") return false;
-  
+
   return true;
 }

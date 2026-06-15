@@ -15,5 +15,5 @@ export const FONTS_LIST: FontItem[] = [
   { id: "tajawal", name: "تجول", family: "'Tajawal'", desc: "اداری قرآنی" },
   { id: "playfair", name: "پلی‌فیر", family: "'Playfair Display'", desc: "لاتین کلاسیک" },
   { id: "space", name: "اسپیس", family: "'Space Grotesk'", desc: "آینده‌نگار" },
-  { id: "mono", name: "جت‌برینز", family: "'JetBrains Mono'", desc: "فنی هکری" }
+  { id: "mono", name: "جت‌برینز", family: "'JetBrains Mono'", desc: "فنی هکری" },
 ];

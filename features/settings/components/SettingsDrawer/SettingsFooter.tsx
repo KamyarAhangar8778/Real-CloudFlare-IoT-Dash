@@ -9,7 +9,8 @@ export function SettingsFooter() {
         <CheckCircle2 className="w-3.5 h-3.5 text-accent4" style={{ color: "var(--accent4)" }} />
       </div>
       <p className="text-[9px] theme-text-muted font-sans">
-        برای بازگشت به نمای اصلی، بر روی فضای خارج از منو ضربه بزنید یا کلید ضربدر بالا را کلیک کنید.
+        برای بازگشت به نمای اصلی، بر روی فضای خارج از منو ضربه بزنید یا کلید ضربدر بالا را کلیک
+        کنید.
       </p>
     </div>
   );

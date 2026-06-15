@@ -20,11 +20,11 @@ export default function Loading() {
         <h3 className="text-sm font-sans font-black tracking-widest text-[#c5a880] uppercase">
           سامانه هوشمند هخامنشی
         </h3>
-        
+
         <p className="text-[10px] text-gray-500 font-mono tracking-wider mt-2 animate-pulse uppercase">
           Achaemenid IoT System Connecting...
         </p>
-        
+
         {/* Stylized step indicators */}
         <div className="flex gap-1 mt-4">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 animate-ping" />

@@ -29,4 +29,3 @@ export function isCloudflareEnabled(): boolean {
   const url = getCloudflareWorkerUrl();
   return url !== "" && !url.includes("YOUR_SUBDOMAIN");
 }
-

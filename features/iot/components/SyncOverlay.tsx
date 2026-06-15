@@ -34,7 +34,7 @@ export default function SyncOverlay({
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 text-center select-none overflow-hidden"
           style={{
             background: "radial-gradient(ellipse_at_center, #0c0f1d 0%, #030408 100%)",
-            fontFamily: "var(--font-vazir)"
+            fontFamily: "var(--font-vazir)",
           }}
         >
           {/* Modern rotating loading ring */}
@@ -52,9 +52,7 @@ export default function SyncOverlay({
             <h3 className="text-xl font-bold text-white tracking-wide font-sans">
               سامانه یکپارچه مانیتورینگ اینترنت اشیا
             </h3>
-            <p className="text-xs text-slate-400">
-              {syncMessage}
-            </p>
+            <p className="text-xs text-slate-400">{syncMessage}</p>
 
             {/* Progress bar container */}
             <div className="w-64 h-1 bg-black/50 border border-gray-800/60 rounded-full overflow-hidden mx-auto relative mt-2">
@@ -65,7 +63,7 @@ export default function SyncOverlay({
                 transition={{ duration: 0.1 }}
               />
             </div>
-            
+
             <div className="text-[10px] text-zinc-500 font-mono mt-1">
               {syncProgress}% • CONNECTED ON STANDALONE_PORT
             </div>
@@ -98,7 +96,6 @@ export default function SyncOverlay({
                 </button>
               </div>
             </div>
-
           </div>
         </motion.div>
       )}

@@ -34,9 +34,18 @@ export function useCloudflarePush({
   headerTitle,
   cuneiformOpacity,
   cuneiformColor,
-  headerPosition
+  headerPosition,
 }: UseCloudflarePushProps) {
-  const { segments, groupsOrder, groupConfigs, groupsCols, showToast, manualSaveMode, incrementUnsavedChanges, resetUnsavedChanges } = useIoTStore();
+  const {
+    segments,
+    groupsOrder,
+    groupConfigs,
+    groupsCols,
+    showToast,
+    manualSaveMode,
+    incrementUnsavedChanges,
+    resetUnsavedChanges,
+  } = useIoTStore();
   const isFirstRender = useRef(true);
 
   const triggerCloudflarePush = useCallback(async () => {
@@ -49,7 +58,7 @@ export function useCloudflarePush({
         chip: "ESP32-S3-WROOM-1",
         firmware: "v3.4.1-Achaemenid-OS",
         reboot_count: 0,
-        last_boot: new Date().toISOString()
+        last_boot: new Date().toISOString(),
       },
       preferences: {
         theme_mode: isDark ? "dark" : "light",
@@ -62,12 +71,12 @@ export function useCloudflarePush({
         cuneiform_opacity: cuneiformOpacity,
         cuneiform_color: cuneiformColor,
         header_position: headerPosition,
-        manual_save_mode: manualSaveMode
+        manual_save_mode: manualSaveMode,
       },
       layout: {
         groups_order: groupsOrder,
         groups_cols: groupsCols,
-        group_configs: groupConfigs
+        group_configs: groupConfigs,
       },
       segments: segments,
       worker_url: getCloudflareWorkerUrl(),
@@ -80,8 +89,27 @@ export function useCloudflarePush({
     } else {
       showToast(result.message, "error");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, headerPosition, manualSaveMode, segments, groupsOrder, groupConfigs, groupsCols, showToast, resetUnsavedChanges]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isFullyReady,
+    isDark,
+    accent3,
+    accent4,
+    selectedFont,
+    animationsEnabled,
+    headerAnimationType,
+    headerTitle,
+    cuneiformOpacity,
+    cuneiformColor,
+    headerPosition,
+    manualSaveMode,
+    segments,
+    groupsOrder,
+    groupConfigs,
+    groupsCols,
+    showToast,
+    resetUnsavedChanges,
+  ]);
 
   useEffect(() => {
     if (!isFullyReady) return;
@@ -101,10 +129,25 @@ export function useCloudflarePush({
     }, 1200);
     return () => clearTimeout(handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullyReady, isDark, accent3, accent4, selectedFont, animationsEnabled, headerAnimationType, headerTitle, cuneiformOpacity, cuneiformColor, headerPosition, segments, groupsOrder, groupConfigs, groupsCols]);
+  }, [
+    isFullyReady,
+    isDark,
+    accent3,
+    accent4,
+    selectedFont,
+    animationsEnabled,
+    headerAnimationType,
+    headerTitle,
+    cuneiformOpacity,
+    cuneiformColor,
+    headerPosition,
+    segments,
+    groupsOrder,
+    groupConfigs,
+    groupsCols,
+  ]);
 
   return {
     triggerCloudflarePush,
   };
 }
-

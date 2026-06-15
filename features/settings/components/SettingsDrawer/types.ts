@@ -26,9 +26,34 @@ export interface SettingsDrawerProps {
 }
 
 export const SETTINGS_TABS = [
-  { id: "colors", title: "تنظیم تنوع رنگ و تضاد", compactTitle: "رنگ ۳ و رنگ ۴ بورد", Icon: Palette },
-  { id: "fonts", title: "مدیریت قلم و تایپوگرافی", compactTitle: "قلم و فونت‌های سلطنتی", Icon: Type },
-  { id: "animations", title: "کنترل پایداری و بهینه‌سازی", compactTitle: "فریم‌ریت و مصرف سرویس", Icon: Activity },
-  { id: "header-settings", title: "موقعیت و تنظیمات هدر", compactTitle: "طرح قرارگیری هدر بورد", Icon: LayoutGrid },
-  { id: "cuneiform", title: "تنظیمات کتیبه خط میخی", compactTitle: "پدیداری و کنتراست پس‌زمینه", Icon: Sparkles }
+  {
+    id: "colors",
+    title: "تنظیم تنوع رنگ و تضاد",
+    compactTitle: "رنگ ۳ و رنگ ۴ بورد",
+    Icon: Palette,
+  },
+  {
+    id: "fonts",
+    title: "مدیریت قلم و تایپوگرافی",
+    compactTitle: "قلم و فونت‌های سلطنتی",
+    Icon: Type,
+  },
+  {
+    id: "animations",
+    title: "کنترل پایداری و بهینه‌سازی",
+    compactTitle: "فریم‌ریت و مصرف سرویس",
+    Icon: Activity,
+  },
+  {
+    id: "header-settings",
+    title: "موقعیت و تنظیمات هدر",
+    compactTitle: "طرح قرارگیری هدر بورد",
+    Icon: LayoutGrid,
+  },
+  {
+    id: "cuneiform",
+    title: "تنظیمات کتیبه خط میخی",
+    compactTitle: "پدیداری و کنتراست پس‌زمینه",
+    Icon: Sparkles,
+  },
 ];

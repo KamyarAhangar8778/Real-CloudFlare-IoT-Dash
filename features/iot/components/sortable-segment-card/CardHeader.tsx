@@ -31,9 +31,11 @@ export default function CardHeader({
   const [showAutoOffMenu, setShowAutoOffMenu] = React.useState(false);
   const autoOffValue = segment.auto_off || 0;
   return (
-    <div className={`flex items-center justify-between border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${
-      isUltraCompact ? "p-2" : "p-4"
-    }`}>
+    <div
+      className={`flex items-center justify-between border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${
+        isUltraCompact ? "p-2" : "p-4"
+      }`}
+    >
       <div className="flex items-center gap-1.5 md:gap-2">
         <button
           onClick={() => onRemove(segment.id)}
@@ -43,9 +45,9 @@ export default function CardHeader({
         >
           <X className={`${isUltraCompact ? "w-3 h-3" : "w-3.5 h-3.5"}`} />
         </button>
-        
-        <div 
-          {...attributes} 
+
+        <div
+          {...attributes}
           {...listeners}
           className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-all rounded-lg shadow-sm"
           title="کشیدن برای جابه‌جایی"
@@ -54,7 +56,7 @@ export default function CardHeader({
         </div>
 
         {onUpdateSegmentMode && (
-          <div 
+          <div
             className="flex items-center bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 p-[3px] mr-1.5 rounded-full shadow-sm relative"
             onPointerDown={(e) => e.stopPropagation()}
           >
@@ -90,7 +92,20 @@ export default function CardHeader({
                   className={`p-1 rounded-full transition-colors ${autoOffValue > 0 ? "text-[var(--accent3)]" : "text-slate-500 hover:text-slate-800 dark:hover:text-white"}`}
                   title="تنظیم زمان خاموشی خودکار (Auto-Off)"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
                 </button>
                 {countdown !== null && countdown !== undefined && (
                   <span className="text-[10px] font-bold text-[var(--accent3)] mr-1 tabular-nums">
@@ -101,7 +116,9 @@ export default function CardHeader({
                 {showAutoOffMenu && (
                   <div className="absolute top-full mt-2 left-0 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-3 z-50">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">خاموشی خودکار: {autoOffValue > 0 ? `${autoOffValue} ثانیه` : "غیرفعال"}</span>
+                      <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                        خاموشی خودکار: {autoOffValue > 0 ? `${autoOffValue} ثانیه` : "غیرفعال"}
+                      </span>
                     </div>
                     <input
                       type="range"
@@ -131,14 +148,16 @@ export default function CardHeader({
 
       <div className="flex items-center gap-2">
         <div className="text-right">
-          <span className={`block font-sans font-extrabold theme-text-primary group-hover:text-[var(--accent3)] transition-colors ${
-            isUltraCompact ? "text-[10px]" : "text-xs"
-          }`}>
+          <span
+            className={`block font-sans font-extrabold theme-text-primary group-hover:text-[var(--accent3)] transition-colors ${
+              isUltraCompact ? "text-[10px]" : "text-xs"
+            }`}
+          >
             {segment.title}
           </span>
         </div>
         {!isUltraCompact && (
-          <div 
+          <div
             className={`p-2 transition-colors ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
             style={{ clipPath: BUTTON_CLIP }}
           >

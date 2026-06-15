@@ -17,14 +17,8 @@ export default function HeaderSettingsContent({
 }: HeaderSettingsContentProps) {
   return (
     <div className="space-y-4 text-right font-sans">
-      <PositionSwitcher
-        headerPosition={headerPosition}
-        setHeaderPosition={setHeaderPosition}
-      />
-      <TitleInput
-        headerTitle={headerTitle}
-        setHeaderTitle={setHeaderTitle}
-      />
+      <PositionSwitcher headerPosition={headerPosition} setHeaderPosition={setHeaderPosition} />
+      <TitleInput headerTitle={headerTitle} setHeaderTitle={setHeaderTitle} />
     </div>
   );
 }

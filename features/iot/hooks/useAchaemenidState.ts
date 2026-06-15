@@ -55,12 +55,9 @@ export function useAchaemenidState() {
     ...aesthetic,
   });
 
-  const {
-    isLoadingIoT,
-    updatePinOnServer,
-    handleTogglePin,
-    handleSetPinState,
-  } = usePinOperations({ refetchIot });
+  const { isLoadingIoT, updatePinOnServer, handleTogglePin, handleSetPinState } = usePinOperations({
+    refetchIot,
+  });
 
   const {
     handleAddSegment,

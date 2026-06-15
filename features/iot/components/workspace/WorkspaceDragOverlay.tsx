@@ -38,52 +38,52 @@ export default function WorkspaceDragOverlay({
 }: WorkspaceDragOverlayProps) {
   return (
     <DragOverlay>
-      {activeSegmentId ? (
-        (() => {
-          const seg = segments.find(s => s.id === activeSegmentId);
-          if (!seg) return null;
-          const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
-          return (
-            <div style={{ opacity: 0.8, cursor: "grabbing" }}>
-              <SortableSegmentCard
-                segment={seg}
-                isPinOn={!!pinsState[seg.pin]}
-                onRemove={handleRemoveSegment}
-                onTogglePin={handleTogglePin}
-                onSetPinState={handleSetPinState}
-                onUpdateSegmentMode={handleUpdateSegmentMode}
-                onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
-                isLoadingIoT={isLoadingIoT}
-                parentGroupsCols={groupsCols}
-                groupMaxCols={originalGroupCols}
-                animationsEnabled={animationsEnabled}
-              />
-            </div>
-          );
-        })()
-      ) : null}
-      {activeGroupId ? (
-        (() => {
-          const groupId = activeGroupId.replace("group-", "");
-          const groupSegments = segments.filter(s => (s.group || "Test") === groupId);
-          return (
-            <div style={{ opacity: 0.8, cursor: "grabbing" }}>
-              <SortableGroup 
-                id={groupId} 
-                items={groupSegments.map(s => s.id)} 
-                segmentCount={groupSegments.length}
-                maxCols={groupConfigs[groupId]?.maxCols || 3}
-                parentGroupsCols={groupsCols}
-                onColsChange={() => {}}
-                onAddPlaceholder={() => {}}
-                onDeleteGroup={() => {}}
-              >
-                <></>
-              </SortableGroup>
-            </div>
-          );
-        })()
-      ) : null}
+      {activeSegmentId
+        ? (() => {
+            const seg = segments.find((s) => s.id === activeSegmentId);
+            if (!seg) return null;
+            const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
+            return (
+              <div style={{ opacity: 0.8, cursor: "grabbing" }}>
+                <SortableSegmentCard
+                  segment={seg}
+                  isPinOn={!!pinsState[seg.pin]}
+                  onRemove={handleRemoveSegment}
+                  onTogglePin={handleTogglePin}
+                  onSetPinState={handleSetPinState}
+                  onUpdateSegmentMode={handleUpdateSegmentMode}
+                  onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
+                  isLoadingIoT={isLoadingIoT}
+                  parentGroupsCols={groupsCols}
+                  groupMaxCols={originalGroupCols}
+                  animationsEnabled={animationsEnabled}
+                />
+              </div>
+            );
+          })()
+        : null}
+      {activeGroupId
+        ? (() => {
+            const groupId = activeGroupId.replace("group-", "");
+            const groupSegments = segments.filter((s) => (s.group || "Test") === groupId);
+            return (
+              <div style={{ opacity: 0.8, cursor: "grabbing" }}>
+                <SortableGroup
+                  id={groupId}
+                  items={groupSegments.map((s) => s.id)}
+                  segmentCount={groupSegments.length}
+                  maxCols={groupConfigs[groupId]?.maxCols || 3}
+                  parentGroupsCols={groupsCols}
+                  onColsChange={() => {}}
+                  onAddPlaceholder={() => {}}
+                  onDeleteGroup={() => {}}
+                >
+                  <></>
+                </SortableGroup>
+              </div>
+            );
+          })()
+        : null}
     </DragOverlay>
   );
 }

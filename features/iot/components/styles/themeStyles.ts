@@ -12,16 +12,27 @@ export function getThemeStyles({
   selectedFont,
 }: ThemeStylesParams): string {
   const selectedFontFamily =
-    selectedFont === "vazir" ? "var(--font-vazir)" :
-    selectedFont === "lalezar" ? "var(--font-lalezar)" :
-    selectedFont === "mono" ? "var(--font-mono)" :
-    selectedFont === "playfair" ? "var(--font-playfair)" :
-    selectedFont === "space" ? "var(--font-space)" :
-    selectedFont === "cairo" ? "var(--font-cairo)" :
-    selectedFont === "amiri" ? "var(--font-amiri)" :
-    selectedFont === "changa" ? "var(--font-changa)" :
-    selectedFont === "reem" ? "var(--font-reem)" :
-    selectedFont === "tajawal" ? "var(--font-tajawal)" : "var(--font-vazir)";
+    selectedFont === "vazir"
+      ? "var(--font-vazir)"
+      : selectedFont === "lalezar"
+        ? "var(--font-lalezar)"
+        : selectedFont === "mono"
+          ? "var(--font-mono)"
+          : selectedFont === "playfair"
+            ? "var(--font-playfair)"
+            : selectedFont === "space"
+              ? "var(--font-space)"
+              : selectedFont === "cairo"
+                ? "var(--font-cairo)"
+                : selectedFont === "amiri"
+                  ? "var(--font-amiri)"
+                  : selectedFont === "changa"
+                    ? "var(--font-changa)"
+                    : selectedFont === "reem"
+                      ? "var(--font-reem)"
+                      : selectedFont === "tajawal"
+                        ? "var(--font-tajawal)"
+                        : "var(--font-vazir)";
 
   return `
     :root {

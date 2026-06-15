@@ -12,7 +12,7 @@ export default function ThemeToggle({
   isDark,
   setIsDark,
   animationsEnabled,
-  variant
+  variant,
 }: ThemeToggleProps) {
   if (variant === "vertical") {
     return (
@@ -26,9 +26,13 @@ export default function ThemeToggle({
           </span>
           <div className="p-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
             {isDark ? (
-              <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} />
+              <Moon
+                className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`}
+              />
             ) : (
-              <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} />
+              <Sun
+                className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`}
+              />
             )}
           </div>
         </button>
@@ -43,9 +47,13 @@ export default function ThemeToggle({
       title="تغییر رنگ پوسته"
     >
       {isDark ? (
-        <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} />
+        <Sun
+          className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`}
+        />
       ) : (
-        <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} />
+        <Moon
+          className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`}
+        />
       )}
     </button>
   );

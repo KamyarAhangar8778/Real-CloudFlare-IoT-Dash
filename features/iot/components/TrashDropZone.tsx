@@ -21,9 +21,7 @@ export default function TrashDropZone({ activeId }: { activeId: string | null })
       }`}
     >
       <Trash2 className={`w-8 h-8 mx-auto mb-2 ${isOver ? "animate-bounce" : ""}`} />
-      <span className="text-sm font-bold font-sans">
-        برای حذف اینجا رها کنید
-      </span>
+      <span className="text-sm font-bold font-sans">برای حذف اینجا رها کنید</span>
     </div>
   );
 }

@@ -3,10 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Globe, CloudLightning, Server } from "lucide-react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { 
-  getCloudflareWorkerUrl, 
-  setCloudflareWorkerUrl, 
-  isCloudflareEnabled 
+import {
+  getCloudflareWorkerUrl,
+  setCloudflareWorkerUrl,
+  isCloudflareEnabled,
 } from "@/features/iot/services/cloudflareService";
 import { saveConfigToCloudflare } from "@/features/iot/services/cloudflare/api";
 import type { EspConfig } from "@/features/iot/services/esp32Config";
@@ -15,9 +15,19 @@ interface CloudflareIntegrationProps {
   isDark?: boolean;
 }
 
-export default function CloudflareIntegration({ isDark: _isDark = true }: CloudflareIntegrationProps) {
+export default function CloudflareIntegration({
+  isDark: _isDark = true,
+}: CloudflareIntegrationProps) {
   const [cfUrl, setCfUrl] = useState(() => getCloudflareWorkerUrl());
-  const { segments, groupsOrder, groupConfigs, groupsCols, showToast, manualSaveMode, setManualSaveMode } = useIoTStore();
+  const {
+    segments,
+    groupsOrder,
+    groupConfigs,
+    groupsCols,
+    showToast,
+    manualSaveMode,
+    setManualSaveMode,
+  } = useIoTStore();
   const [isSavingUrl, setIsSavingUrl] = useState(false);
 
   const handleCfUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,12 +93,15 @@ export default function CloudflareIntegration({ isDark: _isDark = true }: Cloudf
   return (
     <div className="pt-2 space-y-4 text-right">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] theme-text-tertiary">Cloudflare Workers KV & Durable Objects</span>
+        <span className="text-[10px] theme-text-tertiary">
+          Cloudflare Workers KV & Durable Objects
+        </span>
         <span className="font-bold text-[11px] text-accent3">اتصال هوشمند کلودفلر</span>
       </div>
-      
+
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
-        برای ذخیره‌سازی ابری و دائم ساختار چیدمان (Cloudflare KV) و نظارت بر شیرها و سوییچ‌ها (Durable Objects)، آدرس ورکر خود را وارد کنید:
+        برای ذخیره‌سازی ابری و دائم ساختار چیدمان (Cloudflare KV) و نظارت بر شیرها و سوییچ‌ها (Durable
+        Objects)، آدرس ورکر خود را وارد کنید:
       </p>
 
       <div className="flex gap-2">
@@ -117,32 +130,43 @@ export default function CloudflareIntegration({ isDark: _isDark = true }: Cloudf
       <div className="p-3 mt-4 rounded-xl border border-slate-800 bg-black/30 flex items-center justify-between">
         <label className="flex items-center cursor-pointer gap-3 w-full">
           <div className="relative">
-            <input 
-              type="checkbox" 
-              className="sr-only" 
+            <input
+              type="checkbox"
+              className="sr-only"
               checked={manualSaveMode}
               onChange={(e) => setManualSaveMode(e.target.checked)}
             />
-            <div className={`block w-10 h-6 rounded-full transition-colors ${manualSaveMode ? 'bg-accent3' : 'bg-slate-800'}`}></div>
-            <div className={`dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${manualSaveMode ? 'transform translate-x-4' : ''}`}></div>
+            <div
+              className={`block w-10 h-6 rounded-full transition-colors ${manualSaveMode ? "bg-accent3" : "bg-slate-800"}`}
+            ></div>
+            <div
+              className={`dot absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${manualSaveMode ? "transform translate-x-4" : ""}`}
+            ></div>
           </div>
           <div className="flex flex-col flex-1 text-right">
-            <span className="text-[11px] font-bold text-white">جلوگیری از ذخیره خودکار تغییرات داشبورد</span>
-            <span className="text-[9px] text-slate-400 mt-0.5">در صورت فعال بودن، تغییرات داشبورد به صورت خودکار ذخیره نمی‌شوند و یک دکمه ذخیره دستی به شما نمایش داده می‌شود.</span>
+            <span className="text-[11px] font-bold text-white">
+              جلوگیری از ذخیره خودکار تغییرات داشبورد
+            </span>
+            <span className="text-[9px] text-slate-400 mt-0.5">
+              در صورت فعال بودن، تغییرات داشبورد به صورت خودکار ذخیره نمی‌شوند و یک دکمه ذخیره دستی
+              به شما نمایش داده می‌شود.
+            </span>
           </div>
         </label>
       </div>
 
       {/* Status Indicator Bar */}
-      <div className={`p-3 rounded-xl border flex items-center justify-between text-right text-[10px] ${
-        isCfConnected
-          ? "bg-emerald-950/20 border-emerald-500/40 text-emerald-400"
-          : "bg-slate-950/40 border-slate-800 text-slate-400"
-      }`}>
+      <div
+        className={`p-3 rounded-xl border flex items-center justify-between text-right text-[10px] ${
+          isCfConnected
+            ? "bg-emerald-950/20 border-emerald-500/40 text-emerald-400"
+            : "bg-slate-950/40 border-slate-800 text-slate-400"
+        }`}
+      >
         <div className="flex items-center gap-1.5 justify-end w-full">
           <span className="font-bold">
-            {isCfConnected 
-              ? "سیستم روی حالت ذخیره‌سازی کلودفلر (ابر زنده) تنظیم شده است." 
+            {isCfConnected
+              ? "سیستم روی حالت ذخیره‌سازی کلودفلر (ابر زنده) تنظیم شده است."
               : "پخش آفلاین / حافظه محلی فعال است (ورکر تنظیم نشده است)."}
           </span>
           {isCfConnected ? (

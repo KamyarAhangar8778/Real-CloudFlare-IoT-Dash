@@ -15,19 +15,19 @@ export default function BrandBox({
   variant,
   isDark,
   setIsDark,
-  animationsEnabled
+  animationsEnabled,
 }: BrandBoxProps) {
   if (variant === "vertical") {
     return (
       <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-4 rounded-2xl md:rounded-bl-md md:rounded-tl-md md:rounded-tr-md shadow-sm flex items-center justify-between gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
-            <Image 
-              src="/logo.png" 
-              alt="Logo" 
-              width={26} 
-              height={26} 
-              className="object-contain" 
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={26}
+              height={26}
+              className="object-contain"
               referrerPolicy="no-referrer"
             />
           </div>
@@ -48,12 +48,12 @@ export default function BrandBox({
     <div className="md:w-1/3 xl:w-1/4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] px-5 py-3.5 rounded-2xl shadow-sm flex items-center justify-between md:justify-start gap-4 transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)]">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl shrink-0 flex items-center justify-center overflow-hidden shadow-sm hover:border-[var(--accent4)] transition-all">
-          <Image 
-            src="/logo.png" 
-            alt="Logo" 
-            width={26} 
-            height={26} 
-            className="object-contain" 
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={26}
+            height={26}
+            className="object-contain"
             referrerPolicy="no-referrer"
           />
         </div>
@@ -76,9 +76,13 @@ export default function BrandBox({
             title="تغییر تم پوسته"
           >
             {isDark ? (
-              <Moon className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`} />
+              <Moon
+                className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`}
+              />
             ) : (
-              <Sun className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`} />
+              <Sun
+                className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`}
+              />
             )}
           </button>
         </div>

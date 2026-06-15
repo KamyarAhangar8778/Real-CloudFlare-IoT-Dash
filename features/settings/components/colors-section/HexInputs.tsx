@@ -9,12 +9,7 @@ interface HexInputsProps {
   setAccent4: (val: string) => void;
 }
 
-export default function HexInputs({
-  accent3,
-  setAccent3,
-  accent4,
-  setAccent4,
-}: HexInputsProps) {
+export default function HexInputs({ accent3, setAccent3, accent4, setAccent4 }: HexInputsProps) {
   const [showHexInputs, setShowHexInputs] = React.useState(false);
 
   return (
@@ -28,9 +23,7 @@ export default function HexInputs({
           className="w-3.5 h-3.5 text-accent3 transition-transform duration-300"
           style={{ transform: showHexInputs ? "rotate(-90deg)" : "rotate(0deg)" }}
         />
-        <span className="flex items-center gap-1.5">
-          تنظیم پیشرفته کد رنگ دستی (HEX)
-        </span>
+        <span className="flex items-center gap-1.5">تنظیم پیشرفته کد رنگ دستی (HEX)</span>
       </button>
 
       <AnimatePresence initial={false}>
@@ -45,7 +38,9 @@ export default function HexInputs({
             <div className="grid grid-cols-2 gap-3 pt-3.5 pb-1">
               {/* Accent 3 Hex input */}
               <div className="space-y-1 text-right">
-                <span className="text-[9.5px] theme-text-muted block font-sans">کد هگز رنگ سوم:</span>
+                <span className="text-[9.5px] theme-text-muted block font-sans">
+                  کد هگز رنگ سوم:
+                </span>
                 <input
                   type="text"
                   value={accent3}
@@ -57,7 +52,9 @@ export default function HexInputs({
 
               {/* Accent 4 Hex input */}
               <div className="space-y-1 text-right">
-                <span className="text-[9.5px] theme-text-muted block font-sans">کد هگز رنگ چهارم:</span>
+                <span className="text-[9.5px] theme-text-muted block font-sans">
+                  کد هگز رنگ چهارم:
+                </span>
                 <input
                   type="text"
                   value={accent4}

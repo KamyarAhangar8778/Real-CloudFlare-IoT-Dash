@@ -39,9 +39,9 @@ export default function DashboardWorkspace() {
   return (
     <main className="flex-1 flex flex-col justify-center items-center text-center max-w-4xl mx-auto space-y-8 py-4 w-full relative">
       {segments.length === 0 ? (
-        <WelcomePortal 
-          setIsMenuOpen={setIsMenuOpen} 
-          setIsModulesMenuOpen={setIsModulesMenuOpen} 
+        <WelcomePortal
+          setIsMenuOpen={setIsMenuOpen}
+          setIsModulesMenuOpen={setIsModulesMenuOpen}
           accent3={accent3}
           accent4={accent4}
           animationsEnabled={animationsEnabled}

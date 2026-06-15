@@ -26,14 +26,13 @@ export default function LowDataModeBanner({
   if (!lowDataMode && !(manualSaveMode && unsavedChangesCount > 0)) return null;
 
   return (
-    <div className={`flex flex-col gap-2 ${
-      headerPosition === "left" 
-        ? "max-w-5xl md:mt-0 max-md:mt-6" 
-        : "max-w-6xl mt-4 md:mt-2"
+    <div
+      className={`flex flex-col gap-2 ${
+        headerPosition === "left" ? "max-w-5xl md:mt-0 max-md:mt-6" : "max-w-6xl mt-4 md:mt-2"
       } mx-auto w-full`}
     >
       {lowDataMode && (
-        <motion.div 
+        <motion.div
           initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
           animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
           className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-[var(--card-bg-solid)] border border-[var(--accent3-medium)]/85 text-right gap-4 w-full transition-all duration-300 shadow-md hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}
@@ -55,8 +54,8 @@ export default function LowDataModeBanner({
         </motion.div>
       )}
 
-      {(manualSaveMode && unsavedChangesCount > 0) && (
-        <motion.div 
+      {manualSaveMode && unsavedChangesCount > 0 && (
+        <motion.div
           initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
           animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
           className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-emerald-950/20 border border-emerald-500/40 text-right gap-4 w-full transition-all duration-300 shadow-md hover:border-emerald-500 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}

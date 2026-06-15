@@ -6,7 +6,8 @@ import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
 import useSegmentButtonProps from "./useSegmentButtonProps";
 
-interface ActiveCardProps extends Omit<SortableSegmentCardProps, "onSetupPlaceholder" | "isLoadingIoT"> {
+interface ActiveCardProps
+  extends Omit<SortableSegmentCardProps, "onSetupPlaceholder" | "isLoadingIoT"> {
   isCompact: boolean;
   isUltraCompact: boolean;
   attributes: any;
@@ -68,7 +69,11 @@ export default function ActiveCard({
       transition={animationsEnabled ? { type: "spring", stiffness: 380, damping: 32 } : undefined}
       initial={animationsEnabled ? { opacity: 0, scale: 0.93, y: 10 } : false}
       animate={animationsEnabled ? { opacity: 1, scale: 1, y: 0 } : false}
-      exit={animationsEnabled ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } } : undefined}
+      exit={
+        animationsEnabled
+          ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } }
+          : undefined
+      }
       whileHover={animationsEnabled ? { y: -1.5, scale: 1.002 } : undefined}
       className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl overflow-hidden ${
         isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
@@ -101,9 +106,7 @@ export default function ActiveCard({
           animationsEnabled={animationsEnabled}
         />
 
-        {!isUltraCompact && !isCompact && (
-          <CardFooter segment={segment} isPinOn={isPinOn} />
-        )}
+        {!isUltraCompact && !isCompact && <CardFooter segment={segment} isPinOn={isPinOn} />}
       </div>
     </motion.div>
   );

@@ -35,8 +35,8 @@ export function TabActiveIndicator({
                 backgroundColor: isActive
                   ? "var(--accent3)"
                   : isDark
-                  ? "rgba(255, 255, 255, 0.22)"
-                  : "rgba(15, 23, 42, 0.25)",
+                    ? "rgba(255, 255, 255, 0.22)"
+                    : "rgba(15, 23, 42, 0.25)",
                 boxShadow: isActive ? "0 0 6px var(--accent3)" : "none",
               }}
             />

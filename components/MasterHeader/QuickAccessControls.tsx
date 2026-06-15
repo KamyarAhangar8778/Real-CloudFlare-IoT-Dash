@@ -12,7 +12,7 @@ export default function QuickAccessControls({
   setIsModulesMenuOpen,
   setIsMenuOpen,
   animationsEnabled,
-  variant
+  variant,
 }: QuickAccessControlsProps) {
   if (variant === "vertical") {
     return (
@@ -28,7 +28,9 @@ export default function QuickAccessControls({
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-[var(--accent4-transparent)] text-[var(--accent4)]">
-              <Layers className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`} />
+              <Layers
+                className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`}
+              />
             </div>
             <span className="text-xs font-semibold">پالایه و ماژول‌ها</span>
           </div>
@@ -44,7 +46,9 @@ export default function QuickAccessControls({
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-gray-500/10 text-[var(--text-tertiary)] transition-all">
-              <SettingsIcon className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`} />
+              <SettingsIcon
+                className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+              />
             </div>
             <span className="text-xs font-semibold">تنظیمات اصلی</span>
           </div>
@@ -64,7 +68,9 @@ export default function QuickAccessControls({
         className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97]"
         title="مدیریت ماژول‌ها و ابزارها"
       >
-        <Layers className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`} />
+        <Layers
+          className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`}
+        />
         <span>ماژول‌ها</span>
       </button>
 
@@ -74,7 +80,9 @@ export default function QuickAccessControls({
         className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
         title="پیکربندی سیستم"
       >
-        <SettingsIcon className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`} />
+        <SettingsIcon
+          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+        />
       </button>
     </>
   );

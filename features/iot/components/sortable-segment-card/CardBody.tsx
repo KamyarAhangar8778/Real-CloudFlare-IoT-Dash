@@ -22,7 +22,9 @@ export default function CardBody({
   animationsEnabled = true,
 }: CardBodyProps) {
   return (
-    <div className={`${isUltraCompact ? "p-2 flex-grow flex items-center justify-center" : isCompact ? "p-3 flex-1 flex items-center" : "p-4 flex-1"}`}>
+    <div
+      className={`${isUltraCompact ? "p-2 flex-grow flex items-center justify-center" : isCompact ? "p-3 flex-1 flex items-center" : "p-4 flex-1"}`}
+    >
       {isUltraCompact ? (
         <div className="flex items-center justify-center w-full">
           <PinToggle
@@ -45,12 +47,20 @@ export default function CardBody({
         </div>
       ) : (
         <div className="flex items-center justify-between bg-[var(--card-bg-solid)] p-4 border border-[var(--border-color)] rounded-xl">
-          <span className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border rounded-lg ${
-            isPinOn ? "border-[var(--accent4)] text-[var(--accent4)] bg-[var(--accent4-transparent)]" : "border-gray-500 text-gray-400"
-          }`}>
-            {mode === "push" 
-              ? (isPinOn ? "پالس فعال HIGH" : "آماده تحریک LOW") 
-              : (isPinOn ? "روشن / فعال" : "خاموش / غیرفعال")}
+          <span
+            className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border rounded-lg ${
+              isPinOn
+                ? "border-[var(--accent4)] text-[var(--accent4)] bg-[var(--accent4-transparent)]"
+                : "border-gray-500 text-gray-400"
+            }`}
+          >
+            {mode === "push"
+              ? isPinOn
+                ? "پالس فعال HIGH"
+                : "آماده تحریک LOW"
+              : isPinOn
+                ? "روشن / فعال"
+                : "خاموش / غیرفعال"}
           </span>
 
           <div className="flex items-center gap-3 text-right">

@@ -34,7 +34,6 @@ export default function DashboardContainer() {
   return (
     <MotionConfig reducedMotion={animationsEnabled ? "user" : "always"}>
       <div className="theme-bg-main theme-text-secondary min-h-screen overflow-x-hidden relative font-sans leading-relaxed selection:bg-[var(--accent3-transparent)] selection:text-[var(--accent3)] transition-colors duration-500">
-        
         {/* Fullscreen Initial ESP32 Configuration Sync Overlay */}
         <SyncOverlay
           isFullyReady={isFullyReady}
@@ -66,21 +65,24 @@ export default function DashboardContainer() {
         />
 
         {/* Main Flexible Container Grid */}
-        <div className={`relative z-10 w-full min-h-screen transition-all duration-500 ${
-          headerPosition === "left"
-            ? "flex flex-col md:flex-row-reverse items-stretch"
-            : "flex flex-col max-w-6xl mx-auto px-6 py-6 md:py-8 justify-between gap-12"
-        }`}>
-
+        <div
+          className={`relative z-10 w-full min-h-screen transition-all duration-500 ${
+            headerPosition === "left"
+              ? "flex flex-col md:flex-row-reverse items-stretch"
+              : "flex flex-col max-w-6xl mx-auto px-6 py-6 md:py-8 justify-between gap-12"
+          }`}
+        >
           {/* Desktop Left Sidebar Frame */}
-          {headerPosition === "left" && (
-            <DashboardHeader position="left" />
-          )}
+          {headerPosition === "left" && <DashboardHeader position="left" />}
 
           {/* Workspace & Main Control Sections */}
-          <div className={`flex-1 flex flex-col justify-between gap-12 ${
-            headerPosition === "left" ? "p-6 md:pt-1 md:pb-8 md:px-8 max-w-5xl w-full mx-auto" : "w-full"
-          }`}>
+          <div
+            className={`flex-1 flex flex-col justify-between gap-12 ${
+              headerPosition === "left"
+                ? "p-6 md:pt-1 md:pb-8 md:px-8 max-w-5xl w-full mx-auto"
+                : "w-full"
+            }`}
+          >
             {/* Top Header Section (Shows on mobile/top dynamically) */}
             <DashboardHeader position="topOrMobile" />
 

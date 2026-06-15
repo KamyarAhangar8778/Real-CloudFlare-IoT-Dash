@@ -12,7 +12,7 @@ export function serializeToCloudflare(config: any): any {
       chip: "ESP32-S3-WROOM-1",
       firmware: "v3.4.1-Achaemenid-OS",
       reboot_count: 0,
-      last_boot: new Date().toISOString()
+      last_boot: new Date().toISOString(),
     },
     preferences: {
       theme_mode: config.preferences?.theme_mode || "dark",
@@ -23,12 +23,12 @@ export function serializeToCloudflare(config: any): any {
       header_animation: config.preferences?.header_animation || "fade",
       header_title: config.preferences?.header_title || "سامانه هوشمند پادشاهی هخامنش",
       cuneiform_opacity: config.preferences?.cuneiform_opacity ?? 0.08,
-      cuneiform_color: config.preferences?.cuneiform_color || "accent3"
+      cuneiform_color: config.preferences?.cuneiform_color || "accent3",
     },
     layout: {
       groups_order: config.layout?.groups_order || [],
       groups_cols: config.layout?.groups_cols || 1,
-      group_configs: config.layout?.group_configs || {}
+      group_configs: config.layout?.group_configs || {},
     },
     // Map 'segments' list from our dashboard to 'segments_definition' key
     segments_definition: config.segments || [],
@@ -48,7 +48,7 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
       chip: "ESP32-S3-WROOM-1",
       firmware: "v3.4.1-Achaemenid-OS",
       reboot_count: 0,
-      last_boot: new Date().toISOString()
+      last_boot: new Date().toISOString(),
     },
     preferences: {
       theme_mode: cfData.preferences?.theme_mode || "dark",
@@ -59,12 +59,12 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
       header_animation: cfData.preferences?.header_animation || "fade",
       header_title: cfData.preferences?.header_title || "سامانه هوشمند پادشاهی هخامنش",
       cuneiform_opacity: cfData.preferences?.cuneiform_opacity ?? 0.08,
-      cuneiform_color: cfData.preferences?.cuneiform_color || "accent3"
+      cuneiform_color: cfData.preferences?.cuneiform_color || "accent3",
     },
     layout: {
       groups_order: cfData.layout?.groups_order || [],
       groups_cols: cfData.layout?.groups_cols || 1,
-      group_configs: cfData.layout?.group_configs || {}
+      group_configs: cfData.layout?.group_configs || {},
     },
     // Load from 'segments_definition' and fall back to 'segments'
     segments: cfData.segments_definition || cfData.segments || [],
@@ -72,4 +72,3 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
     worker_url: cfData.worker_url || undefined,
   };
 }
-

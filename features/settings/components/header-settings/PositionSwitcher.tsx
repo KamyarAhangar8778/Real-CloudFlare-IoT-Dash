@@ -32,8 +32,12 @@ export default function PositionSwitcher({
               : "border-[var(--border-color)] hover:border-[var(--accent4)]/60 bg-black/10 hover:bg-black/20"
           }`}
         >
-          <PanelTop className={`w-4 h-4 ${headerPosition === "top" ? "text-[var(--accent4)]" : "theme-text-muted"}`} />
-          <span className={`font-bold text-[11px] ${headerPosition === "top" ? "theme-text-primary" : "theme-text-secondary"}`}>
+          <PanelTop
+            className={`w-4 h-4 ${headerPosition === "top" ? "text-[var(--accent4)]" : "theme-text-muted"}`}
+          />
+          <span
+            className={`font-bold text-[11px] ${headerPosition === "top" ? "theme-text-primary" : "theme-text-secondary"}`}
+          >
             هدر پهن بالا
           </span>
         </motion.button>
@@ -49,8 +53,12 @@ export default function PositionSwitcher({
               : "border-[var(--border-color)] hover:border-[var(--accent4)]/60 bg-black/10 hover:bg-black/20"
           }`}
         >
-          <PanelLeft className={`w-4 h-4 ${headerPosition === "left" ? "text-[var(--accent4)]" : "theme-text-muted"}`} />
-          <span className={`font-bold text-[11px] ${headerPosition === "left" ? "theme-text-primary" : "theme-text-secondary"}`}>
+          <PanelLeft
+            className={`w-4 h-4 ${headerPosition === "left" ? "text-[var(--accent4)]" : "theme-text-muted"}`}
+          />
+          <span
+            className={`font-bold text-[11px] ${headerPosition === "left" ? "theme-text-primary" : "theme-text-secondary"}`}
+          >
             منوی ستونی چپ
           </span>
         </motion.button>

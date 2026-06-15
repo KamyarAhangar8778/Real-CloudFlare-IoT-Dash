@@ -13,7 +13,7 @@ export default function CuneiformSection({
   setCuneiformColor,
   expandedSection,
   toggleSection,
-  hideHeader = false
+  hideHeader = false,
 }: CuneiformSectionProps) {
   const isExpanded = hideHeader ? true : expandedSection === "cuneiform";
 
@@ -41,7 +41,9 @@ export default function CuneiformSection({
           style={{ transform: isExpanded ? "rotate(-90deg)" : "rotate(0deg)" }}
         />
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold theme-text-primary">تنظیمات کتیبه خط میخی پس‌زمینه</span>
+          <span className="text-xs font-bold theme-text-primary">
+            تنظیمات کتیبه خط میخی پس‌زمینه
+          </span>
           <Sparkles className="w-4 h-4 text-accent3" style={{ color: "var(--accent3)" }} />
         </div>
       </button>

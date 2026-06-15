@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  getBaseStyles,
-  getThemeStyles,
-  getUtilityStyles,
-  getAnimationStyles,
-} from "./styles";
+import { getBaseStyles, getThemeStyles, getUtilityStyles, getAnimationStyles } from "./styles";
 
 interface DashboardStylesProps {
   accent3: string;

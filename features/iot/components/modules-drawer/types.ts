@@ -16,7 +16,7 @@ export interface ModulesDrawerProps {
     pin: string,
     title?: string,
     group?: string,
-    mode?: "switch" | "push"
+    mode?: "switch" | "push",
   ) => void;
   segments: Segment[];
   onRemoveSegment: (id: string) => void;

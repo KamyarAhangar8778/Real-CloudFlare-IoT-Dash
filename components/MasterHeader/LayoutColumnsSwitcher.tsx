@@ -10,7 +10,7 @@ interface LayoutColumnsSwitcherProps {
 export default function LayoutColumnsSwitcher({
   groupsCols,
   setGroupsCols,
-  variant
+  variant,
 }: LayoutColumnsSwitcherProps) {
   if (variant === "vertical") {
     return (

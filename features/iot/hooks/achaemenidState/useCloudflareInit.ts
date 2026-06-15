@@ -42,7 +42,11 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
       } catch (e) {
         console.error("Failed to fetch initial configuration from Cloudflare:", e);
       }
-      setSyncStatus(false, 50, "خطا در همگام‌سازی تنظیمات از کلودفلر. لطفاً آدرس ورکر را بررسی و مجدداً تلاش کنید.");
+      setSyncStatus(
+        false,
+        50,
+        "خطا در همگام‌سازی تنظیمات از کلودفلر. لطفاً آدرس ورکر را بررسی و مجدداً تلاش کنید.",
+      );
     } else {
       setSyncStatus(false, 100, "انتقال داده‌های محلی کامل شد.");
       setIsFullyReady(true);
@@ -71,4 +75,3 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
     handleRetrySync: initCloudflareSync,
   };
 }
-

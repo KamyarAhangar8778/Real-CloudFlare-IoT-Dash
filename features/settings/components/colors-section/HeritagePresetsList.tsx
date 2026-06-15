@@ -35,13 +35,13 @@ export default function HeritagePresetsList({
             >
               {/* Colors Preview dots - beautifully circular */}
               <div className="flex gap-2 items-center">
-                <div 
-                  className="w-4 h-4 rounded-full border border-white/20 transition-transform duration-300 group-hover:scale-110 shadow-lg" 
-                  style={{ backgroundColor: preset.accent4 }} 
+                <div
+                  className="w-4 h-4 rounded-full border border-white/20 transition-transform duration-300 group-hover:scale-110 shadow-lg"
+                  style={{ backgroundColor: preset.accent4 }}
                 />
-                <div 
-                  className="w-4 h-4 rounded-full border border-white/20 transition-transform duration-300 group-hover:scale-110 shadow-lg -mr-1.5" 
-                  style={{ backgroundColor: preset.accent3 }} 
+                <div
+                  className="w-4 h-4 rounded-full border border-white/20 transition-transform duration-300 group-hover:scale-110 shadow-lg -mr-1.5"
+                  style={{ backgroundColor: preset.accent3 }}
                 />
               </div>
               <div className="text-right">

@@ -19,14 +19,7 @@ export default function SortableGroup({
   animationsEnabled = true,
   children,
 }: SortableGroupProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `group-${id}`,
     data: {
       type: "Group",
@@ -67,7 +60,7 @@ export default function SortableGroup({
           <div
             className={`flex flex-wrap gap-4 w-full text-right p-4 relative z-10 group-layout-${id.replace(
               /\s+/g,
-              "-"
+              "-",
             )}`}
           >
             <style
@@ -80,8 +73,8 @@ export default function SortableGroup({
                   maxCols === 1
                     ? "100%"
                     : maxCols === 2
-                    ? "calc(50% - 0.5rem)"
-                    : "calc(33.333% - 0.75rem)"
+                      ? "calc(50% - 0.5rem)"
+                      : "calc(33.333% - 0.75rem)"
                 };
                 max-width: 100%;
               }

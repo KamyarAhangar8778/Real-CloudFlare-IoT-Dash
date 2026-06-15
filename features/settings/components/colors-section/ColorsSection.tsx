@@ -27,14 +27,11 @@ export default function ColorsSectionComponent({
   const renderContent = () => (
     <div className="space-y-5 text-right font-sans">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
-        این داشبورد مجهز به سیستم پایداری ۴ رنگی است. رنگ‌های اصلی (سیاه، سفید و خاکستری) همواره ثابت هستند. شما می‌توانید رنگ‌های اختیاری سوم و چهارم را در زیر پیکربندی نمایید:
+        این داشبورد مجهز به سیستم پایداری ۴ رنگی است. رنگ‌های اصلی (سیاه، سفید و خاکستری) همواره ثابت
+        هستند. شما می‌توانید رنگ‌های اختیاری سوم و چهارم را در زیر پیکربندی نمایید:
       </p>
 
-      <HeritagePresetsList
-        accent3={accent3}
-        accent4={accent4}
-        onSelectPreset={selectPreset}
-      />
+      <HeritagePresetsList accent3={accent3} accent4={accent4} onSelectPreset={selectPreset} />
 
       <div className="border-t border-accent3-medium/20 pt-4 space-y-4">
         <div className="flex items-center justify-between">
@@ -82,7 +79,9 @@ export default function ColorsSectionComponent({
           style={{ transform: isExpanded ? "rotate(-90deg)" : "rotate(0deg)" }}
         />
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold theme-text-primary">تنظیم تنوع رنگ و تضاد (رنگ ۳ و ۴)</span>
+          <span className="text-xs font-bold theme-text-primary">
+            تنظیم تنوع رنگ و تضاد (رنگ ۳ و ۴)
+          </span>
           <Palette className="w-4 h-4 text-accent3" />
         </div>
       </button>

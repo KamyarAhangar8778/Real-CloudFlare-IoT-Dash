@@ -5,10 +5,7 @@ interface TitleInputProps {
   setHeaderTitle: (val: string) => void;
 }
 
-export default function TitleInput({
-  headerTitle,
-  setHeaderTitle,
-}: TitleInputProps) {
+export default function TitleInput({ headerTitle, setHeaderTitle }: TitleInputProps) {
   const handleTitleChange = (val: string) => {
     setHeaderTitle(val);
   };
@@ -31,7 +28,7 @@ export default function TitleInput({
           عنوان هدر هوشمند
         </span>
       </div>
-      
+
       <input
         type="text"
         value={headerTitle}
