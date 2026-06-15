@@ -5,6 +5,7 @@ import LayoutPositionSwitcher from "./LayoutPositionSwitcher";
 import LayoutColumnsSwitcher from "./LayoutColumnsSwitcher";
 import QuickAccessControls from "./QuickAccessControls";
 import ThemeToggle from "./ThemeToggle";
+import GlobalRuleSettings from "./GlobalRuleSettings";
 
 export default function VerticalHeader(props: MasterHeaderProps) {
   return (
@@ -46,6 +47,8 @@ export default function VerticalHeader(props: MasterHeaderProps) {
         </div>
 
         {/* Footer controls: theme toggler and brand info */}
+        <GlobalRuleSettings />
+        
         <ThemeToggle
           isDark={props.isDark}
           setIsDark={props.setIsDark}

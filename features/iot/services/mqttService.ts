@@ -2,6 +2,17 @@ import mqtt, { MqttClient } from "mqtt";
 
 let client: MqttClient | null = null;
 
+type StateChangeCallback = (pinId: string, state: boolean) => void;
+const stateCallbacks: StateChangeCallback[] = [];
+
+export const onMqttStateChange = (cb: StateChangeCallback) => {
+  stateCallbacks.push(cb);
+  return () => {
+    const idx = stateCallbacks.indexOf(cb);
+    if (idx > -1) stateCallbacks.splice(idx, 1);
+  };
+};
+
 export const initMqtt = () => {
   if (!client) {
     // استفاده از broker.emqx.io چون داشبورد نیازمند اتصال WebSocket ایمن (WSS) است.
@@ -12,6 +23,20 @@ export const initMqtt = () => {
 
     client.on("connect", () => {
       console.log("[MQTT] Connected to EMQX via WSS!");
+      client?.subscribe("KamyarIoT/Achaemenid/State");
+    });
+
+    client.on("message", (topic, payload) => {
+      if (topic === "KamyarIoT/Achaemenid/State") {
+        try {
+          const data = JSON.parse(payload.toString());
+          if (data.id !== undefined && data.value !== undefined) {
+            stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
+          }
+        } catch (e) {
+          console.error("Failed to parse MQTT state message", e);
+        }
+      }
     });
 
     client.on("error", (err) => {

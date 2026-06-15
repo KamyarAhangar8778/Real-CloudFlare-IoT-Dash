@@ -6,7 +6,7 @@ import {
   isCloudflareEnabled,
   updatePinOnCloudflare,
 } from "@/features/iot/services/cloudflareService";
-import { publishPinCommand, initMqtt } from "@/features/iot/services/mqttService";
+import { publishPinCommand, initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
 
 interface UsePinOperationsProps {
   refetchIot: () => void;
@@ -18,7 +18,11 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
 
   useEffect(() => {
     initMqtt();
-  }, []);
+    const unsubscribe = onMqttStateChange((pin, state) => {
+      setPinsState((prev) => ({ ...prev, [pin]: state }));
+    });
+    return () => unsubscribe();
+  }, [setPinsState]);
 
   const updatePinOnServer = async (
     pin: string,

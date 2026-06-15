@@ -5,6 +5,7 @@ import LayoutPositionSwitcher from "./LayoutPositionSwitcher";
 import LayoutColumnsSwitcher from "./LayoutColumnsSwitcher";
 import QuickAccessControls from "./QuickAccessControls";
 import ThemeToggle from "./ThemeToggle";
+import GlobalRuleSettings from "./GlobalRuleSettings";
 
 export default function HorizontalHeader(props: MasterHeaderProps) {
   return (
@@ -42,6 +43,8 @@ export default function HorizontalHeader(props: MasterHeaderProps) {
 
           {/* Control Target Drawers with Premium feedback */}
           <div className="flex items-center gap-2">
+            <GlobalRuleSettings />
+            
             <QuickAccessControls
               setIsModulesMenuOpen={props.setIsModulesMenuOpen}
               setIsMenuOpen={props.setIsMenuOpen}
