@@ -1,16 +1,21 @@
 import React from "react";
-import { 
-  SortableContext, 
-  verticalListSortingStrategy, 
-  rectSortingStrategy 
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableGroup from "../SortableGroup";
 import SortableSegmentCard from "../SortableSegmentCard";
 import { IoTWorkspaceProps } from "./types";
 
 type WorkspaceGridProps = Omit<
-  IoTWorkspaceProps, 
-  "sensors" | "handleDragStart" | "handleDragOver" | "handleDragEnd" | "activeSegmentId" | "activeGroupId"
+  IoTWorkspaceProps,
+  | "sensors"
+  | "handleDragStart"
+  | "handleDragOver"
+  | "handleDragEnd"
+  | "activeSegmentId"
+  | "activeGroupId"
 >;
 
 export default function WorkspaceGrid({
@@ -33,22 +38,26 @@ export default function WorkspaceGrid({
   handleSetupPlaceholder,
 }: WorkspaceGridProps) {
   return (
-    <SortableContext 
-      items={groupsOrder.map(g => `group-${g}`)} 
+    <SortableContext
+      items={groupsOrder.map((g) => `group-${g}`)}
       strategy={groupsCols > 1 ? rectSortingStrategy : verticalListSortingStrategy}
     >
-      <div className={
-        groupsCols === 3 ? "grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start" :
-        groupsCols === 2 ? "grid grid-cols-1 md:grid-cols-2 gap-8 w-full items-start" :
-        "w-full space-y-8 items-start"
-      }>
+      <div
+        className={
+          groupsCols === 3
+            ? "grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start"
+            : groupsCols === 2
+              ? "grid grid-cols-1 md:grid-cols-2 gap-8 w-full items-start"
+              : "w-full space-y-8 items-start"
+        }
+      >
         {groupsOrder.map((groupName) => {
-          const groupSegments = segments.filter(s => (s.group || "Test") === groupName);
+          const groupSegments = segments.filter((s) => (s.group || "Test") === groupName);
           return (
             <div key={groupName} className="space-y-3 w-full">
-              <SortableGroup 
-                id={groupName} 
-                items={groupSegments.map(s => s.id)} 
+              <SortableGroup
+                id={groupName}
+                items={groupSegments.map((s) => s.id)}
                 segmentCount={groupSegments.length}
                 maxCols={groupConfigs[groupName]?.maxCols || 3}
                 onColsChange={(cols) => handleGroupColsChange(groupName, cols)}

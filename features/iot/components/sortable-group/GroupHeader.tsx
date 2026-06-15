@@ -59,11 +59,7 @@ export default function GroupHeader({
         </div>
       </div>
 
-      <div
-        className={`flex items-center shrink-0 ${
-          parentGroupsCols === 3 ? "gap-1" : "gap-3"
-        }`}
-      >
+      <div className={`flex items-center shrink-0 ${parentGroupsCols === 3 ? "gap-1" : "gap-3"}`}>
         <LayoutSelector
           maxCols={maxCols}
           onColsChange={onColsChange}

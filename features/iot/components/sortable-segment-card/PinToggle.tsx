@@ -22,15 +22,13 @@ export default function PinToggle({
         isPinOn
           ? "bg-[var(--accent4)] shadow-[0_0_8px_rgba(16,185,129,0.35)]"
           : isUltraCompact
-          ? "bg-black/50 border border-slate-800"
-          : "bg-black/30 border border-slate-800/40"
+            ? "bg-black/50 border border-slate-800"
+            : "bg-black/30 border border-slate-800/40"
       }`}
     >
       <span
         className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
-          animationsEnabled
-            ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-            : ""
+          animationsEnabled ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" : ""
         } ${isPinOn ? "-translate-x-5" : "translate-x-0"}`}
       />
     </button>

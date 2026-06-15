@@ -20,7 +20,10 @@ export function SettingsHeader({ onClose, animationsEnabled }: SettingsHeaderPro
       </motion.button>
       <div className="flex items-center gap-2.5">
         <div>
-          <h4 className="font-sans font-black text-sm text-accent3" style={{ color: "var(--accent3)" }}>
+          <h4
+            className="font-sans font-black text-sm text-accent3"
+            style={{ color: "var(--accent3)" }}
+          >
             منوی مدیریت و تنظیمات
           </h4>
           <p className="text-[9px] theme-text-muted font-sans tracking-wide uppercase">
@@ -28,7 +31,9 @@ export function SettingsHeader({ onClose, animationsEnabled }: SettingsHeaderPro
           </p>
         </div>
         <div className="p-2 theme-card-bg-solid border border-accent3-medium text-accent3">
-          <SettingsIcon className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`} />
+          <SettingsIcon
+            className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+          />
         </div>
       </div>
     </div>

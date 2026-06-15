@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { isCloudflareEnabled, fetchPinsFromCloudflare } from "@/features/iot/services/cloudflareService";
+import {
+  isCloudflareEnabled,
+  fetchPinsFromCloudflare,
+} from "@/features/iot/services/cloudflareService";
 
 export function useCloudflareQuery() {
   const { segments, pinsState, setPinsState, lowDataMode } = useIoTStore();
@@ -14,7 +17,7 @@ export function useCloudflareQuery() {
   }, []);
 
   const { data: iotData, refetch: refetchIot } = useQuery({
-    queryKey: ["iotState", segments.map(s => s.pin).join(",")],
+    queryKey: ["iotState", segments.map((s) => s.pin).join(",")],
     queryFn: async () => {
       if (isCloudflareEnabled()) {
         try {

@@ -18,7 +18,7 @@ export default function CircularPickers({
       {/* Accent 3 Manual Circular Picker */}
       <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-black/15 hover:bg-black/30 transition-colors">
         <span className="text-[10px] theme-text-secondary font-bold mb-3">رنگ سوم اصلی</span>
-        <div 
+        <div
           className="relative w-12 h-12 rounded-full border-2 border-white/30 shadow-lg flex items-center justify-center overflow-hidden transition-transform hover:scale-110 cursor-pointer"
           style={{ backgroundColor: accent3 }}
         >
@@ -28,14 +28,17 @@ export default function CircularPickers({
             onChange={(e) => setAccent3(e.target.value)}
             className="absolute inset-0 w-16 h-16 -m-2 opacity-0 cursor-pointer"
           />
-          <div className="w-5 h-5 rounded-full border border-white/50 pointer-events-none" style={{ backgroundColor: accent3 }} />
+          <div
+            className="w-5 h-5 rounded-full border border-white/50 pointer-events-none"
+            style={{ backgroundColor: accent3 }}
+          />
         </div>
       </div>
 
       {/* Accent 4 Manual Circular Picker */}
       <div className="flex flex-col items-center justify-center p-4 rounded-2xl border border-[var(--border-color)] bg-black/15 hover:bg-black/30 transition-colors">
         <span className="text-[10px] theme-text-secondary font-bold mb-3">رنگ چهارم کمکی</span>
-        <div 
+        <div
           className="relative w-12 h-12 rounded-full border-2 border-white/30 shadow-lg flex items-center justify-center overflow-hidden transition-transform hover:scale-110 cursor-pointer"
           style={{ backgroundColor: accent4 }}
         >
@@ -45,7 +48,10 @@ export default function CircularPickers({
             onChange={(e) => setAccent4(e.target.value)}
             className="absolute inset-0 w-16 h-16 -m-2 opacity-0 cursor-pointer"
           />
-          <div className="w-5 h-5 rounded-full border border-white/50 pointer-events-none" style={{ backgroundColor: accent4 }} />
+          <div
+            className="w-5 h-5 rounded-full border border-white/50 pointer-events-none"
+            style={{ backgroundColor: accent4 }}
+          />
         </div>
       </div>
     </div>

@@ -32,9 +32,7 @@ export default function FormDetailsInput({
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-[10px] theme-text-tertiary font-bold block">
-          نام گروه سگمنت:
-        </label>
+        <label className="text-[10px] theme-text-tertiary font-bold block">نام گروه سگمنت:</label>
         <input
           type="text"
           placeholder="مانند: Test"

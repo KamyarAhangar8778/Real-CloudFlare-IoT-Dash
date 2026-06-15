@@ -10,15 +10,24 @@ export function useAestheticState() {
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [headerAnimationType, setHeaderAnimationType] = useState<"fade" | "chase">("fade");
   const [headerTitle, setHeaderTitle] = useState("سامانه هوشمند پادشاهی هخامنش");
-  const [cuneiformOpacity, setCuneiformOpacity] = useState(0.08); 
-  const [cuneiformColor, setCuneiformColor] = useState<"accent3" | "accent4" | "white" | "muted">("accent3");
+  const [cuneiformOpacity, setCuneiformOpacity] = useState(0.08);
+  const [cuneiformColor, setCuneiformColor] = useState<"accent3" | "accent4" | "white" | "muted">(
+    "accent3",
+  );
   const [headerPosition, setHeaderPosition] = useState<"top" | "left">("top");
 
-  const cuneiformColorValue = 
-    cuneiformColor === "accent3" ? accent3 :
-    cuneiformColor === "accent4" ? accent4 :
-    cuneiformColor === "white" ? (isDark ? "#ffffff" : "#1e293b") :
-    (isDark ? "#475569" : "#94a3b8");
+  const cuneiformColorValue =
+    cuneiformColor === "accent3"
+      ? accent3
+      : cuneiformColor === "accent4"
+        ? accent4
+        : cuneiformColor === "white"
+          ? isDark
+            ? "#ffffff"
+            : "#1e293b"
+          : isDark
+            ? "#475569"
+            : "#94a3b8";
 
   return {
     isDark,

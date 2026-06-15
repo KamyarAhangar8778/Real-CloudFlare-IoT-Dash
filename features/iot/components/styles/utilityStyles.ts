@@ -6,7 +6,9 @@ interface UtilityStylesParams {
 export function getUtilityStyles({ isDark, animationsEnabled }: UtilityStylesParams): string {
   return `
     /* Active Performance Settings - Disabling CSS animations on demand */
-    ${!animationsEnabled ? `
+    ${
+      !animationsEnabled
+        ? `
       *, *::before, *::after {
         animation-delay: 0s !important;
         animation-duration: 0s !important;
@@ -16,16 +18,22 @@ export function getUtilityStyles({ isDark, animationsEnabled }: UtilityStylesPar
         animation: none !important;
         transition: none !important;
       }
-    ` : ""}
+    `
+        : ""
+    }
 
-    ${isDark ? `
+    ${
+      isDark
+        ? `
       div:nth-of-type(2) > div:nth-of-type(4) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) {
         background-color: var(--card-bg) !important;
       }
       div:nth-of-type(2) > div:nth-of-type(4) > main:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(5) {
         background-color: var(--card-bg) !important;
       }
-    ` : ""}
+    `
+        : ""
+    }
 
     .theme-bg-main { background-color: var(--bg-main); }
     .theme-text-primary { color: var(--text-primary); }

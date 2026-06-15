@@ -16,7 +16,7 @@ export default function StabilitySection({
   expandedSection,
   toggleSection,
   hideHeader = false,
-  isDark = true
+  isDark = true,
 }: StabilitySectionProps) {
   const isExpanded = hideHeader ? true : expandedSection === "animations";
   const { lowDataMode, setLowDataMode } = useIoTStore();

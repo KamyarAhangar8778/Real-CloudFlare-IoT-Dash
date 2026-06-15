@@ -14,7 +14,8 @@ export default function FontGrid({ selectedFont, setSelectedFont }: FontGridProp
   return (
     <div className="space-y-4 text-right">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
-        یکی از قلم‌های زیر را برای بورد خود انتخاب نمایید. پیش‌نمایش زنده هر قلم با متن زیر نمایش داده شده است:
+        یکی از قلم‌های زیر را برای بورد خود انتخاب نمایید. پیش‌نمایش زنده هر قلم با متن زیر نمایش داده
+        شده است:
       </p>
 
       {/* Grid: 2 rows of 5 columns on large screen, wrapping nicely on smaller screens */}
@@ -35,7 +36,9 @@ export default function FontGrid({ selectedFont, setSelectedFont }: FontGridProp
             >
               {/* Top Meta info */}
               <div className="flex items-center justify-between w-full gap-1">
-                <span className={`text-[8.5px] font-sans font-bold tracking-tight ${isSelected ? "text-[var(--accent3)]" : "theme-text-muted"}`}>
+                <span
+                  className={`text-[8.5px] font-sans font-bold tracking-tight ${isSelected ? "text-[var(--accent3)]" : "theme-text-muted"}`}
+                >
                   {font.desc}
                 </span>
                 <span className="font-sans font-black text-[10px] theme-text-primary">
@@ -47,7 +50,9 @@ export default function FontGrid({ selectedFont, setSelectedFont }: FontGridProp
               <div className="w-full py-2 flex items-center justify-center overflow-hidden">
                 <span
                   className={`text-[12px] font-bold text-center leading-relaxed transition-colors duration-300 ${
-                    isSelected ? "text-[var(--accent3)]" : "theme-text-secondary group-hover:theme-text-primary"
+                    isSelected
+                      ? "text-[var(--accent3)]"
+                      : "theme-text-secondary group-hover:theme-text-primary"
                   }`}
                   style={{ fontFamily: font.family }}
                 >

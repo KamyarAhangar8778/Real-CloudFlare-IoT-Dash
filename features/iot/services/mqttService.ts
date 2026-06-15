@@ -24,7 +24,7 @@ export const publishPinCommand = (pinId: string, value: boolean, timer?: number)
   if (!client) {
     initMqtt();
   }
-  
+
   if (client?.connected) {
     const payloadObj: any = { id: pinId, value };
     if (timer !== undefined) {

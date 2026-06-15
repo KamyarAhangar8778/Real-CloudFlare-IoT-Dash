@@ -6,10 +6,7 @@ interface TalismanStatusProps {
   accent4: string;
 }
 
-export default function TalismanStatus({
-  accent3,
-  accent4,
-}: TalismanStatusProps) {
+export default function TalismanStatus({ accent3, accent4 }: TalismanStatusProps) {
   return (
     <div className="theme-card-bg-solid border border-accent4-medium/40 p-3 text-center space-y-1.5 rounded-2xl">
       <div className="flex items-center justify-center gap-1.5 text-[10px] text-accent4">

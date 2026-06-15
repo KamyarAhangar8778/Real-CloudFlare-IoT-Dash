@@ -26,11 +26,11 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
   if (position === "left") {
     return (
       <aside className="hidden md:flex md:w-72 md:shrink-0 md:sticky md:top-4 md:h-fit p-1 flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] gap-4">
-        <MasterHeader 
-          isDark={isDark} 
-          setIsDark={setIsDark} 
-          setIsModulesMenuOpen={setIsModulesMenuOpen} 
-          setIsMenuOpen={setIsMenuOpen} 
+        <MasterHeader
+          isDark={isDark}
+          setIsDark={setIsDark}
+          setIsModulesMenuOpen={setIsModulesMenuOpen}
+          setIsMenuOpen={setIsMenuOpen}
           headerAnimationType={headerAnimationType}
           headerTitle={headerTitle}
           groupsCols={groupsCols}
@@ -49,11 +49,11 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
 
   return (
     <div className={headerPosition === "left" ? "md:hidden w-full" : "w-full"}>
-      <MasterHeader 
-        isDark={isDark} 
-        setIsDark={setIsDark} 
-        setIsModulesMenuOpen={setIsModulesMenuOpen} 
-        setIsMenuOpen={setIsMenuOpen} 
+      <MasterHeader
+        isDark={isDark}
+        setIsDark={setIsDark}
+        setIsModulesMenuOpen={setIsModulesMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
         headerAnimationType={headerAnimationType}
         headerTitle={headerTitle}
         groupsCols={groupsCols}

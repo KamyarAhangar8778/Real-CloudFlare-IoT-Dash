@@ -17,7 +17,8 @@ export default function CuneiformContent({
   return (
     <div className="space-y-4 text-right font-sans">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
-        با استفاده از ابزارهای زیر می‌توانید میزان پدیداری و هویت رنگ کتیبه سنگی خط میخی هخامنشی متحرک در پس‌زمینه را سفارشی‌سازی کنید:
+        با استفاده از ابزارهای زیر می‌توانید میزان پدیداری و هویت رنگ کتیبه سنگی خط میخی هخامنشی
+        متحرک در پس‌زمینه را سفارشی‌سازی کنید:
       </p>
 
       <OpacityControl
@@ -25,10 +26,7 @@ export default function CuneiformContent({
         setCuneiformOpacity={setCuneiformOpacity}
       />
 
-      <ColorPicker
-        cuneiformColor={cuneiformColor}
-        setCuneiformColor={setCuneiformColor}
-      />
+      <ColorPicker cuneiformColor={cuneiformColor} setCuneiformColor={setCuneiformColor} />
     </div>
   );
 }

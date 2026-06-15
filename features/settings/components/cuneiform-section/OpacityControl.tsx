@@ -15,7 +15,9 @@ export default function OpacityControl({
         <span className="text-[10px] text-accent3 font-mono" style={{ color: "var(--accent3)" }}>
           {Math.round(cuneiformOpacity * 100)}%
         </span>
-        <label className="text-[10px] theme-text-secondary font-bold">میزان پدیداری (شفافیت):</label>
+        <label className="text-[10px] theme-text-secondary font-bold">
+          میزان پدیداری (شفافیت):
+        </label>
       </div>
       <input
         type="range"

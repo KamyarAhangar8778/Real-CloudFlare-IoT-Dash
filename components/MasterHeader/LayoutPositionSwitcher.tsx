@@ -10,7 +10,7 @@ interface LayoutPositionSwitcherProps {
 export default function LayoutPositionSwitcher({
   headerPosition,
   setHeaderPosition,
-  variant
+  variant,
 }: LayoutPositionSwitcherProps) {
   const handleTogglePosition = (pos: "top" | "left") => {
     setHeaderPosition(pos);

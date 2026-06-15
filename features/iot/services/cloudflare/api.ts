@@ -13,7 +13,7 @@ export async function fetchConfigFromCloudflare(): Promise<EspConfig | null> {
     const res = await fetch(`${baseUrl}/config`, {
       method: "GET",
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
       },
     });
 
@@ -53,7 +53,7 @@ export async function saveConfigToCloudflare(config: EspConfig): Promise<AckResu
       body: JSON.stringify(payload),
     });
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     if (res.ok && data?.ack) {
       return { success: true, message: data.message || "تنظیمات با موفقیت ذخیره شد." };
@@ -83,7 +83,7 @@ export async function updatePinOnCloudflare(pin: string, value: boolean): Promis
       body: JSON.stringify({ value }),
     });
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     if (res.ok && data?.ack) {
       return { success: true, message: data.message || `وضعیت پین ${pin} ذخیره شد.` };
@@ -98,12 +98,14 @@ export async function updatePinOnCloudflare(pin: string, value: boolean): Promis
 /**
  * Fetch states for all configured pins from Durable Objects.
  */
-export async function fetchPinsFromCloudflare(segments: any[]): Promise<Record<string, boolean> | null> {
+export async function fetchPinsFromCloudflare(
+  segments: any[],
+): Promise<Record<string, boolean> | null> {
   if (!isCloudflareEnabled()) return null;
   const baseUrl = getCloudflareWorkerUrl().replace(/\/$/, "");
 
   try {
-    const pinsToFetch = Array.from(new Set(segments.map(s => s.pin).filter(Boolean))) as string[];
+    const pinsToFetch = Array.from(new Set(segments.map((s) => s.pin).filter(Boolean))) as string[];
     const result: Record<string, boolean> = {};
 
     await Promise.all(
@@ -119,7 +121,7 @@ export async function fetchPinsFromCloudflare(segments: any[]): Promise<Record<s
         } catch (e) {
           console.warn(`Could not fetch state for pin ${pin}:`, e);
         }
-      })
+      }),
     );
 
     return result;

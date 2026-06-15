@@ -11,7 +11,7 @@ export interface IoTWorkspaceProps {
   activeSegmentId: string | null;
   activeGroupId: string | null;
   animationsEnabled?: boolean;
-  
+
   handleDragStart: (event: DragStartEvent) => void;
   handleDragOver: (event: DragOverEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;

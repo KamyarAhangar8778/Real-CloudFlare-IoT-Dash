@@ -1,11 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverEvent } from "@dnd-kit/core";
+import {
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverEvent,
+} from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 export function useAchaemenidDnd({
-  segments, setSegments, groupsOrder, setGroupsOrder, handleRemoveGroup, handleRemoveSegment
+  segments,
+  setSegments,
+  groupsOrder,
+  setGroupsOrder,
+  handleRemoveGroup,
+  handleRemoveSegment,
 }: {
   segments: any[];
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
@@ -19,7 +32,7 @@ export function useAchaemenidDnd({
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const handleDragStart = (e: DragStartEvent) => {
@@ -29,18 +42,19 @@ export function useAchaemenidDnd({
 
   const handleDragOver = (e: DragOverEvent) => {
     const { active, over } = e;
-    if (!over || active.data.current?.type === "Group" || over.data.current?.type === "Group") return;
+    if (!over || active.data.current?.type === "Group" || over.data.current?.type === "Group")
+      return;
 
-    const activeSeg = segments.find(s => s.id === active.id);
+    const activeSeg = segments.find((s) => s.id === active.id);
     if (!activeSeg) return;
-    const overSeg = segments.find(s => s.id === over.id);
+    const overSeg = segments.find((s) => s.id === over.id);
 
     if (overSeg) {
       const activeGroup = activeSeg.group || "Test";
       const overGroup = overSeg.group || "Test";
       setSegments((prev) => {
-        const activeIdx = prev.findIndex(s => s.id === active.id);
-        const overIdx = prev.findIndex(s => s.id === over.id);
+        const activeIdx = prev.findIndex((s) => s.id === active.id);
+        const overIdx = prev.findIndex((s) => s.id === over.id);
         if (activeIdx === -1 || overIdx === -1) return prev;
         if (activeGroup !== overGroup) {
           const updated = [...prev];
@@ -53,10 +67,14 @@ export function useAchaemenidDnd({
       });
     } else {
       const overIdStr = over.id.toString();
-      const targetGroup = overIdStr.startsWith("group-") ? overIdStr.replace("group-", "") : (groupsOrder.includes(overIdStr) ? overIdStr : "");
+      const targetGroup = overIdStr.startsWith("group-")
+        ? overIdStr.replace("group-", "")
+        : groupsOrder.includes(overIdStr)
+          ? overIdStr
+          : "";
       if (targetGroup && (activeSeg.group || "Test") !== targetGroup) {
         setSegments((prev) => {
-          const idx = prev.findIndex(s => s.id === active.id);
+          const idx = prev.findIndex((s) => s.id === active.id);
           if (idx === -1) return prev;
           const updated = [...prev];
           updated[idx] = { ...updated[idx], group: targetGroup };
@@ -72,7 +90,8 @@ export function useAchaemenidDnd({
     const { active, over } = e;
     if (!over) return;
     if (over.id === "trash-dropzone") {
-      if (active.data.current?.type === "Group") handleRemoveGroup(active.id.toString().replace("group-", ""));
+      if (active.data.current?.type === "Group")
+        handleRemoveGroup(active.id.toString().replace("group-", ""));
       else if (active.data.current?.type === "Segment") handleRemoveSegment(active.id.toString());
       return;
     }
@@ -83,11 +102,18 @@ export function useAchaemenidDnd({
         setGroupsOrder((prev) => {
           const activeIdx = prev.indexOf(activeIdStr);
           const overIdx = prev.indexOf(overIdStr);
-          return (activeIdx !== -1 && overIdx !== -1) ? arrayMove(prev, activeIdx, overIdx) : prev;
+          return activeIdx !== -1 && overIdx !== -1 ? arrayMove(prev, activeIdx, overIdx) : prev;
         });
       }
     }
   };
 
-  return { sensors, activeSegmentId, activeGroupId, handleDragStart, handleDragOver, handleDragEnd };
+  return {
+    sensors,
+    activeSegmentId,
+    activeGroupId,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+  };
 }

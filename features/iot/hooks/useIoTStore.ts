@@ -27,9 +27,15 @@ interface IoTStoreState {
   // Actions
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
   setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
-  setGroupConfigs: (configs: Record<string, { maxCols: number }> | ((prev: Record<string, { maxCols: number }>) => Record<string, { maxCols: number }>)) => void;
+  setGroupConfigs: (
+    configs:
+      | Record<string, { maxCols: number }>
+      | ((prev: Record<string, { maxCols: number }>) => Record<string, { maxCols: number }>),
+  ) => void;
   setGroupsCols: (cols: number) => void;
-  setPinsState: (pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void;
+  setPinsState: (
+    pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>),
+  ) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
   updateSegmentRule: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
@@ -73,7 +79,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   setGroupConfigs: (groupConfigs) => {
     set((state) => {
-      const next = typeof groupConfigs === "function" ? groupConfigs(state.groupConfigs) : groupConfigs;
+      const next =
+        typeof groupConfigs === "function" ? groupConfigs(state.groupConfigs) : groupConfigs;
       return { groupConfigs: next };
     });
   },
@@ -91,9 +98,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   updateSegmentMode: (id, mode) => {
     set((state) => {
-      const updated = state.segments.map((seg) =>
-        seg.id === id ? { ...seg, mode } : seg
-      );
+      const updated = state.segments.map((seg) => (seg.id === id ? { ...seg, mode } : seg));
       return { segments: updated };
     });
   },

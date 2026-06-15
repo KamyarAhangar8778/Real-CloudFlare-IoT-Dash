@@ -11,16 +11,15 @@ const COLOR_MODES = [
   { id: "accent3", name: "رنگ سوم (طلایی)", color: "var(--accent3)" },
   { id: "accent4", name: "رنگ چهارم (سبز)", color: "var(--accent4)" },
   { id: "white", name: "سفید شاهنشاهی", color: "#ffffff" },
-  { id: "muted", name: "خاکستری کتبیه‌ای", color: "#718096" }
+  { id: "muted", name: "خاکستری کتبیه‌ای", color: "#718096" },
 ] as const;
 
-export default function ColorPicker({
-  cuneiformColor,
-  setCuneiformColor,
-}: ColorPickerProps) {
+export default function ColorPicker({ cuneiformColor, setCuneiformColor }: ColorPickerProps) {
   return (
     <div className="space-y-2 text-right w-full">
-      <label className="text-[10px] theme-text-secondary font-bold block">رنگ نگاره‌های خط میخی:</label>
+      <label className="text-[10px] theme-text-secondary font-bold block">
+        رنگ نگاره‌های خط میخی:
+      </label>
       <div className="grid grid-cols-2 gap-2">
         {COLOR_MODES.map((mode) => {
           const isSelected = cuneiformColor === mode.id;
@@ -36,11 +35,14 @@ export default function ColorPicker({
                   : "border-[var(--border-color)] hover:border-[var(--accent3)]/50 bg-black/10 hover:bg-black/20"
               }`}
             >
-              <div 
-                className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-md transition-transform duration-300 hover:scale-110" 
-                style={{ backgroundColor: mode.color }} 
+              <div
+                className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-md transition-transform duration-300 hover:scale-110"
+                style={{ backgroundColor: mode.color }}
               />
-              <span className={isSelected ? "text-accent3" : "theme-text-secondary"} style={isSelected ? { color: "var(--accent3)" } : {}}>
+              <span
+                className={isSelected ? "text-accent3" : "theme-text-secondary"}
+                style={isSelected ? { color: "var(--accent3)" } : {}}
+              >
                 {mode.name}
               </span>
             </motion.button>

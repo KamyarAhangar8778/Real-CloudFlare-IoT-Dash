@@ -12,7 +12,7 @@ export default function TypographySection({
   setSelectedFont,
   expandedSection,
   toggleSection,
-  hideHeader = false
+  hideHeader = false,
 }: TypographySectionProps) {
   const isExpanded = hideHeader ? true : expandedSection === "fonts";
 
