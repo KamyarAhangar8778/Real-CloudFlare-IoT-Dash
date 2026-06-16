@@ -24,13 +24,25 @@ export const initMqtt = () => {
     client.on("connect", () => {
       console.log("[MQTT] Connected to EMQX via WSS!");
       client?.subscribe("KamyarIoT/Achaemenid/State");
+      // Announce presence immediately upon connection
+      client?.publish(
+        "KamyarIoT/Achaemenid/Command",
+        JSON.stringify({ command: "dashboard_presence", status: "online" }),
+        { qos: 1 }
+      );
     });
 
     client.on("message", (topic, payload) => {
       if (topic === "KamyarIoT/Achaemenid/State") {
         try {
           const data = JSON.parse(payload.toString());
-          if (data.id !== undefined && data.value !== undefined) {
+          if (data.command === "ping") {
+            client?.publish(
+              "KamyarIoT/Achaemenid/Command",
+              JSON.stringify({ command: "dashboard_presence", status: "online" }),
+              { qos: 1 }
+            );
+          } else if (data.id !== undefined && data.value !== undefined) {
             stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
           }
         } catch (e) {
