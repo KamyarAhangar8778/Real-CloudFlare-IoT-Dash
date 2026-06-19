@@ -68,33 +68,25 @@ export default function SyncOverlay({
               {syncProgress}% • CONNECTED ON STANDALONE_PORT
             </div>
 
-            {/* Input field for Cloudflare Worker URL during stage 1 initialization */}
-            <div className="w-80 mt-6 p-4 rounded-2xl border border-slate-800/80 bg-black/45 backdrop-blur-md space-y-3">
-              <div className="text-right text-[10px] font-bold text-cyan-400">
-                پیکربندی ورکر کلودفلر (مرحله اول)
+            {/* Target Cloudflare Worker Status Hub */}
+            <div className="w-80 mt-6 p-4 rounded-2xl border border-slate-800/80 bg-black/45 backdrop-blur-md space-y-2">
+              <div className="text-center text-[10px] font-bold text-cyan-400">
+                ورکر هدف کلودفلر (سرور مانیتورینگ)
               </div>
-              <input
-                type="text"
-                dir="ltr"
-                value={workerUrl}
-                onChange={(e) => setWorkerUrl(e.target.value)}
-                placeholder="https://my-iot-worker.subdomain.workers.dev"
-                className="block w-full py-2 px-3 border border-slate-850 focus:border-cyan-500 rounded-xl bg-slate-950/80 text-[10px] text-white placeholder-slate-600 focus:outline-none font-mono transition-all text-center"
-              />
-              <div className="flex gap-2 justify-stretch">
-                <button
-                  onClick={onRetry}
-                  className="flex-1 py-1.5 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 hover:border-cyan-500/80 text-cyan-300 hover:text-cyan-100 rounded-lg text-[9px] font-bold transition-all cursor-pointer"
-                >
-                  تلاش مجدد همگام‌سازی
-                </button>
-                <button
-                  onClick={onBypass}
-                  className="flex-1 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-lg text-[9px] font-bold transition-all cursor-pointer"
-                >
-                  ورود آفلاین
-                </button>
+              <div className="text-[10px] font-mono text-zinc-300 select-all break-all border border-slate-850 bg-slate-950/50 p-2 rounded-xl text-center">
+                {workerUrl || "https://api.agkalaa.ir"}
               </div>
+              <div className="text-[9px] text-zinc-500 text-center leading-relaxed">
+                در حال همگام‌سازی بلادرنگ پایه‌ها و دریافت مستمر داده‌های حافظه پایا...
+              </div>
+              
+              <button
+                type="button"
+                onClick={onBypass}
+                className="w-full mt-2 py-2 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 hover:border-cyan-500/80 text-cyan-300 hover:text-cyan-100 rounded-xl text-[10px] font-bold transition-all cursor-pointer font-sans"
+              >
+                دور زدن لودینگ و ورود به داشبورد
+              </button>
             </div>
           </div>
         </motion.div>
