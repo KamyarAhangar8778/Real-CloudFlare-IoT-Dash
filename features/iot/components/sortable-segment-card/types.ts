@@ -7,7 +7,22 @@ export interface SegmentData {
   state?: boolean;
   mode?: "switch" | "push";
   auto_off?: number;
-  rule?: { targetPin: string; triggerState: boolean; actionState: boolean };
+  rule?: { 
+    highActions?: Array<{
+      reqHold: number;
+      targetPin: string;
+      actionOn: boolean;
+      actionType?: number;
+      delay?: number;
+    }>;
+    lowActions?: Array<{
+      reqHold: number;
+      targetPin: string;
+      actionOn: boolean;
+      actionType?: number;
+      delay?: number;
+    }>;
+  };
 }
 
 export interface SortableSegmentCardProps {
@@ -18,7 +33,25 @@ export interface SortableSegmentCardProps {
   onSetPinState?: (pin: string, state: boolean, preventMqtt?: boolean) => void;
   onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
   onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
-  onUpdateSegmentRule?: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
+  onUpdateSegmentRule?: (
+    id: string, 
+    rule: { 
+      highActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      lowActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+    }
+  ) => void;
   isLoadingIoT: boolean;
   onSetupPlaceholder?: (id: string) => void;
   parentGroupsCols?: number;

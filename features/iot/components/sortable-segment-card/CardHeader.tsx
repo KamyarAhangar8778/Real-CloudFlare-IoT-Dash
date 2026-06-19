@@ -11,7 +11,25 @@ interface CardHeaderProps {
   onRemove: (id: string) => void;
   onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
   onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
-  onUpdateSegmentRule?: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
+  onUpdateSegmentRule?: (
+    id: string, 
+    rule: { 
+      highActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      lowActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+    }
+  ) => void;
   countdown?: number | null;
   attributes: any;
   listeners: any;
