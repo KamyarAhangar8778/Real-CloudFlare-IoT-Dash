@@ -101,9 +101,31 @@ export function useSegmentManagement({
     setSegments((prev) => prev.map((s) => (s.id === id ? { ...s, auto_off } : s)));
   };
 
-  const handleUpdateSegmentRule = (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => {
+  const handleUpdateSegmentRule = (
+    id: string, 
+    rule: { 
+      targetPinHigh: string; 
+      actionOnHigh: boolean; 
+      actionTypeHigh?: number;
+      delayHigh?: number;
+      targetPinLow: string; 
+      actionOnLow: boolean;
+      actionTypeLow?: number;
+      delayLow?: number;
+    }
+  ) => {
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
-    publishUpdateRuleCommand(id, rule.targetPinHigh, rule.actionOnHigh, rule.targetPinLow, rule.actionOnLow);
+    publishUpdateRuleCommand(
+      id, 
+      rule.targetPinHigh, 
+      rule.actionOnHigh, 
+      rule.actionTypeHigh || 0,
+      rule.delayHigh || 0,
+      rule.targetPinLow, 
+      rule.actionOnLow,
+      rule.actionTypeLow || 0,
+      rule.delayLow || 0
+    );
   };
 
   const handleRemoveGroup = (groupId: string) => {
