@@ -5,6 +5,7 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import {
   publishAddSegmentCommand,
   publishDeleteSegmentCommand,
+  publishUpdateRuleCommand,
 } from "@/features/iot/services/mqttService";
 
 interface UseSegmentManagementProps {
@@ -102,6 +103,7 @@ export function useSegmentManagement({
 
   const handleUpdateSegmentRule = (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => {
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
+    publishUpdateRuleCommand(id, rule.targetPin, rule.triggerState, rule.actionState);
   };
 
   const handleRemoveGroup = (groupId: string) => {
