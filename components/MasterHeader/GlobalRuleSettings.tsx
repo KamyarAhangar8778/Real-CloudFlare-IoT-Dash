@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Settings2, X } from "lucide-react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { publishUpdateRuleCommand } from "@/features/iot/services/mqttService";
 
 import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
 
@@ -65,6 +66,7 @@ export default function GlobalRuleSettings() {
                     }
                     
                     updateSegmentRule(segment.id, rule);
+                    publishUpdateRuleCommand(segment.id, rule.targetPin, rule.triggerState, rule.actionState);
                     showToast("شرط با موفقیت ثبت و به دستگاه ارسال شد.", "success");
                   };
 
