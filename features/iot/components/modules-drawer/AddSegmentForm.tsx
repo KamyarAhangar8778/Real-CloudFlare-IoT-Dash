@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
 import { Plus } from "lucide-react";
 import { Segment } from "./types";
 import ButtonModeSelector from "./ButtonModeSelector";
@@ -19,6 +21,7 @@ export default function AddSegmentForm({
   segments,
   animationsEnabled,
 }: AddSegmentFormProps) {
+  const { showToast } = useIoTStore();
   const [selectedType, setSelectedType] = useState("gpio_toggle");
   const [selectedPin, setSelectedPin] = useState("2");
   const [customPin, setCustomPin] = useState("");
@@ -27,6 +30,7 @@ export default function AddSegmentForm({
   const [useCustomPinInput, setUseCustomPinInput] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [buttonMode, setButtonMode] = useState<"switch" | "push">("switch");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorText("");
@@ -35,6 +39,16 @@ export default function AddSegmentForm({
     if (!targetPin) {
       setErrorText("لطفاً شماره پایه را مشخص کنید.");
       return;
+    }
+
+    const validation = validateEsp32Pin(targetPin, selectedType);
+    if (!validation.isValid) {
+      showToast(validation.message, "error");
+      return;
+    }
+
+    if (validation.isWarning) {
+      showToast(validation.message, "success");
     }
 
     if (segments.some((s) => s.type === selectedType && s.pin === targetPin)) {
