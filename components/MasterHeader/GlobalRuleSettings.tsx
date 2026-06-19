@@ -14,7 +14,7 @@ export default function GlobalRuleSettings() {
   const showToast = useIoTStore((state) => state.showToast);
 
   // Local state for tracking edited rules
-  const [localRules, setLocalRules] = useState<Record<string, { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }>>({});
+  const [localRules, setLocalRules] = useState<Record<string, { targetPinHigh: string; actionOnHigh: boolean; actionTypeHigh?: number; delayHigh?: number; targetPinLow: string; actionOnLow: boolean; actionTypeLow?: number; delayLow?: number; }>>({});
 
 
   const inputSegments = segments.filter((s) => s.type === "input");
