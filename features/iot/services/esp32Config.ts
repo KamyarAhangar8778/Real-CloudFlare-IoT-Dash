@@ -35,17 +35,31 @@ export interface EspConfig {
     mode?: "switch" | "push";
     auto_off?: number;
     rule?: {
-      targetPinHigh: string;
-      actionOnHigh: boolean;
+      highActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      lowActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      // Also allow old schema to exist so TS doesn't complain when reading old KV data
+      targetPinHigh?: string;
+      actionOnHigh?: boolean;
       actionTypeHigh?: number;
       delayHigh?: number;
       reqHoldHigh?: number;
-      targetPinLow: string;
-      actionOnLow: boolean;
+      targetPinLow?: string;
+      actionOnLow?: boolean;
       actionTypeLow?: number;
       delayLow?: number;
       reqHoldLow?: number;
-      // Also allow old schema to exist so TS doesn't complain when reading old KV data
       targetPin?: string;
       triggerState?: boolean;
       actionState?: boolean;

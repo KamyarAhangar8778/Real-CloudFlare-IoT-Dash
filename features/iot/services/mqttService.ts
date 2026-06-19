@@ -95,32 +95,35 @@ export const publishDeleteSegmentCommand = (id: string) => {
 
 export const publishUpdateRuleCommand = (
   id: string, 
-  targetPinHigh: string, 
-  actionOnHigh: boolean, 
-  actionTypeHigh: number = 0,
-  delayHigh: number = 0,
-  reqHoldHigh: number = 0,
-  targetPinLow: string, 
-  actionOnLow: boolean,
-  actionTypeLow: number = 0,
-  delayLow: number = 0,
-  reqHoldLow: number = 0
+  highActions: Array<{
+    reqHold: number;
+    targetPin: string;
+    actionOn: boolean;
+    actionType?: number;
+    delay?: number;
+  }> = [],
+  lowActions: Array<{
+    reqHold: number;
+    targetPin: string;
+    actionOn: boolean;
+    actionType?: number;
+    delay?: number;
+  }> = []
 ) => {
   if (!client) initMqtt();
   if (client?.connected) {
+    const formatActions = (actions: any[]) => actions.map(a => ({
+      ...a,
+      targetPin: parseInt(a.targetPin || "-1", 10),
+      actionType: a.actionType || 0,
+      delay: a.delay || 0
+    }));
+
     const payload = JSON.stringify({ 
       command: "update_rule", 
       id, 
-      targetPinHigh: parseInt(targetPinHigh || "-1", 10), 
-      actionOnHigh,
-      actionTypeHigh,
-      delayHigh,
-      reqHoldHigh,
-      targetPinLow: parseInt(targetPinLow || "-1", 10),
-      actionOnLow,
-      actionTypeLow,
-      delayLow,
-      reqHoldLow
+      highActions: formatActions(highActions),
+      lowActions: formatActions(lowActions)
     });
     client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
     console.log(`[MQTT] Published update_rule: ${payload}`);

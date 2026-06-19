@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Settings2, X, Info } from "lucide-react";
+import { Settings2, X, Info, Plus, Trash2 } from "lucide-react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { publishUpdateRuleCommand } from "@/features/iot/services/mqttService";
-
 import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
 
 export default function GlobalRuleSettings() {
@@ -14,8 +13,10 @@ export default function GlobalRuleSettings() {
   const showToast = useIoTStore((state) => state.showToast);
 
   // Local state for tracking edited rules
-  const [localRules, setLocalRules] = useState<Record<string, { targetPinHigh: string; actionOnHigh: boolean; actionTypeHigh?: number; delayHigh?: number; reqHoldHigh?: number; targetPinLow: string; actionOnLow: boolean; actionTypeLow?: number; delayLow?: number; reqHoldLow?: number; }>>({});
-
+  const [localRules, setLocalRules] = useState<Record<string, {
+    highActions: Array<{ reqHold: number; targetPin: string; actionOn: boolean; actionType?: number; delay?: number; }>;
+    lowActions: Array<{ reqHold: number; targetPin: string; actionOn: boolean; actionType?: number; delay?: number; }>;
+  }>>({});
 
   const inputSegments = segments.filter((s) => s.type === "input");
 
@@ -35,7 +36,7 @@ export default function GlobalRuleSettings() {
           onClick={() => setIsOpen(false)}
         >
           <div 
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-[var(--card-bg-solid)]">
@@ -47,9 +48,10 @@ export default function GlobalRuleSettings() {
             
             <div className="p-4 overflow-y-auto flex-1 space-y-6" dir="rtl">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 p-3 rounded-lg text-xs flex gap-2 items-start">
-                <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                <Info className="w-5 h-5 shrink-0 mt-0.5" />
                 <p>
-                  در این بخش می‌توانید مشخص کنید زمانی که یک سنسور یا کلیدِ ورودی <strong>روشن (HIGH)</strong> می‌شود چه اتفاقی بیفتد، و زمانی که <strong>خاموش (LOW)</strong> می‌شود چه اتفاقی بیفتد. در صورت خالی گذاشتن شماره پایه (GPIO)، برای آن حالت هیچ کاری انجام نمی‌شود.
+                  در این بخش می‌توانید برای زمان‌های مختلف نگه‌داشتن کلید (مثلاً 0، 3، 5 یا 10 ثانیه) عملیات متفاوتی تعریف کنید. 
+                  شما می‌توانید برای هر وضعیت (روشن شدن یا خاموش شدن) چندین عملیات بسازید تا هرکدام روی یک پایه‌ی مجزا تاثیر بگذارند.
                 </p>
               </div>
 
@@ -57,225 +59,216 @@ export default function GlobalRuleSettings() {
                 <p className="text-center text-slate-500 text-sm py-8">هیچ ورودی (سنسور/کلید) در داشبورد وجود ندارد.</p>
               ) : (
                 inputSegments.map(segment => {
-                  const originalRule = segment.rule || { 
-                    targetPinHigh: "", actionOnHigh: true, actionTypeHigh: 0, delayHigh: 0, reqHoldHigh: 0,
-                    targetPinLow: "", actionOnLow: false, actionTypeLow: 0, delayLow: 0, reqHoldLow: 0
+                  const originalRule = segment.rule || { highActions: [], lowActions: [] };
+                  const rule = localRules[segment.id] || { 
+                    highActions: originalRule.highActions || [], 
+                    lowActions: originalRule.lowActions || [] 
                   };
-                  const rule = localRules[segment.id] || originalRule;
                   
-                  const handleLocalChange = (updates: Partial<typeof rule>) => {
-                    setLocalRules(prev => ({
-                      ...prev,
-                      [segment.id]: { ...rule, ...updates }
-                    }));
-                  };
-
                   const handleSave = () => {
-                    if (rule.targetPinHigh) {
-                      const valHigh = validateEsp32Pin(rule.targetPinHigh, "output");
-                      if (!valHigh.isValid) {
-                        showToast(`خطا در پایه HIGH: ${valHigh.message}`, "error");
-                        return;
+                    // Validate all pins
+                    const allActions = [...(rule.highActions || []), ...(rule.lowActions || [])];
+                    for (const action of allActions) {
+                      if (action.targetPin) {
+                        const val = validateEsp32Pin(action.targetPin, "output");
+                        if (!val.isValid) {
+                          showToast(`خطا در پایه: ${val.message}`, "error");
+                          return;
+                        }
                       }
-                      if (valHigh.isWarning) showToast(valHigh.message, "success");
-                    }
-                    if (rule.targetPinLow) {
-                      const valLow = validateEsp32Pin(rule.targetPinLow, "output");
-                      if (!valLow.isValid) {
-                        showToast(`خطا در پایه LOW: ${valLow.message}`, "error");
-                        return;
-                      }
-                      if (valLow.isWarning) showToast(valLow.message, "success");
                     }
                     
                     updateSegmentRule(segment.id, rule);
                     publishUpdateRuleCommand(
                       segment.id, 
-                      rule.targetPinHigh, 
-                      rule.actionOnHigh, 
-                      rule.actionTypeHigh || 0,
-                      rule.delayHigh || 0,
-                      rule.reqHoldHigh || 0,
-                      rule.targetPinLow, 
-                      rule.actionOnLow,
-                      rule.actionTypeLow || 0,
-                      rule.delayLow || 0,
-                      rule.reqHoldLow || 0
+                      rule.highActions,
+                      rule.lowActions
                     );
                     showToast("شرط‌ها با موفقیت ثبت و به دستگاه ارسال شدند.", "success");
                   };
 
+                  const renderActionsList = (type: "high" | "low") => {
+                    const actions = type === "high" ? rule.highActions : rule.lowActions;
+                    const isHigh = type === "high";
+                    const colorClasses = isHigh ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+                    const bgClass = isHigh ? "bg-emerald-500" : "bg-rose-500";
+                    const borderClass = isHigh ? "border-emerald-100 dark:border-emerald-900/30" : "border-rose-100 dark:border-rose-900/30";
+                    const containerBg = isHigh ? "bg-emerald-50/50 dark:bg-emerald-950/20" : "bg-rose-50/50 dark:bg-rose-950/20";
+                    const focusClass = isHigh ? "focus:border-emerald-500" : "focus:border-rose-500";
+
+                    const addAction = () => {
+                      if (actions.length >= 4) {
+                        showToast("حداکثر ۴ عملیات برای هر وضعیت مجاز است", "error");
+                        return;
+                      }
+                      const availableHolds = [0, 3, 5, 10].filter(h => !actions.some(a => a.reqHold === h));
+                      if (availableHolds.length === 0) return;
+
+                      const newAction = { reqHold: availableHolds[0], targetPin: "", actionOn: true, actionType: 0, delay: 0 };
+                      setLocalRules(prev => ({
+                        ...prev,
+                        [segment.id]: {
+                          ...rule,
+                          [isHigh ? "highActions" : "lowActions"]: [...actions, newAction]
+                        }
+                      }));
+                    };
+
+                    const removeAction = (index: number) => {
+                      const newArray = [...actions];
+                      newArray.splice(index, 1);
+                      setLocalRules(prev => ({
+                        ...prev,
+                        [segment.id]: {
+                          ...rule,
+                          [isHigh ? "highActions" : "lowActions"]: newArray
+                        }
+                      }));
+                    };
+
+                    const updateAction = (index: number, updates: any) => {
+                      const newArray = [...actions];
+                      newArray[index] = { ...newArray[index], ...updates };
+                      setLocalRules(prev => ({
+                        ...prev,
+                        [segment.id]: {
+                          ...rule,
+                          [isHigh ? "highActions" : "lowActions"]: newArray
+                        }
+                      }));
+                    };
+
+                    return (
+                      <div className={`border ${borderClass} ${containerBg} p-4 rounded-xl`}>
+                        <div className="flex justify-between items-center mb-4">
+                          <h4 className={`${colorClasses} font-medium text-sm flex items-center gap-2`}>
+                            <span className={`w-2 h-2 rounded-full ${bgClass}`}></span>
+                            هنگام {isHigh ? "فعال شدن (HIGH)" : "غیرفعال شدن (LOW)"}
+                          </h4>
+                          <button 
+                            onClick={addAction}
+                            disabled={actions.length >= 4}
+                            className={`flex items-center gap-1 px-2 py-1 text-xs rounded-md border ${isHigh ? "border-emerald-200 text-emerald-600 hover:bg-emerald-100 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/50" : "border-rose-200 text-rose-600 hover:bg-rose-100 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-900/50"} transition-colors disabled:opacity-50`}
+                          >
+                            <Plus className="w-3 h-3" /> افزودن عملیات
+                          </button>
+                        </div>
+
+                        {actions.length === 0 ? (
+                          <div className="text-center py-4 text-slate-400 text-xs bg-white/50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
+                            هیچ عملیاتی تعریف نشده است
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {actions.map((action, idx) => (
+                              <div key={idx} className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-800 relative shadow-sm">
+                                <button 
+                                  onClick={() => removeAction(idx)}
+                                  className="absolute top-2 left-2 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                                  title="حذف"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs pr-2">
+                                  <div>
+                                    <label className="block text-slate-500 mb-1">زمان نگه‌داشتن:</label>
+                                    <select
+                                      value={action.reqHold}
+                                      onChange={(e) => {
+                                        const val = parseInt(e.target.value, 10);
+                                        // Prevent duplicate holds
+                                        if (actions.some((a, i) => i !== idx && a.reqHold === val)) {
+                                          showToast("این زمان قبلاً استفاده شده است", "error");
+                                          return;
+                                        }
+                                        updateAction(idx, { reqHold: val });
+                                      }}
+                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md focus:outline-none ${focusClass}`}
+                                    >
+                                      <option value={0}>بدون نیاز به نگه‌داشتن (فوری)</option>
+                                      <option value={3}>۳ ثانیه</option>
+                                      <option value={5}>۵ ثانیه</option>
+                                      <option value={10}>۱۰ ثانیه</option>
+                                    </select>
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-slate-500 mb-1">پایه هدف (GPIO):</label>
+                                    <input
+                                      type="text"
+                                      placeholder="مثال: 4"
+                                      value={action.targetPin}
+                                      onChange={(e) => updateAction(idx, { targetPin: e.target.value })}
+                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left focus:outline-none ${focusClass}`}
+                                      dir="ltr"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-slate-500 mb-1">وضعیت بشود:</label>
+                                    <select
+                                      value={action.actionOn ? "1" : "0"}
+                                      onChange={(e) => updateAction(idx, { actionOn: e.target.value === "1" })}
+                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md focus:outline-none ${focusClass}`}
+                                    >
+                                      <option value="1">روشن (HIGH)</option>
+                                      <option value="0">خاموش (LOW)</option>
+                                    </select>
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-slate-500 mb-1">نوع عملیات:</label>
+                                    <select
+                                      value={action.actionType || 0}
+                                      onChange={(e) => updateAction(idx, { actionType: parseInt(e.target.value, 10) })}
+                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md focus:outline-none ${focusClass}`}
+                                    >
+                                      <option value={0}>همان لحظه تغییر کند</option>
+                                      <option value={1}>بعد از زمان تعیین‌شده تغییر کند</option>
+                                      <option value={2}>فقط برای مدت معین بماند</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                {(action.actionType || 0) > 0 && (
+                                  <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/50 w-full sm:w-1/2 lg:w-1/4">
+                                    <label className="block text-slate-500 mb-1 text-xs">زمان عملیات (بین ۱ تا ۶۰ ثانیه):</label>
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      max="60"
+                                      value={action.delay || 10}
+                                      onChange={(e) => updateAction(idx, { delay: parseInt(e.target.value, 10) })}
+                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left text-xs focus:outline-none ${focusClass}`}
+                                      dir="ltr"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  };
+
                   return (
-                    <div key={segment.id} className="p-5 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-950/50 hover:border-[var(--accent3)] transition-colors flex flex-col gap-5">
-                      <div className="font-bold text-sm text-[var(--accent3)] flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
-                        <span className="w-2 h-2 rounded-full bg-[var(--accent3)] animate-pulse"></span>
+                    <div key={segment.id} className="p-5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-[var(--card-bg)] shadow-sm flex flex-col gap-5">
+                      <div className="font-bold text-sm text-[var(--accent3)] flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-3">
+                        <span className="w-2 h-2 rounded-full bg-[var(--accent3)]"></span>
                         {segment.title} (ورودی پایه: {segment.pin})
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* HIGH Trigger Section */}
-                        <div className="bg-white dark:bg-slate-900 border border-emerald-100 dark:border-emerald-900/30 p-4 rounded-xl">
-                          <h4 className="text-emerald-600 dark:text-emerald-400 font-medium text-xs mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            هنگام فعال شدن (HIGH)
-                          </h4>
-                          <div className="space-y-3 text-xs">
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">پایه هدف (GPIO):</label>
-                              <input
-                                type="text"
-                                placeholder="خالی = بدون عملیات"
-                                value={rule.targetPinHigh}
-                                onChange={(e) => handleLocalChange({ targetPinHigh: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-emerald-500"
-                                dir="ltr"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">زمان مورد نیاز نگه‌داشتن کلید:</label>
-                              <select
-                                value={rule.reqHoldHigh || 0}
-                                onChange={(e) => {
-                                  const val = parseInt(e.target.value, 10);
-                                  if (val > 0) {
-                                    // Disable hold time on the other state
-                                    handleLocalChange({ reqHoldHigh: val, reqHoldLow: 0 });
-                                  } else {
-                                    handleLocalChange({ reqHoldHigh: val });
-                                  }
-                                }}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-emerald-500"
-                              >
-                                <option value={0}>بدون نیاز به نگه‌داشتن (فوری)</option>
-                                <option value={3}>۳ ثانیه</option>
-                                <option value={5}>۵ ثانیه</option>
-                                <option value={10}>۱۰ ثانیه</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">وضعیت پایه هدف بشود:</label>
-                              <select
-                                value={rule.actionOnHigh ? "1" : "0"}
-                                onChange={(e) => handleLocalChange({ actionOnHigh: e.target.value === "1" })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-emerald-500"
-                              >
-                                <option value="1">روشن (HIGH)</option>
-                                <option value="0">خاموش (LOW)</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">نوع عملیات:</label>
-                              <select
-                                value={rule.actionTypeHigh || 0}
-                                onChange={(e) => handleLocalChange({ actionTypeHigh: parseInt(e.target.value, 10) })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-emerald-500"
-                              >
-                                <option value={0}>همان لحظه تغییر کند</option>
-                                <option value={1}>بعد از زمان تعیین‌شده تغییر کند</option>
-                                <option value={2}>فقط برای مدت زمان تعیین‌شده بماند</option>
-                              </select>
-                            </div>
-                            {(rule.actionTypeHigh || 0) > 0 && (
-                              <div>
-                                <label className="block text-slate-500 mb-1.5">زمان (بین ۱ تا ۶۰ ثانیه):</label>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max="60"
-                                  value={rule.delayHigh || 10}
-                                  onChange={(e) => handleLocalChange({ delayHigh: parseInt(e.target.value, 10) })}
-                                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-emerald-500"
-                                  dir="ltr"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* LOW Trigger Section */}
-                        <div className="bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-900/30 p-4 rounded-xl">
-                          <h4 className="text-rose-600 dark:text-rose-400 font-medium text-xs mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                            هنگام غیرفعال شدن (LOW)
-                          </h4>
-                          <div className="space-y-3 text-xs">
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">پایه هدف (GPIO):</label>
-                              <input
-                                type="text"
-                                placeholder="خالی = بدون عملیات"
-                                value={rule.targetPinLow}
-                                onChange={(e) => handleLocalChange({ targetPinLow: e.target.value })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-rose-500"
-                                dir="ltr"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">زمان مورد نیاز نگه‌داشتن کلید:</label>
-                              <select
-                                value={rule.reqHoldLow || 0}
-                                onChange={(e) => {
-                                  const val = parseInt(e.target.value, 10);
-                                  if (val > 0) {
-                                    // Disable hold time on the other state
-                                    handleLocalChange({ reqHoldLow: val, reqHoldHigh: 0 });
-                                  } else {
-                                    handleLocalChange({ reqHoldLow: val });
-                                  }
-                                }}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-rose-500"
-                              >
-                                <option value={0}>بدون نیاز به نگه‌داشتن (فوری)</option>
-                                <option value={3}>۳ ثانیه</option>
-                                <option value={5}>۵ ثانیه</option>
-                                <option value={10}>۱۰ ثانیه</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">وضعیت پایه هدف بشود:</label>
-                              <select
-                                value={rule.actionOnLow ? "1" : "0"}
-                                onChange={(e) => handleLocalChange({ actionOnLow: e.target.value === "1" })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-rose-500"
-                              >
-                                <option value="1">روشن (HIGH)</option>
-                                <option value="0">خاموش (LOW)</option>
-                              </select>
-                            </div>
-                            <div>
-                              <label className="block text-slate-500 mb-1.5">نوع عملیات:</label>
-                              <select
-                                value={rule.actionTypeLow || 0}
-                                onChange={(e) => handleLocalChange({ actionTypeLow: parseInt(e.target.value, 10) })}
-                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-rose-500"
-                              >
-                                <option value={0}>همان لحظه تغییر کند</option>
-                                <option value={1}>بعد از زمان تعیین‌شده تغییر کند</option>
-                                <option value={2}>فقط برای مدت زمان تعیین‌شده بماند</option>
-                              </select>
-                            </div>
-                            {(rule.actionTypeLow || 0) > 0 && (
-                              <div>
-                                <label className="block text-slate-500 mb-1.5">زمان (بین ۱ تا ۶۰ ثانیه):</label>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max="60"
-                                  value={rule.delayLow || 10}
-                                  onChange={(e) => handleLocalChange({ delayLow: parseInt(e.target.value, 10) })}
-                                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-rose-500"
-                                  dir="ltr"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                      <div className="grid grid-cols-1 gap-6">
+                        {renderActionsList("high")}
+                        {renderActionsList("low")}
                       </div>
 
                       <div className="flex justify-end mt-2">
                         <button 
                           onClick={handleSave}
-                          className="px-6 py-2.5 bg-[var(--accent3)] hover:bg-[var(--accent2)] text-white text-sm font-medium rounded-lg transition-colors"
+                          className="px-6 py-2 bg-[var(--accent3)] hover:bg-[var(--accent2)] text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
                         >
                           ثبت و ارسال به دستگاه
                         </button>

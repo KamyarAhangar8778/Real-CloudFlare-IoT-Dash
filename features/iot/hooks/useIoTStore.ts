@@ -12,16 +12,20 @@ interface IoTStoreState {
     mode?: "switch" | "push";
     auto_off?: number;
     rule?: {
-      targetPinHigh: string;
-      actionOnHigh: boolean;
-      actionTypeHigh?: number;
-      delayHigh?: number;
-      reqHoldHigh?: number;
-      targetPinLow: string;
-      actionOnLow: boolean;
-      actionTypeLow?: number;
-      delayLow?: number;
-      reqHoldLow?: number;
+      highActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      lowActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
     };
   }>;
   groupsOrder: string[];
@@ -48,17 +52,21 @@ interface IoTStoreState {
     pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>),
   ) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
-  updateSegmentRule: (id: string, rule: { 
-    targetPinHigh: string; 
-    actionOnHigh: boolean; 
-    actionTypeHigh?: number;
-    delayHigh?: number;
-    reqHoldHigh?: number;
-    targetPinLow: string; 
-    actionOnLow: boolean;
-    actionTypeLow?: number;
-    delayLow?: number;
-    reqHoldLow?: number;
+  updateSegmentRule: (id: string, rule: {
+    highActions?: Array<{
+      reqHold: number;
+      targetPin: string;
+      actionOn: boolean;
+      actionType?: number;
+      delay?: number;
+    }>;
+    lowActions?: Array<{
+      reqHold: number;
+      targetPin: string;
+      actionOn: boolean;
+      actionType?: number;
+      delay?: number;
+    }>;
   }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
@@ -184,25 +192,43 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
         const triggerState = oldRule.triggerState ?? true;
         
         s.rule = {
-          targetPinHigh: triggerState ? oldRule.targetPin : "",
-          actionOnHigh: triggerState ? oldRule.actionState : true,
-          actionTypeHigh: 0,
-          delayHigh: 0,
-          targetPinLow: !triggerState ? oldRule.targetPin : "",
-          actionOnLow: !triggerState ? oldRule.actionState : false,
-          actionTypeLow: 0,
-          delayLow: 0,
-          reqHoldHigh: 0,
-          reqHoldLow: 0,
+          highActions: triggerState && oldRule.targetPin ? [{
+            reqHold: 0,
+            targetPin: oldRule.targetPin,
+            actionOn: oldRule.actionState ?? true,
+            actionType: 0,
+            delay: 0
+          }] : [],
+          lowActions: !triggerState && oldRule.targetPin ? [{
+            reqHold: 0,
+            targetPin: oldRule.targetPin,
+            actionOn: oldRule.actionState ?? false,
+            actionType: 0,
+            delay: 0
+          }] : []
+        };
+      } else if (s.rule && "targetPinHigh" in s.rule) {
+        const oldRule: any = s.rule;
+        s.rule = {
+          highActions: oldRule.targetPinHigh ? [{
+            reqHold: oldRule.reqHoldHigh || 0,
+            targetPin: oldRule.targetPinHigh,
+            actionOn: oldRule.actionOnHigh ?? true,
+            actionType: oldRule.actionTypeHigh || 0,
+            delay: oldRule.delayHigh || 0
+          }] : [],
+          lowActions: oldRule.targetPinLow ? [{
+            reqHold: oldRule.reqHoldLow || 0,
+            targetPin: oldRule.targetPinLow,
+            actionOn: oldRule.actionOnLow ?? false,
+            actionType: oldRule.actionTypeLow || 0,
+            delay: oldRule.delayLow || 0
+          }] : []
         };
       } else if (s.rule) {
-        // Ensure new properties exist
-        if (s.rule.actionTypeHigh === undefined) s.rule.actionTypeHigh = 0;
-        if (s.rule.delayHigh === undefined) s.rule.delayHigh = 0;
-        if (s.rule.reqHoldHigh === undefined) s.rule.reqHoldHigh = 0;
-        if (s.rule.actionTypeLow === undefined) s.rule.actionTypeLow = 0;
-        if (s.rule.delayLow === undefined) s.rule.delayLow = 0;
-        if (s.rule.reqHoldLow === undefined) s.rule.reqHoldLow = 0;
+        // Ensure arrays exist
+        if (!s.rule.highActions) s.rule.highActions = [];
+        if (!s.rule.lowActions) s.rule.lowActions = [];
       }
     });
 
