@@ -101,9 +101,9 @@ export function useSegmentManagement({
     setSegments((prev) => prev.map((s) => (s.id === id ? { ...s, auto_off } : s)));
   };
 
-  const handleUpdateSegmentRule = (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => {
+  const handleUpdateSegmentRule = (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => {
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
-    publishUpdateRuleCommand(id, rule.targetPin, rule.triggerState, rule.actionState);
+    publishUpdateRuleCommand(id, rule.targetPinHigh, rule.actionOnHigh, rule.targetPinLow, rule.actionOnLow);
   };
 
   const handleRemoveGroup = (groupId: string) => {
