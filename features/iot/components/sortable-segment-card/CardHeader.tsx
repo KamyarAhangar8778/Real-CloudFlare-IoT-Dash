@@ -11,7 +11,7 @@ interface CardHeaderProps {
   onRemove: (id: string) => void;
   onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
   onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
-  onUpdateSegmentRule?: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
+  onUpdateSegmentRule?: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
   countdown?: number | null;
   attributes: any;
   listeners: any;
@@ -33,7 +33,7 @@ export default function CardHeader({
   const [showAutoOffMenu, setShowAutoOffMenu] = React.useState(false);
   const [showRuleMenu, setShowRuleMenu] = React.useState(false);
   const autoOffValue = segment.auto_off || 0;
-  const rule = segment.rule || { targetPin: "", triggerState: true, actionState: true };
+  const rule = segment.rule || { targetPinHigh: "", actionOnHigh: true, targetPinLow: "", actionOnLow: false };
   return (
     <div
       className={`flex items-center justify-between border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${

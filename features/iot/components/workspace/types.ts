@@ -23,6 +23,6 @@ export interface IoTWorkspaceProps {
   handleSetPinState: (pin: string, state: boolean, preventMqtt?: boolean) => void;
   handleUpdateSegmentMode: (id: string, mode: "switch" | "push") => void;
   handleUpdateSegmentAutoOff: (id: string, autoOff: number) => void;
-  handleUpdateSegmentRule?: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
+  handleUpdateSegmentRule?: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
   handleSetupPlaceholder: (id: string) => void;
 }
