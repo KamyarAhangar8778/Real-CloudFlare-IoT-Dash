@@ -33,6 +33,17 @@ export interface EspConfig {
     group: string;
     state?: boolean;
     mode?: "switch" | "push";
+    auto_off?: number;
+    rule?: {
+      targetPinHigh: string;
+      actionOnHigh: boolean;
+      targetPinLow: string;
+      actionOnLow: boolean;
+      // Also allow old schema to exist so TS doesn't complain when reading old KV data
+      targetPin?: string;
+      triggerState?: boolean;
+      actionState?: boolean;
+    };
   }>;
   /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
   worker_url?: string;
