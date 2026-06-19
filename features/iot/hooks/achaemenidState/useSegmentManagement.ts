@@ -108,10 +108,12 @@ export function useSegmentManagement({
       actionOnHigh: boolean; 
       actionTypeHigh?: number;
       delayHigh?: number;
+      reqHoldHigh?: number;
       targetPinLow: string; 
       actionOnLow: boolean;
       actionTypeLow?: number;
       delayLow?: number;
+      reqHoldLow?: number;
     }
   ) => {
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
@@ -121,10 +123,12 @@ export function useSegmentManagement({
       rule.actionOnHigh, 
       rule.actionTypeHigh || 0,
       rule.delayHigh || 0,
+      rule.reqHoldHigh || 0,
       rule.targetPinLow, 
       rule.actionOnLow,
       rule.actionTypeLow || 0,
-      rule.delayLow || 0
+      rule.delayLow || 0,
+      rule.reqHoldLow || 0
     );
   };
 

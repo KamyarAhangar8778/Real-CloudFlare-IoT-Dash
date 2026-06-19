@@ -99,10 +99,12 @@ export const publishUpdateRuleCommand = (
   actionOnHigh: boolean, 
   actionTypeHigh: number = 0,
   delayHigh: number = 0,
+  reqHoldHigh: number = 0,
   targetPinLow: string, 
   actionOnLow: boolean,
   actionTypeLow: number = 0,
-  delayLow: number = 0
+  delayLow: number = 0,
+  reqHoldLow: number = 0
 ) => {
   if (!client) initMqtt();
   if (client?.connected) {
@@ -113,10 +115,12 @@ export const publishUpdateRuleCommand = (
       actionOnHigh,
       actionTypeHigh,
       delayHigh,
+      reqHoldHigh,
       targetPinLow: parseInt(targetPinLow || "-1", 10),
       actionOnLow,
       actionTypeLow,
-      delayLow
+      delayLow,
+      reqHoldLow
     });
     client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
     console.log(`[MQTT] Published update_rule: ${payload}`);

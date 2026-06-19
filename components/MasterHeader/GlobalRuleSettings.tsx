@@ -14,7 +14,7 @@ export default function GlobalRuleSettings() {
   const showToast = useIoTStore((state) => state.showToast);
 
   // Local state for tracking edited rules
-  const [localRules, setLocalRules] = useState<Record<string, { targetPinHigh: string; actionOnHigh: boolean; actionTypeHigh?: number; delayHigh?: number; targetPinLow: string; actionOnLow: boolean; actionTypeLow?: number; delayLow?: number; }>>({});
+  const [localRules, setLocalRules] = useState<Record<string, { targetPinHigh: string; actionOnHigh: boolean; actionTypeHigh?: number; delayHigh?: number; reqHoldHigh?: number; targetPinLow: string; actionOnLow: boolean; actionTypeLow?: number; delayLow?: number; reqHoldLow?: number; }>>({});
 
 
   const inputSegments = segments.filter((s) => s.type === "input");
@@ -58,8 +58,8 @@ export default function GlobalRuleSettings() {
               ) : (
                 inputSegments.map(segment => {
                   const originalRule = segment.rule || { 
-                    targetPinHigh: "", actionOnHigh: true, actionTypeHigh: 0, delayHigh: 0,
-                    targetPinLow: "", actionOnLow: false, actionTypeLow: 0, delayLow: 0
+                    targetPinHigh: "", actionOnHigh: true, actionTypeHigh: 0, delayHigh: 0, reqHoldHigh: 0,
+                    targetPinLow: "", actionOnLow: false, actionTypeLow: 0, delayLow: 0, reqHoldLow: 0
                   };
                   const rule = localRules[segment.id] || originalRule;
                   
@@ -95,10 +95,12 @@ export default function GlobalRuleSettings() {
                       rule.actionOnHigh, 
                       rule.actionTypeHigh || 0,
                       rule.delayHigh || 0,
+                      rule.reqHoldHigh || 0,
                       rule.targetPinLow, 
                       rule.actionOnLow,
                       rule.actionTypeLow || 0,
-                      rule.delayLow || 0
+                      rule.delayLow || 0,
+                      rule.reqHoldLow || 0
                     );
                     showToast("شرط‌ها با موفقیت ثبت و به دستگاه ارسال شدند.", "success");
                   };
@@ -128,6 +130,27 @@ export default function GlobalRuleSettings() {
                                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-emerald-500"
                                 dir="ltr"
                               />
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 mb-1.5">زمان مورد نیاز نگه‌داشتن کلید:</label>
+                              <select
+                                value={rule.reqHoldHigh || 0}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  if (val > 0) {
+                                    // Disable hold time on the other state
+                                    handleLocalChange({ reqHoldHigh: val, reqHoldLow: 0 });
+                                  } else {
+                                    handleLocalChange({ reqHoldHigh: val });
+                                  }
+                                }}
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-emerald-500"
+                              >
+                                <option value={0}>بدون نیاز به نگه‌داشتن (فوری)</option>
+                                <option value={3}>۳ ثانیه</option>
+                                <option value={5}>۵ ثانیه</option>
+                                <option value={10}>۱۰ ثانیه</option>
+                              </select>
                             </div>
                             <div>
                               <label className="block text-slate-500 mb-1.5">وضعیت پایه هدف بشود:</label>
@@ -186,6 +209,27 @@ export default function GlobalRuleSettings() {
                                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-rose-500"
                                 dir="ltr"
                               />
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 mb-1.5">زمان مورد نیاز نگه‌داشتن کلید:</label>
+                              <select
+                                value={rule.reqHoldLow || 0}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  if (val > 0) {
+                                    // Disable hold time on the other state
+                                    handleLocalChange({ reqHoldLow: val, reqHoldHigh: 0 });
+                                  } else {
+                                    handleLocalChange({ reqHoldLow: val });
+                                  }
+                                }}
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-rose-500"
+                              >
+                                <option value={0}>بدون نیاز به نگه‌داشتن (فوری)</option>
+                                <option value={3}>۳ ثانیه</option>
+                                <option value={5}>۵ ثانیه</option>
+                                <option value={10}>۱۰ ثانیه</option>
+                              </select>
                             </div>
                             <div>
                               <label className="block text-slate-500 mb-1.5">وضعیت پایه هدف بشود:</label>

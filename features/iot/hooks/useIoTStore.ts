@@ -16,10 +16,12 @@ interface IoTStoreState {
       actionOnHigh: boolean;
       actionTypeHigh?: number;
       delayHigh?: number;
+      reqHoldHigh?: number;
       targetPinLow: string;
       actionOnLow: boolean;
       actionTypeLow?: number;
       delayLow?: number;
+      reqHoldLow?: number;
     };
   }>;
   groupsOrder: string[];
@@ -51,10 +53,12 @@ interface IoTStoreState {
     actionOnHigh: boolean; 
     actionTypeHigh?: number;
     delayHigh?: number;
+    reqHoldHigh?: number;
     targetPinLow: string; 
     actionOnLow: boolean;
     actionTypeLow?: number;
     delayLow?: number;
+    reqHoldLow?: number;
   }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
@@ -188,13 +192,17 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
           actionOnLow: !triggerState ? oldRule.actionState : false,
           actionTypeLow: 0,
           delayLow: 0,
+          reqHoldHigh: 0,
+          reqHoldLow: 0,
         };
       } else if (s.rule) {
         // Ensure new properties exist
         if (s.rule.actionTypeHigh === undefined) s.rule.actionTypeHigh = 0;
         if (s.rule.delayHigh === undefined) s.rule.delayHigh = 0;
+        if (s.rule.reqHoldHigh === undefined) s.rule.reqHoldHigh = 0;
         if (s.rule.actionTypeLow === undefined) s.rule.actionTypeLow = 0;
         if (s.rule.delayLow === undefined) s.rule.delayLow = 0;
+        if (s.rule.reqHoldLow === undefined) s.rule.reqHoldLow = 0;
       }
     });
 
