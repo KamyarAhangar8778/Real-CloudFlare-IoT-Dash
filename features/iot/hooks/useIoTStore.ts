@@ -14,8 +14,12 @@ interface IoTStoreState {
     rule?: {
       targetPinHigh: string;
       actionOnHigh: boolean;
+      actionTypeHigh?: number;
+      delayHigh?: number;
       targetPinLow: string;
       actionOnLow: boolean;
+      actionTypeLow?: number;
+      delayLow?: number;
     };
   }>;
   groupsOrder: string[];
@@ -42,7 +46,16 @@ interface IoTStoreState {
     pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>),
   ) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
-  updateSegmentRule: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
+  updateSegmentRule: (id: string, rule: { 
+    targetPinHigh: string; 
+    actionOnHigh: boolean; 
+    actionTypeHigh?: number;
+    delayHigh?: number;
+    targetPinLow: string; 
+    actionOnLow: boolean;
+    actionTypeLow?: number;
+    delayLow?: number;
+  }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
   toast: { message: string; type: "success" | "error" } | null;
@@ -169,9 +182,19 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
         s.rule = {
           targetPinHigh: triggerState ? oldRule.targetPin : "",
           actionOnHigh: triggerState ? oldRule.actionState : true,
+          actionTypeHigh: 0,
+          delayHigh: 0,
           targetPinLow: !triggerState ? oldRule.targetPin : "",
           actionOnLow: !triggerState ? oldRule.actionState : false,
+          actionTypeLow: 0,
+          delayLow: 0,
         };
+      } else if (s.rule) {
+        // Ensure new properties exist
+        if (s.rule.actionTypeHigh === undefined) s.rule.actionTypeHigh = 0;
+        if (s.rule.delayHigh === undefined) s.rule.delayHigh = 0;
+        if (s.rule.actionTypeLow === undefined) s.rule.actionTypeLow = 0;
+        if (s.rule.delayLow === undefined) s.rule.delayLow = 0;
       }
     });
 

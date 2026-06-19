@@ -30,8 +30,14 @@ export default function GlobalRuleSettings() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setIsOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-[var(--card-bg-solid)]">
               <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">مدیریت شرط‌ها (Rules)</h2>
               <button onClick={() => setIsOpen(false)} className="p-1.5 text-slate-500 hover:text-red-500 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors">
@@ -51,7 +57,10 @@ export default function GlobalRuleSettings() {
                 <p className="text-center text-slate-500 text-sm py-8">هیچ ورودی (سنسور/کلید) در داشبورد وجود ندارد.</p>
               ) : (
                 inputSegments.map(segment => {
-                  const originalRule = segment.rule || { targetPinHigh: "", actionOnHigh: true, targetPinLow: "", actionOnLow: false };
+                  const originalRule = segment.rule || { 
+                    targetPinHigh: "", actionOnHigh: true, actionTypeHigh: 0, delayHigh: 0,
+                    targetPinLow: "", actionOnLow: false, actionTypeLow: 0, delayLow: 0
+                  };
                   const rule = localRules[segment.id] || originalRule;
                   
                   const handleLocalChange = (updates: Partial<typeof rule>) => {
@@ -80,7 +89,17 @@ export default function GlobalRuleSettings() {
                     }
                     
                     updateSegmentRule(segment.id, rule);
-                    publishUpdateRuleCommand(segment.id, rule.targetPinHigh, rule.actionOnHigh, rule.targetPinLow, rule.actionOnLow);
+                    publishUpdateRuleCommand(
+                      segment.id, 
+                      rule.targetPinHigh, 
+                      rule.actionOnHigh, 
+                      rule.actionTypeHigh || 0,
+                      rule.delayHigh || 0,
+                      rule.targetPinLow, 
+                      rule.actionOnLow,
+                      rule.actionTypeLow || 0,
+                      rule.delayLow || 0
+                    );
                     showToast("شرط‌ها با موفقیت ثبت و به دستگاه ارسال شدند.", "success");
                   };
 
@@ -121,6 +140,32 @@ export default function GlobalRuleSettings() {
                                 <option value="0">خاموش (LOW)</option>
                               </select>
                             </div>
+                            <div>
+                              <label className="block text-slate-500 mb-1.5">نوع عملیات:</label>
+                              <select
+                                value={rule.actionTypeHigh || 0}
+                                onChange={(e) => handleLocalChange({ actionTypeHigh: parseInt(e.target.value, 10) })}
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-emerald-500"
+                              >
+                                <option value={0}>همان لحظه تغییر کند</option>
+                                <option value={1}>بعد از زمان تعیین‌شده تغییر کند</option>
+                                <option value={2}>فقط برای مدت زمان تعیین‌شده بماند</option>
+                              </select>
+                            </div>
+                            {(rule.actionTypeHigh || 0) > 0 && (
+                              <div>
+                                <label className="block text-slate-500 mb-1.5">زمان (بین ۱ تا ۶۰ ثانیه):</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="60"
+                                  value={rule.delayHigh || 10}
+                                  onChange={(e) => handleLocalChange({ delayHigh: parseInt(e.target.value, 10) })}
+                                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-emerald-500"
+                                  dir="ltr"
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -153,6 +198,32 @@ export default function GlobalRuleSettings() {
                                 <option value="0">خاموش (LOW)</option>
                               </select>
                             </div>
+                            <div>
+                              <label className="block text-slate-500 mb-1.5">نوع عملیات:</label>
+                              <select
+                                value={rule.actionTypeLow || 0}
+                                onChange={(e) => handleLocalChange({ actionTypeLow: parseInt(e.target.value, 10) })}
+                                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg focus:outline-none focus:border-rose-500"
+                              >
+                                <option value={0}>همان لحظه تغییر کند</option>
+                                <option value={1}>بعد از زمان تعیین‌شده تغییر کند</option>
+                                <option value={2}>فقط برای مدت زمان تعیین‌شده بماند</option>
+                              </select>
+                            </div>
+                            {(rule.actionTypeLow || 0) > 0 && (
+                              <div>
+                                <label className="block text-slate-500 mb-1.5">زمان (بین ۱ تا ۶۰ ثانیه):</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="60"
+                                  value={rule.delayLow || 10}
+                                  onChange={(e) => handleLocalChange({ delayLow: parseInt(e.target.value, 10) })}
+                                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-left focus:outline-none focus:border-rose-500"
+                                  dir="ltr"
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

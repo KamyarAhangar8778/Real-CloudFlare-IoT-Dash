@@ -93,7 +93,17 @@ export const publishDeleteSegmentCommand = (id: string) => {
   }
 };
 
-export const publishUpdateRuleCommand = (id: string, targetPinHigh: string, actionOnHigh: boolean, targetPinLow: string, actionOnLow: boolean) => {
+export const publishUpdateRuleCommand = (
+  id: string, 
+  targetPinHigh: string, 
+  actionOnHigh: boolean, 
+  actionTypeHigh: number = 0,
+  delayHigh: number = 0,
+  targetPinLow: string, 
+  actionOnLow: boolean,
+  actionTypeLow: number = 0,
+  delayLow: number = 0
+) => {
   if (!client) initMqtt();
   if (client?.connected) {
     const payload = JSON.stringify({ 
@@ -101,8 +111,12 @@ export const publishUpdateRuleCommand = (id: string, targetPinHigh: string, acti
       id, 
       targetPinHigh: parseInt(targetPinHigh || "-1", 10), 
       actionOnHigh,
+      actionTypeHigh,
+      delayHigh,
       targetPinLow: parseInt(targetPinLow || "-1", 10),
-      actionOnLow
+      actionOnLow,
+      actionTypeLow,
+      delayLow
     });
     client.publish("KamyarIoT/Achaemenid/Command", payload, { qos: 1 });
     console.log(`[MQTT] Published update_rule: ${payload}`);
