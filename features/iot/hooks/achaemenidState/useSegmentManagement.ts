@@ -104,31 +104,27 @@ export function useSegmentManagement({
   const handleUpdateSegmentRule = (
     id: string, 
     rule: { 
-      targetPinHigh: string; 
-      actionOnHigh: boolean; 
-      actionTypeHigh?: number;
-      delayHigh?: number;
-      reqHoldHigh?: number;
-      targetPinLow: string; 
-      actionOnLow: boolean;
-      actionTypeLow?: number;
-      delayLow?: number;
-      reqHoldLow?: number;
+      highActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
+      lowActions?: Array<{
+        reqHold: number;
+        targetPin: string;
+        actionOn: boolean;
+        actionType?: number;
+        delay?: number;
+      }>;
     }
   ) => {
     setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
     publishUpdateRuleCommand(
       id, 
-      rule.targetPinHigh, 
-      rule.actionOnHigh, 
-      rule.actionTypeHigh || 0,
-      rule.delayHigh || 0,
-      rule.reqHoldHigh || 0,
-      rule.targetPinLow, 
-      rule.actionOnLow,
-      rule.actionTypeLow || 0,
-      rule.delayLow || 0,
-      rule.reqHoldLow || 0
+      rule.highActions || [],
+      rule.lowActions || []
     );
   };
 
