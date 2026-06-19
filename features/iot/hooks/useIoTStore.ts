@@ -11,7 +11,12 @@ interface IoTStoreState {
     state?: boolean;
     mode?: "switch" | "push";
     auto_off?: number;
-    rule?: { targetPin: string; triggerState: boolean; actionState: boolean };
+    rule?: {
+      targetPinHigh: string;
+      actionOnHigh: boolean;
+      targetPinLow: string;
+      actionOnLow: boolean;
+    };
   }>;
   groupsOrder: string[];
   groupConfigs: Record<string, { maxCols: number }>;
@@ -37,7 +42,7 @@ interface IoTStoreState {
     pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>),
   ) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
-  updateSegmentRule: (id: string, rule: { targetPin: string; triggerState: boolean; actionState: boolean }) => void;
+  updateSegmentRule: (id: string, rule: { targetPinHigh: string; actionOnHigh: boolean; targetPinLow: string; actionOnLow: boolean }) => void;
   setSyncStatus: (loading: boolean, progress: number, message: string) => void;
   setLowDataMode: (enabled: boolean) => void;
   toast: { message: string; type: "success" | "error" } | null;
@@ -154,6 +159,19 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     config.segments.forEach((s) => {
       if (s.pin && s.state !== undefined) {
         importedPins[s.pin] = s.state;
+      }
+      
+      // Backward compatibility for old rule schema
+      if (s.rule && "targetPin" in s.rule) {
+        const oldRule: any = s.rule;
+        const triggerState = oldRule.triggerState ?? true;
+        
+        s.rule = {
+          targetPinHigh: triggerState ? oldRule.targetPin : "",
+          actionOnHigh: triggerState ? oldRule.actionState : true,
+          targetPinLow: !triggerState ? oldRule.targetPin : "",
+          actionOnLow: !triggerState ? oldRule.actionState : false,
+        };
       }
     });
 
