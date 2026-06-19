@@ -37,8 +37,12 @@ export interface EspConfig {
     rule?: {
       targetPinHigh: string;
       actionOnHigh: boolean;
+      actionTypeHigh?: number;
+      delayHigh?: number;
       targetPinLow: string;
       actionOnLow: boolean;
+      actionTypeLow?: number;
+      delayLow?: number;
       // Also allow old schema to exist so TS doesn't complain when reading old KV data
       targetPin?: string;
       triggerState?: boolean;
