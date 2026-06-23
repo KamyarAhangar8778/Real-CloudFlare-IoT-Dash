@@ -110,5 +110,7 @@ export function useAchaemenidState() {
     setWorkerUrl,
     handleRetrySync,
     triggerCloudflarePush,
+    automations: store.automations,
+    setAutomations: store.setAutomations,
   };
 }

@@ -6,6 +6,7 @@ export function useEspMenuState() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModulesMenuOpen, setIsModulesMenuOpen] = useState(false);
   const [isEspDrawerOpen, setIsEspDrawerOpen] = useState(false);
+  const [isAutomationsMenuOpen, setIsAutomationsMenuOpen] = useState(false);
 
   return {
     isMenuOpen,
@@ -14,5 +15,7 @@ export function useEspMenuState() {
     setIsModulesMenuOpen,
     isEspDrawerOpen,
     setIsEspDrawerOpen,
+    isAutomationsMenuOpen,
+    setIsAutomationsMenuOpen,
   };
 }

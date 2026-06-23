@@ -38,6 +38,15 @@ interface IoTStoreState {
   lowDataMode: boolean;
   manualSaveMode: boolean;
   unsavedChangesCount: number;
+  automations: Array<{
+    id: string;
+    title: string;
+    time: string;
+    days: number[];
+    targetPin: string;
+    actionOn: boolean;
+    enabled: boolean;
+  }>;
 
   // Actions
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
@@ -77,6 +86,9 @@ interface IoTStoreState {
   setManualSaveMode: (enabled: boolean) => void;
   incrementUnsavedChanges: () => void;
   resetUnsavedChanges: () => void;
+  setAutomations: (
+    automations: any[] | ((prev: any[]) => any[]),
+  ) => void;
 }
 
 export const useIoTStore = create<IoTStoreState>((set, get) => ({
@@ -92,6 +104,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   manualSaveMode: false,
   unsavedChangesCount: 0,
   toast: null,
+  automations: [],
 
   setSegments: (segments) => {
     set((state) => {
@@ -170,6 +183,13 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     set({ unsavedChangesCount: 0 });
   },
 
+  setAutomations: (automations) => {
+    set((state) => {
+      const next = typeof automations === "function" ? automations(state.automations) : automations;
+      return { automations: next };
+    });
+  },
+
   applyEspConfig: (config) => {
     if (!config) return;
 
@@ -178,6 +198,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
       groupsOrder: config.layout.groups_order,
       groupConfigs: config.layout.group_configs,
       groupsCols: config.layout.groups_cols || 1,
+      automations: config.automations || [],
     });
 
     const importedPins: Record<string, boolean> = {};

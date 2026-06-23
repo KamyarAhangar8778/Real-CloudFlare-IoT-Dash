@@ -65,6 +65,15 @@ export interface EspConfig {
       actionState?: boolean;
     };
   }>;
+  automations?: Array<{
+    id: string;
+    title: string;
+    time: string; // "HH:MM" in 24h format
+    days: number[]; // 0=Sun, 1=Mon, etc.
+    targetPin: string;
+    actionOn: boolean;
+    enabled: boolean;
+  }>;
   /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
   worker_url?: string;
 }
@@ -121,6 +130,7 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
       group: "بخش فرماندهی",
     },
   ],
+  automations: [],
 };
 
 /**

@@ -10,6 +10,9 @@ const SettingsDrawer = dynamic(() => import("@/features/settings/components/Sett
 const ModulesDrawer = dynamic(() => import("@/features/iot/components/ModulesDrawer"), {
   ssr: false,
 });
+const AutomationsDrawer = dynamic(() => import("@/features/iot/components/AutomationsDrawer"), {
+  ssr: false,
+});
 
 export default function DashboardDrawers() {
   const {
@@ -17,6 +20,8 @@ export default function DashboardDrawers() {
     setIsMenuOpen,
     isModulesMenuOpen,
     setIsModulesMenuOpen,
+    isAutomationsMenuOpen,
+    setIsAutomationsMenuOpen,
     accent3,
     setAccent3,
     accent4,
@@ -79,6 +84,15 @@ export default function DashboardDrawers() {
           isDark={isDark}
           accent3={accent3}
           accent4={accent4}
+          animationsEnabled={animationsEnabled}
+        />
+      )}
+
+      {isAutomationsMenuOpen && (
+        <AutomationsDrawer
+          isOpen={isAutomationsMenuOpen}
+          onClose={() => setIsAutomationsMenuOpen(false)}
+          isDark={isDark}
           animationsEnabled={animationsEnabled}
         />
       )}
