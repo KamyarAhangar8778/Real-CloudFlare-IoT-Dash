@@ -3,7 +3,6 @@ export interface MasterHeaderProps {
   setIsDark: (val: boolean) => void;
   setIsModulesMenuOpen: (val: boolean) => void;
   setIsMenuOpen: (val: boolean) => void;
-  setIsAutomationsMenuOpen: (val: boolean) => void;
   headerAnimationType: "fade" | "chase";
   headerTitle: string;
   groupsCols: number;
