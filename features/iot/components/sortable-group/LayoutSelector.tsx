@@ -23,19 +23,22 @@ export default function LayoutSelector({
       <button
         onClick={() => onColsChange(1)}
         aria-label="تک ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 1
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
             : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
         }`}
         title="نمایش تک ستونه"
       >
-        <Columns2 className="w-3.5 h-3.5 rotate-90" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+          <rect width="18" height="7" x="3" y="3" rx="1" />
+          <rect width="18" height="7" x="3" y="14" rx="1" />
+        </svg>
       </button>
       <button
         onClick={() => onColsChange(2)}
         aria-label="دو ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 2
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
             : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
@@ -47,14 +50,21 @@ export default function LayoutSelector({
       <button
         onClick={() => onColsChange(3)}
         aria-label="سه ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 3
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
             : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
         }`}
         title="نمایش سه ستونه"
       >
-        <LayoutGrid className="w-3.5 h-3.5 scale-x-110" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+          <rect width="4" height="7" x="3" y="3" rx="1" />
+          <rect width="4" height="7" x="10" y="3" rx="1" />
+          <rect width="4" height="7" x="17" y="3" rx="1" />
+          <rect width="4" height="7" x="3" y="14" rx="1" />
+          <rect width="4" height="7" x="10" y="14" rx="1" />
+          <rect width="4" height="7" x="17" y="14" rx="1" />
+        </svg>
       </button>
     </div>
   );

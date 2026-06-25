@@ -22,6 +22,7 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
     setHeaderPosition,
     animationsEnabled,
     isSidebarCollapsed,
+    setIsSidebarCollapsed,
   } = useDashboard();
 
   if (position === "left") {
