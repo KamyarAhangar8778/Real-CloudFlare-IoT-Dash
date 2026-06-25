@@ -21,11 +21,16 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
     headerPosition,
     setHeaderPosition,
     animationsEnabled,
+    isSidebarCollapsed,
   } = useDashboard();
 
   if (position === "left") {
     return (
-      <aside className="hidden md:flex md:w-72 md:shrink-0 md:sticky md:top-4 md:h-fit p-1 flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] gap-4">
+      <aside 
+        className={`hidden md:flex md:shrink-0 md:sticky md:top-4 md:h-fit p-1 flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] gap-4 transition-all duration-300 ${
+          isSidebarCollapsed ? "md:w-20" : "md:w-72"
+        }`}
+      >
         <MasterHeader
           isDark={isDark}
           setIsDark={setIsDark}
@@ -38,6 +43,8 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
           headerPosition={headerPosition}
           setHeaderPosition={setHeaderPosition}
           animationsEnabled={animationsEnabled}
+          isSidebarCollapsed={isSidebarCollapsed}
+          setIsSidebarCollapsed={setIsSidebarCollapsed}
         />
       </aside>
     );
@@ -61,6 +68,8 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
         headerPosition={headerPosition === "left" ? "top" : headerPosition}
         setHeaderPosition={setHeaderPosition}
         animationsEnabled={animationsEnabled}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
       />
     </div>
   );

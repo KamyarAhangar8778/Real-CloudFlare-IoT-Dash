@@ -43,7 +43,7 @@ export default function HorizontalHeader(props: MasterHeaderProps) {
 
           {/* Control Target Drawers with Premium feedback */}
           <div className="flex items-center gap-2">
-            <GlobalRuleSettings />
+            <GlobalRuleSettings variant="horizontal" />
             
             <QuickAccessControls
               setIsModulesMenuOpen={props.setIsModulesMenuOpen}

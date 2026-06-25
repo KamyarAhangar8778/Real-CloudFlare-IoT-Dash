@@ -12,6 +12,8 @@ interface ActiveCardProps
   isUltraCompact: boolean;
   attributes: any;
   listeners: any;
+  isSettingsOpen?: boolean;
+  setIsSettingsOpen?: (val: boolean) => void;
 }
 
 export default function ActiveCard({
@@ -30,6 +32,8 @@ export default function ActiveCard({
   isUltraCompact,
   attributes,
   listeners,
+  isSettingsOpen,
+  setIsSettingsOpen,
 }: ActiveCardProps) {
   const mode = segment.mode || "switch";
   const buttonProps = useSegmentButtonProps({
@@ -76,7 +80,7 @@ export default function ActiveCard({
           : undefined
       }
       whileHover={animationsEnabled ? { y: -1.5, scale: 1.002 } : undefined}
-      className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl ${
+      className={`flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl ${
         isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
       }`}
     >
@@ -88,6 +92,7 @@ export default function ActiveCard({
           segment={segment}
           isPinOn={isPinOn}
           isUltraCompact={isUltraCompact}
+          isCompact={isCompact}
           mode={mode}
           onRemove={onRemove}
           onUpdateSegmentMode={onUpdateSegmentMode}
@@ -96,6 +101,8 @@ export default function ActiveCard({
           countdown={countdown}
           onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
           onUpdateSegmentRule={onUpdateSegmentRule}
+          isSettingsOpen={isSettingsOpen}
+          setIsSettingsOpen={setIsSettingsOpen}
         />
 
         <CardBody

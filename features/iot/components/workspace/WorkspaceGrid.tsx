@@ -42,17 +42,28 @@ export default function WorkspaceGrid({
       items={groupsOrder.map((g) => `group-${g}`)}
       strategy={groupsCols > 1 ? rectSortingStrategy : verticalListSortingStrategy}
     >
-      <div
-        className={
-          groupsCols === 3
-            ? "grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start"
-            : groupsCols === 2
-              ? "grid grid-cols-1 md:grid-cols-2 gap-8 w-full items-start"
-              : "w-full space-y-8 items-start"
-        }
-      >
+      <div className="flex flex-wrap gap-8 w-full items-start workspace-grid-layout">
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .workspace-grid-layout > * {
+                flex-grow: 1;
+                flex-shrink: 0;
+                flex-basis: ${
+                  groupsCols === 1
+                    ? "100%"
+                    : groupsCols === 2
+                      ? "calc(50% - 1rem)"
+                      : "calc(33.3333% - 1.3333rem)"
+                };
+              }
+            `,
+          }}
+        />
         {groupsOrder.map((groupName) => {
           const groupSegments = segments.filter((s) => (s.group || "Test") === groupName);
+          const effectiveGroupsCols = Math.min(groupsOrder.length, groupsCols);
+          
           return (
             <div key={groupName} className="space-y-3 w-full">
               <SortableGroup
@@ -63,7 +74,7 @@ export default function WorkspaceGrid({
                 onColsChange={(cols) => handleGroupColsChange(groupName, cols)}
                 onAddPlaceholder={handleAddPlaceholder}
                 onDeleteGroup={handleRemoveGroup}
-                parentGroupsCols={groupsCols}
+                parentGroupsCols={effectiveGroupsCols}
                 animationsEnabled={animationsEnabled}
               >
                 {groupSegments.map((seg) => (
@@ -79,8 +90,9 @@ export default function WorkspaceGrid({
                     onUpdateSegmentRule={handleUpdateSegmentRule}
                     isLoadingIoT={isLoadingIoT}
                     onSetupPlaceholder={handleSetupPlaceholder}
-                    parentGroupsCols={groupsCols}
+                    parentGroupsCols={effectiveGroupsCols}
                     groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
+                    groupItemsCount={groupSegments.length}
                     animationsEnabled={animationsEnabled}
                   />
                 ))}

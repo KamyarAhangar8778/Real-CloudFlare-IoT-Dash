@@ -5,14 +5,16 @@ interface LayoutColumnsSwitcherProps {
   groupsCols: number;
   setGroupsCols: (val: number) => void;
   variant: "vertical" | "horizontal";
+  isSidebarCollapsed?: boolean;
 }
 
 export default function LayoutColumnsSwitcher({
   groupsCols,
   setGroupsCols,
   variant,
+  isSidebarCollapsed,
 }: LayoutColumnsSwitcherProps) {
-  if (variant === "vertical") {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
       <div className="flex items-center justify-between p-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg gap-2">
         <span className="text-[10px] text-[var(--text-tertiary)] font-bold">ستون‌ها:</span>

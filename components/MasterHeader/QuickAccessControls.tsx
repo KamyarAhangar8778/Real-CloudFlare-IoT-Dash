@@ -7,6 +7,7 @@ interface QuickAccessControlsProps {
   setIsMenuOpen: (val: boolean) => void;
   animationsEnabled?: boolean;
   variant: "vertical" | "horizontal";
+  isSidebarCollapsed?: boolean;
 }
 
 export default function QuickAccessControls({
@@ -14,10 +15,11 @@ export default function QuickAccessControls({
   setIsMenuOpen,
   animationsEnabled,
   variant,
+  isSidebarCollapsed,
 }: QuickAccessControlsProps) {
   const { setIsAutomationsMenuOpen } = useDashboard();
 
-  if (variant === "vertical") {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
       <div className="space-y-2 mt-4">
         <span className="text-[10px] text-[var(--text-muted)] font-black block text-right uppercase tracking-wider">
@@ -80,23 +82,22 @@ export default function QuickAccessControls({
   }
 
   return (
-    <>
+    <div className={variant === "vertical" ? "flex flex-col gap-2" : "flex items-center gap-1"}>
       {/* Modules trigger */}
       <button
         onClick={() => setIsModulesMenuOpen(true)}
-        className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97]"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center"
         title="مدیریت ماژول‌ها و ابزارها"
       >
         <Layers
-          className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`}
+          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}
         />
-        <span>ماژول‌ها</span>
       </button>
 
       {/* Automations trigger */}
       <button
         onClick={() => setIsAutomationsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="اتوماسیون‌های زمانی"
       >
         <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -105,13 +106,13 @@ export default function QuickAccessControls({
       {/* General system Settings trigger */}
       <button
         onClick={() => setIsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="پیکربندی سیستم"
       >
         <SettingsIcon
           className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
         />
       </button>
-    </>
+    </div>
   );
 }

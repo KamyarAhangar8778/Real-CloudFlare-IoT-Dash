@@ -10,4 +10,6 @@ export interface MasterHeaderProps {
   headerPosition: "top" | "left";
   setHeaderPosition: (val: "top" | "left") => void;
   animationsEnabled?: boolean;
+  isSidebarCollapsed?: boolean;
+  setIsSidebarCollapsed?: (val: boolean) => void;
 }

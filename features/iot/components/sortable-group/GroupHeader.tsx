@@ -27,71 +27,76 @@ export default function GroupHeader({
   attributes,
   listeners,
 }: GroupHeaderProps) {
+  
   return (
     <div
-      className={`flex items-center justify-between bg-black/[0.08] dark:bg-black/35 border-b border-[var(--border-color)] relative z-10 rounded-t-2xl ${
-        parentGroupsCols === 3 ? "p-3 px-4 gap-2" : "p-4 gap-4"
-      }`}
+      className="flex items-stretch justify-between bg-black/[0.08] dark:bg-black/35 border-b border-[var(--border-color)] relative z-10 rounded-t-2xl overflow-hidden"
     >
-      <div className="flex items-center gap-2 min-w-0 flex-1">
-        <div
-          className={`flex items-center justify-center bg-[var(--accent3-transparent)] text-[var(--accent3)] shrink-0 ${
-            parentGroupsCols === 3 ? "p-1.5" : "p-2"
-          }`}
-          style={{
-            clipPath:
-              "polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)",
-          }}
-        >
-          <Layers className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
-        </div>
-        <div className="min-w-0 flex-1 text-right">
-          <h4
-            className={`font-sans font-extrabold text-slate-850 dark:text-[var(--accent3)] truncate ${
-              parentGroupsCols === 3 ? "text-[11px]" : "text-base"
+      {/* Right Part: Title and Layout Selector */}
+      <div className={`flex items-center justify-between flex-1 ${parentGroupsCols === 3 ? "p-2 pr-4 gap-2" : "p-2.5 pr-5 gap-4"}`}>
+        <div className="flex items-center gap-2 min-w-0">
+          <div
+            className={`flex items-center justify-center bg-[var(--accent3-transparent)] text-[var(--accent3)] shrink-0 ${
+              parentGroupsCols === 3 ? "p-1.5" : "p-2"
             }`}
+            style={{
+              clipPath:
+                "polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)",
+            }}
           >
-            {id}
-          </h4>
-          <span className="text-[9px] theme-text-muted mt-0.5 whitespace-nowrap block">
-            ({segmentCount} دستگاه)
-          </span>
+            <Layers className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
+          </div>
+          <div className="min-w-0 flex-1 text-right">
+            <h4
+              className={`font-sans font-extrabold text-slate-850 dark:text-[var(--accent3)] truncate ${
+                parentGroupsCols === 3 ? "text-[11px]" : "text-base"
+              }`}
+            >
+              {id}
+            </h4>
+            <span className="text-[9px] theme-text-muted mt-0.5 whitespace-nowrap block">
+              ({segmentCount} دستگاه)
+            </span>
+          </div>
+        </div>
+
+        <div className="shrink-0">
+          <LayoutSelector
+            maxCols={maxCols}
+            onColsChange={onColsChange}
+            parentGroupsCols={parentGroupsCols}
+          />
         </div>
       </div>
 
-      <div className={`flex items-center shrink-0 ${parentGroupsCols === 3 ? "gap-1" : "gap-3"}`}>
-        <LayoutSelector
-          maxCols={maxCols}
-          onColsChange={onColsChange}
-          parentGroupsCols={parentGroupsCols}
-        />
-
+      {/* Left Part: 3 Action Buttons */}
+      <div className="flex items-stretch shrink-0 border-r border-[var(--border-color)]">
         {/* Add Placeholder Handle */}
         <button
           onClick={() => onAddPlaceholder(id)}
-          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] transition-all cursor-pointer rounded-lg shadow-sm"
+          className={`flex items-center justify-center text-slate-600 dark:text-gray-400 hover:text-[var(--accent3)] hover:bg-[var(--accent3-transparent)] transition-all cursor-pointer border-l border-[var(--border-color)] ${parentGroupsCols === 3 ? "w-10" : "w-12 sm:w-14"}`}
           title="اضافه کردن سگمنت (پایه خالی) به این گروه"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
         </button>
 
         {/* Delete Group Handle */}
         <button
           onClick={() => onDeleteGroup(id)}
-          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-red-500 hover:text-red-500 transition-all cursor-pointer rounded-lg shadow-sm"
+          className={`flex items-center justify-center text-slate-600 dark:text-gray-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all cursor-pointer border-l border-[var(--border-color)] ${parentGroupsCols === 3 ? "w-10" : "w-12 sm:w-14"}`}
           title="حذف کامل این گروه و تمامی سگمنت‌های داخل آن"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
         </button>
 
         {/* Group Drag Handle */}
         <div
           {...attributes}
           {...listeners}
-          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-all rounded-lg shadow-sm"
+          className={`flex items-center justify-center text-slate-600 dark:text-gray-400 hover:text-[var(--accent3)] hover:bg-[var(--accent3-transparent)] transition-all cursor-grab active:cursor-grabbing ${parentGroupsCols === 3 ? "w-10" : "w-12 sm:w-14"}`}
           title="کشیدن کل گروه برای جابه‌جایی"
         >
-          <GripVertical className="w-4 h-4" />
+          <GripVertical className={parentGroupsCols === 3 ? "w-4 h-4" : "w-5 h-5"} />
         </div>
       </div>
     </div>

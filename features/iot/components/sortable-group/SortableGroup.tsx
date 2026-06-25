@@ -40,7 +40,7 @@ export default function SortableGroup({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative group/group-card w-full mb-6 touch-none flex flex-col border border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-350 hover:-translate-y-1 hover:border-[var(--accent3)]"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col border border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-md rounded-2xl shadow-sm hover:shadow-xl transition-all duration-350 hover:-translate-y-1 hover:border-[var(--accent3)]"
     >
       <GroupHeader
         id={id}
@@ -74,9 +74,8 @@ export default function SortableGroup({
                     ? "100%"
                     : maxCols === 2
                       ? "calc(50% - 0.5rem)"
-                      : "calc(33.333% - 0.75rem)"
+                      : "calc(33.3333% - 0.6667rem)"
                 };
-                max-width: 100%;
               }
             `,
               }}
@@ -87,7 +86,7 @@ export default function SortableGroup({
       </div>
 
       {/* Footer Island */}
-      <div className="p-3 bg-black/10 border-t border-[var(--border-color)] flex justify-between flex-row-reverse items-center relative z-10">
+      <div className="p-3 bg-black/10 border-t border-[var(--border-color)] flex justify-between flex-row-reverse items-center relative z-10 rounded-b-2xl">
         <div className="flex gap-1.5 opacity-50 px-2 transition-opacity group-hover/group-card:opacity-100">
           {Array.from({ length: maxCols }).map((_, idx) => (
             <div key={idx} className="w-2 h-1 bg-[var(--accent3)]" />

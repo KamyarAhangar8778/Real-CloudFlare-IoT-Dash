@@ -56,5 +56,6 @@ export interface SortableSegmentCardProps {
   onSetupPlaceholder?: (id: string) => void;
   parentGroupsCols?: number;
   groupMaxCols?: number;
+  groupItemsCount?: number;
   animationsEnabled?: boolean;
 }

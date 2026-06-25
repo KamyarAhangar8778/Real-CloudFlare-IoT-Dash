@@ -5,12 +5,22 @@ import { Settings2, X, Info, Plus, Trash2 } from "lucide-react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { publishUpdateRuleCommand } from "@/features/iot/services/mqttService";
 import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "motion/react";
+import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 
-export default function GlobalRuleSettings() {
+interface GlobalRuleSettingsProps {
+  variant?: "vertical" | "horizontal";
+  isSidebarCollapsed?: boolean;
+}
+
+export default function GlobalRuleSettings({ variant = "horizontal", isSidebarCollapsed }: GlobalRuleSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const segments = useIoTStore((state) => state.segments);
   const updateSegmentRule = useIoTStore((state) => state.updateSegmentRule);
   const showToast = useIoTStore((state) => state.showToast);
+  
+  const { isDark, accent3, accent4, animationsEnabled } = useDashboard();
 
   // Local state for tracking edited rules
   const [localRules, setLocalRules] = useState<Record<string, {
@@ -20,38 +30,101 @@ export default function GlobalRuleSettings() {
 
   const inputSegments = segments.filter((s) => s.type === "input");
 
+  const backdropBackground = isDark
+    ? `radial-gradient(circle at center, ${accent3}15 0%, ${accent4}08 50%, rgba(5,6,9,0.65) 100%)`
+    : `radial-gradient(circle at center, ${accent3}0a 0%, ${accent4}05 50%, rgba(244,245,247,0.7) 100%)`;
+
+  const backdropStyle: React.CSSProperties = {
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    background: backdropBackground,
+    transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+  };
+
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] text-slate-700 dark:text-gray-300 hover:border-[var(--accent3)] hover:text-[var(--accent3)] transition-all shadow-sm"
-        title="تنظیمات شرط‌ها"
-      >
-        <Settings2 className="w-4 h-4" />
-      </button>
-
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          onClick={() => setIsOpen(false)}
+      {variant === "vertical" && !isSidebarCollapsed ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
         >
-          <div 
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-[var(--card-bg-solid)]">
-              <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">مدیریت شرط‌ها (Rules)</h2>
-              <button onClick={() => setIsOpen(false)} className="p-1.5 text-slate-500 hover:text-red-500 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors">
-                <X className="w-5 h-5" />
-              </button>
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
+              <Settings2
+                className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+              />
             </div>
-            
-            <div className="p-4 overflow-y-auto flex-1 space-y-6" dir="rtl">
+            <span className="text-xs font-semibold">قوانین و شرط‌ها</span>
+          </div>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
+            Rules
+          </span>
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center w-full"
+          title="تنظیمات شرط‌ها"
+        >
+          <Settings2 className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:rotate-90" : ""}`} />
+        </button>
+      )}
+
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              style={backdropStyle}
+              className="fixed inset-0 z-50 cursor-pointer"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 24, stiffness: 200 }}
+              className="fixed top-0 left-0 h-full w-full max-w-sm bg-gradient-to-b from-[var(--drawer-gradient-from)] to-[var(--drawer-gradient-to)] border-r border-accent3-medium rounded-r-[2.5rem] shadow-2xl z-50 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] px-6 py-8 text-right flex flex-col transition-colors duration-500"
+              dir="rtl"
+            >
+              <div className="flex items-center justify-between border-b border-accent3-medium pb-4 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 theme-card-bg-solid border border-accent3-medium text-accent3 rounded-xl">
+                    <Settings2
+                      className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+                    />
+                  </div>
+                  <div>
+                    <h4
+                      className="font-sans font-black text-sm text-accent3"
+                      style={{ color: "var(--accent3)" }}
+                    >
+                      مدیریت شرط‌ها
+                    </h4>
+                    <p className="text-[9px] theme-text-muted font-sans tracking-wide uppercase">
+                      Rules Configuration
+                    </p>
+                  </div>
+                </div>
+                <motion.button
+                  onClick={() => setIsOpen(false)}
+                  whileHover={animationsEnabled ? { scale: 1.15, rotate: 90 } : undefined}
+                  whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
+                  className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
+                >
+                  <X className="w-5 h-5" />
+                </motion.button>
+              </div>
+              
+              <div className="py-6 flex-1 space-y-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 p-3 rounded-lg text-xs flex gap-2 items-start">
                 <Info className="w-5 h-5 shrink-0 mt-0.5" />
                 <p>
                   در این بخش می‌توانید برای زمان‌های مختلف نگه‌داشتن کلید (مثلاً 0، 3، 5 یا 10 ثانیه) عملیات متفاوتی تعریف کنید. 
-                  شما می‌توانید برای هر وضعیت (روشن شدن یا خاموش شدن) چندین عملیات بسازید تا هرکدام روی یک پایه‌ی مجزا تاثیر بگذارند.
+                  شما می‌توانید برای هر وضعیت چندین عملیات بسازید تا هرکدام روی یک پایه‌ی مجزا تاثیر بگذارند.
                 </p>
               </div>
 
@@ -143,20 +216,20 @@ export default function GlobalRuleSettings() {
                         <div className="flex justify-between items-center mb-4">
                           <h4 className={`${colorClasses} font-medium text-sm flex items-center gap-2`}>
                             <span className={`w-2 h-2 rounded-full ${bgClass}`}></span>
-                            هنگام {isHigh ? "فعال شدن (HIGH)" : "غیرفعال شدن (LOW)"}
+                            هنگام {isHigh ? "فعال شدن" : "غیرفعال شدن"}
                           </h4>
                           <button 
                             onClick={addAction}
                             disabled={actions.length >= 4}
                             className={`flex items-center gap-1 px-2 py-1 text-xs rounded-md border ${isHigh ? "border-emerald-200 text-emerald-600 hover:bg-emerald-100 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-900/50" : "border-rose-200 text-rose-600 hover:bg-rose-100 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-900/50"} transition-colors disabled:opacity-50`}
                           >
-                            <Plus className="w-3 h-3" /> افزودن عملیات
+                            <Plus className="w-3 h-3" /> افزودن
                           </button>
                         </div>
 
                         {actions.length === 0 ? (
                           <div className="text-center py-4 text-slate-400 text-xs bg-white/50 dark:bg-slate-900/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
-                            هیچ عملیاتی تعریف نشده است
+                            هیچ عملیاتی تعریف نشده
                           </div>
                         ) : (
                           <div className="space-y-3">
@@ -170,14 +243,13 @@ export default function GlobalRuleSettings() {
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                                 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs pr-2">
+                                <div className="flex flex-col gap-3 text-xs pr-2">
                                   <div>
                                     <label className="block text-slate-500 mb-1">زمان نگه‌داشتن:</label>
                                     <select
                                       value={action.reqHold}
                                       onChange={(e) => {
                                         const val = parseInt(e.target.value, 10);
-                                        // Prevent duplicate holds
                                         if (actions.some((a, i) => i !== idx && a.reqHold === val)) {
                                           showToast("این زمان قبلاً استفاده شده است", "error");
                                           return;
@@ -193,28 +265,29 @@ export default function GlobalRuleSettings() {
                                     </select>
                                   </div>
 
-                                  <div>
-                                    <label className="block text-slate-500 mb-1">پایه هدف (GPIO):</label>
-                                    <input
-                                      type="text"
-                                      placeholder="مثال: 4"
-                                      value={action.targetPin}
-                                      onChange={(e) => updateAction(idx, { targetPin: e.target.value })}
-                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left focus:outline-none ${focusClass}`}
-                                      dir="ltr"
-                                    />
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-slate-500 mb-1">وضعیت بشود:</label>
-                                    <select
-                                      value={action.actionOn ? "1" : "0"}
-                                      onChange={(e) => updateAction(idx, { actionOn: e.target.value === "1" })}
-                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md focus:outline-none ${focusClass}`}
-                                    >
-                                      <option value="1">روشن (HIGH)</option>
-                                      <option value="0">خاموش (LOW)</option>
-                                    </select>
+                                  <div className="flex gap-2">
+                                    <div className="flex-1">
+                                      <label className="block text-slate-500 mb-1">پایه هدف (GPIO):</label>
+                                      <input
+                                        type="text"
+                                        placeholder="مثال: 4"
+                                        value={action.targetPin}
+                                        onChange={(e) => updateAction(idx, { targetPin: e.target.value })}
+                                        className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left focus:outline-none ${focusClass}`}
+                                        dir="ltr"
+                                      />
+                                    </div>
+                                    <div className="flex-1">
+                                      <label className="block text-slate-500 mb-1">وضعیت:</label>
+                                      <select
+                                        value={action.actionOn ? "1" : "0"}
+                                        onChange={(e) => updateAction(idx, { actionOn: e.target.value === "1" })}
+                                        className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md focus:outline-none ${focusClass}`}
+                                      >
+                                        <option value="1">روشن (HIGH)</option>
+                                        <option value="0">خاموش (LOW)</option>
+                                      </select>
+                                    </div>
                                   </div>
 
                                   <div>
@@ -229,22 +302,22 @@ export default function GlobalRuleSettings() {
                                       <option value={2}>فقط برای مدت معین بماند</option>
                                     </select>
                                   </div>
-                                </div>
 
-                                {(action.actionType || 0) > 0 && (
-                                  <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/50 w-full sm:w-1/2 lg:w-1/4">
-                                    <label className="block text-slate-500 mb-1 text-xs">زمان عملیات (بین ۱ تا ۶۰ ثانیه):</label>
-                                    <input
-                                      type="number"
-                                      min="1"
-                                      max="60"
-                                      value={action.delay || 10}
-                                      onChange={(e) => updateAction(idx, { delay: parseInt(e.target.value, 10) })}
-                                      className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left text-xs focus:outline-none ${focusClass}`}
-                                      dir="ltr"
-                                    />
-                                  </div>
-                                )}
+                                  {(action.actionType || 0) > 0 && (
+                                    <div>
+                                      <label className="block text-slate-500 mb-1 text-xs">زمان عملیات (بین ۱ تا ۶۰ ثانیه):</label>
+                                      <input
+                                        type="number"
+                                        min="1"
+                                        max="60"
+                                        value={action.delay || 10}
+                                        onChange={(e) => updateAction(idx, { delay: parseInt(e.target.value, 10) })}
+                                        className={`w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 p-2 rounded-md text-left text-xs focus:outline-none ${focusClass}`}
+                                        dir="ltr"
+                                      />
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -257,10 +330,10 @@ export default function GlobalRuleSettings() {
                     <div key={segment.id} className="p-5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-[var(--card-bg)] shadow-sm flex flex-col gap-5">
                       <div className="font-bold text-sm text-[var(--accent3)] flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/50 pb-3">
                         <span className="w-2 h-2 rounded-full bg-[var(--accent3)]"></span>
-                        {segment.title} (ورودی پایه: {segment.pin})
+                        {segment.title} (پایه: {segment.pin})
                       </div>
 
-                      <div className="grid grid-cols-1 gap-6">
+                      <div className="flex flex-col gap-4">
                         {renderActionsList("high")}
                         {renderActionsList("low")}
                       </div>
@@ -268,18 +341,21 @@ export default function GlobalRuleSettings() {
                       <div className="flex justify-end mt-2">
                         <button 
                           onClick={handleSave}
-                          className="px-6 py-2 bg-[var(--accent3)] hover:bg-[var(--accent2)] text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+                          className="w-full py-2 bg-[var(--accent3)] hover:bg-[var(--accent2)] text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
                         >
-                          ثبت و ارسال به دستگاه
+                          ثبت و ارسال
                         </button>
                       </div>
                     </div>
                   );
                 })
               )}
-            </div>
-          </div>
-        </div>
+              </div>
+            </motion.div>
+          </>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </>
   );

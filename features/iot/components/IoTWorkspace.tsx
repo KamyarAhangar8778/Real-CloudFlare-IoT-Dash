@@ -19,6 +19,11 @@ export default function IoTWorkspace(props: IoTWorkspaceProps) {
       <WorkspaceGrid {...props} />
       <WorkspaceDragOverlay {...props} />
       <TrashDropZone activeId={props.activeSegmentId || props.activeGroupId} />
+
+      {/* Force grabbing cursor globally during drag to prevent underlying elements from overriding it */}
+      {(props.activeSegmentId || props.activeGroupId) && (
+        <style dangerouslySetInnerHTML={{ __html: `* { cursor: grabbing !important; }` }} />
+      )}
     </DndContext>
   );
 }

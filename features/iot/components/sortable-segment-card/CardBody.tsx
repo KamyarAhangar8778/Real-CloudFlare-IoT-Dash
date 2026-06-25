@@ -26,7 +26,7 @@ export default function CardBody({
       {segment.type === "input" ? (
         <div className="flex items-center justify-between bg-[var(--card-bg-solid)] p-4 border border-[var(--border-color)] rounded-xl w-full">
           <span className={`text-[10px] font-sans font-bold px-2.5 py-0.5 border rounded-lg ${
-            isPinOn ? "border-green-500 text-green-500 bg-green-500/10" : "border-gray-500 text-gray-400"
+            isPinOn ? "border-[var(--accent4)] text-[var(--accent4)] bg-[var(--accent4-transparent)]" : "border-gray-500 text-gray-400"
           }`}>
             {isPinOn ? "ورودی HIGH (1)" : "ورودی LOW (0)"}
           </span>
@@ -39,8 +39,8 @@ export default function CardBody({
                 Digital Input Status
               </span>
             </div>
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-inner ${isPinOn ? "bg-green-500/20 shadow-green-500/50" : "bg-gray-800"}`}>
-              <div className={`w-4 h-4 rounded-full ${isPinOn ? "bg-green-400 animate-pulse shadow-[0_0_15px_rgba(74,222,128,0.8)]" : "bg-gray-600"}`} />
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-inner ${isPinOn ? "bg-[var(--accent4-transparent)]" : "bg-gray-800"}`} style={{ boxShadow: isPinOn ? 'inset 0 0 10px var(--accent4-transparent)' : '' }}>
+              <div className={`w-4 h-4 rounded-full ${isPinOn ? "bg-[var(--accent4)] animate-pulse" : "bg-gray-600"}`} style={{ boxShadow: isPinOn ? '0 0 15px var(--accent4)' : '' }} />
             </div>
           </div>
         </div>
