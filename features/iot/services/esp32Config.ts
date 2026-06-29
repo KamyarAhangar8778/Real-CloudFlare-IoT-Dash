@@ -93,6 +93,13 @@ export interface EspConfig {
       actionOn?: boolean;
     }>;
   }>;
+  mqtt?: {
+    broker_ws_url: string;
+    broker_host: string;
+    broker_port: number;
+    base_topic: string;
+    qos: 0 | 1 | 2;
+  };
   /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
   worker_url?: string;
 }
@@ -152,6 +159,13 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
   automations: [],
   macros: [],
   voiceCommands: [],
+  mqtt: {
+    broker_ws_url: "wss://broker.emqx.io:8084/mqtt",
+    broker_host: "broker.emqx.io",
+    broker_port: 1883,
+    base_topic: "KamyarIoT/Achaemenid",
+    qos: 1,
+  },
 };
 
 /**

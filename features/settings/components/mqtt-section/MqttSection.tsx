@@ -2,26 +2,61 @@ import React, { useState, useEffect } from "react";
 import { soundManager } from "@/lib/audio";
 import { reconnectMqtt, getMqttSettings } from "@/features/iot/services/mqttService";
 import { Radio, RefreshCw, Save } from "lucide-react";
+import { fetchConfigFromCloudflare, saveConfigToCloudflare } from "@/features/iot/services/cloudflare/api";
+import { DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
 
 export default function MqttSection() {
-  const [brokerUrl, setBrokerUrl] = useState("");
+  const [brokerWsUrl, setBrokerWsUrl] = useState("");
+  const [brokerHost, setBrokerHost] = useState("");
+  const [brokerPort, setBrokerPort] = useState(1883);
   const [baseTopic, setBaseTopic] = useState("");
   const [qos, setQos] = useState<0 | 1 | 2>(1);
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
+    // Load initially from local
     const settings = getMqttSettings();
-    setBrokerUrl(settings.brokerUrl);
+    setBrokerWsUrl(settings.brokerUrl);
+    setBrokerHost("broker.emqx.io");
+    setBrokerPort(1883);
     setBaseTopic(settings.baseTopic);
     setQos(settings.qos);
+
+    // Fetch from Cloudflare to sync
+    fetchConfigFromCloudflare().then(config => {
+      if (config && config.mqtt) {
+        setBrokerWsUrl(config.mqtt.broker_ws_url);
+        setBrokerHost(config.mqtt.broker_host);
+        setBrokerPort(config.mqtt.broker_port);
+        setBaseTopic(config.mqtt.base_topic);
+        setQos(config.mqtt.qos);
+      }
+    });
   }, []);
 
-  const handleSaveAndReconnect = () => {
+  const handleSaveAndReconnect = async () => {
     soundManager.playClick();
-    localStorage.setItem("mqtt_broker_url", brokerUrl);
+    
+    // Save locally for dashboard fast reconnect
+    localStorage.setItem("mqtt_broker_url", brokerWsUrl);
     localStorage.setItem("mqtt_base_topic", baseTopic);
     localStorage.setItem("mqtt_qos", qos.toString());
     
+    // Save to Cloudflare for Worker & ESP32
+    try {
+      const config = await fetchConfigFromCloudflare() || DEFAULT_ESP_CONFIG;
+      config.mqtt = {
+        broker_ws_url: brokerWsUrl,
+        broker_host: brokerHost,
+        broker_port: brokerPort,
+        base_topic: baseTopic,
+        qos: qos
+      };
+      await saveConfigToCloudflare(config);
+    } catch (e) {
+      console.error("Failed to save MQTT settings to cloud", e);
+    }
+
     reconnectMqtt();
     
     setIsSaved(true);
@@ -37,19 +72,49 @@ export default function MqttSection() {
       </div>
 
       <div className="space-y-4">
-        {/* Broker URL */}
+        {/* Broker WebSocket URL (Dashboard) */}
         <div className="space-y-2 text-right">
           <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-            آدرس سرور MQTT (Broker URL)
+            آدرس سرور داشبورد (WebSocket URL)
           </label>
           <input
             type="text"
             dir="ltr"
-            value={brokerUrl}
-            onChange={(e) => setBrokerUrl(e.target.value)}
+            value={brokerWsUrl}
+            onChange={(e) => setBrokerWsUrl(e.target.value)}
             className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
             placeholder="wss://broker.emqx.io:8084/mqtt"
           />
+        </div>
+
+        {/* Broker TCP Host & Port (ESP32) */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="col-span-2 space-y-2 text-right">
+            <label className="text-xs font-bold text-[var(--text-primary)] px-1">
+              آدرس سرور سخت‌افزار (TCP Host)
+            </label>
+            <input
+              type="text"
+              dir="ltr"
+              value={brokerHost}
+              onChange={(e) => setBrokerHost(e.target.value)}
+              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+              placeholder="broker.emqx.io"
+            />
+          </div>
+          <div className="col-span-1 space-y-2 text-right">
+            <label className="text-xs font-bold text-[var(--text-primary)] px-1">
+              پورت (Port)
+            </label>
+            <input
+              type="number"
+              dir="ltr"
+              value={brokerPort}
+              onChange={(e) => setBrokerPort(parseInt(e.target.value) || 1883)}
+              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+              placeholder="1883"
+            />
+          </div>
         </div>
 
         {/* Base Topic */}
