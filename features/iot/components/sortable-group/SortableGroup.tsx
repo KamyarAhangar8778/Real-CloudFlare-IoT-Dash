@@ -90,7 +90,6 @@ export default function SortableGroup({
                       ? "calc(50% - 0.5rem - 0.1px)"
                       : "calc(33.3333% - 0.6667rem - 0.1px)"
                 };
-                max-width: 100%;
               }
             `,
               }}
