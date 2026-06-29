@@ -71,9 +71,12 @@ export interface EspConfig {
     title: string;
     time: string; // "HH:MM" in 24h format
     days: number[]; // 0=Sun, 1=Mon, etc.
-    targetPin: string;
-    actionOn: boolean;
     enabled: boolean;
+    actions: Array<{
+      targetPin?: string;
+      targetMacro?: string;
+      actionOn?: boolean;
+    }>;
   }>;
   macros?: Array<{
     id: string;

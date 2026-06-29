@@ -2,9 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info } from "lucide-react";
+import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info, Layers } from "lucide-react";
 import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
-import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
 
 interface AutomationsDrawerProps {
   isOpen: boolean;
@@ -24,22 +23,26 @@ const DAYS_MAP = [
 ];
 
 export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsEnabled }: AutomationsDrawerProps) {
-  const { automations, setAutomations, segments, showToast } = useAchaemenidState();
+  const { automations, setAutomations, segments, macros, showToast } = useAchaemenidState();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form State
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
   const [days, setDays] = useState<number[]>([]);
-  const [targetPin, setTargetPin] = useState("");
-  const [actionOn, setActionOn] = useState(true);
+  
+  // Actions state
+  const [actions, setActions] = useState<Array<{
+    targetPin?: string;
+    targetMacro?: string;
+    actionOn?: boolean;
+  }>>([]);
 
   const resetForm = () => {
     setTitle("");
     setTime("");
     setDays([]);
-    setTargetPin("");
-    setActionOn(true);
+    setActions([]);
     setEditingId(null);
   };
 
@@ -48,19 +51,17 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     setTitle(auto.title);
     setTime(auto.time);
     setDays([...auto.days]);
-    setTargetPin(auto.targetPin);
-    setActionOn(auto.actionOn);
+    setActions(auto.actions ? [...auto.actions] : []);
   };
 
   const handleSave = () => {
-    if (!title || !time || !targetPin || days.length === 0) {
+    if (!title || !time || days.length === 0) {
       showToast("لطفاً تمامی فیلدها را پر کنید.", "error");
       return;
     }
-
-    const val = validateEsp32Pin(targetPin, "output");
-    if (!val.isValid) {
-      showToast(`خطا در پایه: ${val.message}`, "error");
+    
+    if (actions.length === 0) {
+      showToast("حداقل یک عملیات مشخص کنید.", "error");
       return;
     }
 
@@ -69,8 +70,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
       title,
       time,
       days,
-      targetPin,
-      actionOn,
+      actions,
       enabled: true,
     };
 
@@ -90,6 +90,24 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
 
   const handleToggle = (id: string, enabled: boolean) => {
     setAutomations(automations.map(a => a.id === id ? { ...a, enabled } : a));
+  };
+
+  const addAction = (type: "pin" | "macro") => {
+    if (type === "pin") {
+      setActions([...actions, { targetPin: segments[0]?.pin || "2", actionOn: true }]);
+    } else {
+      setActions([...actions, { targetMacro: macros[0]?.id || "" }]);
+    }
+  };
+
+  const updateAction = (index: number, updates: any) => {
+    const newActions = [...actions];
+    newActions[index] = { ...newActions[index], ...updates };
+    setActions(newActions);
+  };
+
+  const removeAction = (index: number) => {
+    setActions(actions.filter((_, i) => i !== index));
   };
 
   const backdropBackground = isDark
@@ -137,7 +155,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400 p-4 rounded-2xl text-xs flex gap-3 items-start leading-relaxed shadow-sm">
                 <Info className="w-5 h-5 shrink-0 mt-0.5" />
                 <p>
-                  در این بخش می‌توانید عملیات‌های زمانی تعریف کنید. سرور ابری پادشاهی در زمان مشخص شده، دستور را به دستگاه ارسال خواهد کرد.
+                  در این بخش می‌توانید عملیات‌های زمانی تعریف کنید. سرور ابری پادشاهی در زمان مشخص شده، چندین دستور را همزمان به دستگاه ارسال خواهد کرد.
                 </p>
               </div>
 
@@ -161,25 +179,13 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     />
                   </div>
 
-                  <div>
+                  <div className="col-span-2">
                     <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">زمان (ساعت):</label>
                     <input 
                       type="time" 
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
                       className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                      dir="ltr"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">پایه هدف:</label>
-                    <input 
-                      type="text" 
-                      value={targetPin}
-                      onChange={(e) => setTargetPin(e.target.value)}
-                      placeholder="مثال: 4"
-                      className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-left text-[var(--text-primary)]"
                       dir="ltr"
                     />
                   </div>
@@ -202,20 +208,87 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     </div>
                   </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">وضعیت مورد نظر:</label>
-                    <div className="flex gap-2 p-1 bg-[var(--card-bg)] rounded-xl border border-[var(--border-color)]">
+                  {/* Actions Section */}
+                  <div className="col-span-2 space-y-3 pt-2">
+                    <label className="block text-xs font-medium text-[var(--text-secondary)]">عملیات‌ها ({actions.length}):</label>
+                    
+                    {actions.map((act, index) => (
+                      <div key={index} className="flex flex-col gap-2 p-3 bg-[var(--card-bg)] rounded-xl border border-[var(--border-color)] relative group">
+                        <button 
+                          onClick={() => removeAction(index)}
+                          className="absolute -top-2 -left-2 p-1.5 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+
+                        {act.targetPin !== undefined ? (
+                          // Pin Action
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-[var(--accent3)] bg-[var(--accent3-transparent)] px-2 py-1 rounded-md">پایه</span>
+                              <select 
+                                value={act.targetPin}
+                                onChange={(e) => updateAction(index, { targetPin: e.target.value })}
+                                className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-2 rounded-lg focus:outline-none focus:border-[var(--accent3)] text-xs transition-colors text-[var(--text-primary)]"
+                              >
+                                {segments.map(seg => (
+                                  <option key={seg.id} value={seg.pin}>{seg.title} (پایه {seg.pin})</option>
+                                ))}
+                                {/* Fallback options if custom pin is needed */}
+                                {(!segments.find(s => s.pin === act.targetPin)) && (
+                                  <option value={act.targetPin}>پایه دستی: {act.targetPin}</option>
+                                )}
+                              </select>
+                            </div>
+                            <div className="flex gap-2 p-1 bg-[var(--card-bg-solid)] rounded-lg border border-[var(--border-color)]">
+                              <button 
+                                onClick={() => updateAction(index, { actionOn: true })}
+                                className={`flex-1 py-1.5 rounded-md text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all ${act.actionOn ? "bg-emerald-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-emerald-500"}`}
+                              >
+                                <Play className="w-3 h-3" /> روشن
+                              </button>
+                              <button 
+                                onClick={() => updateAction(index, { actionOn: false })}
+                                className={`flex-1 py-1.5 rounded-md text-[10px] font-bold flex items-center justify-center gap-1.5 transition-all ${!act.actionOn ? "bg-rose-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-rose-500"}`}
+                              >
+                                <Square className="w-3 h-3" /> خاموش
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          // Macro Action
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold text-indigo-400 bg-indigo-400/10 px-2 py-1 rounded-md flex items-center gap-1">
+                              <Layers className="w-3 h-3" />
+                              ماکرو
+                            </span>
+                            <select 
+                              value={act.targetMacro}
+                              onChange={(e) => updateAction(index, { targetMacro: e.target.value })}
+                              className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-2 rounded-lg focus:outline-none focus:border-indigo-500/50 text-xs transition-colors text-[var(--text-primary)]"
+                            >
+                              <option value="" disabled>یک ماکرو انتخاب کنید</option>
+                              {macros.map(m => (
+                                <option key={m.id} value={m.id}>{m.title}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <div className="flex gap-2">
                       <button 
-                        onClick={() => setActionOn(true)}
-                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${actionOn ? "bg-emerald-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-emerald-500"}`}
+                        onClick={() => addAction("pin")}
+                        className="flex-1 py-2 border border-dashed border-[var(--border-color)] rounded-xl text-xs text-[var(--text-muted)] md:hover:text-[var(--accent3)] md:hover:border-[var(--accent3)] transition-colors flex items-center justify-center gap-1"
                       >
-                        <Play className="w-3.5 h-3.5" /> روشن (HIGH)
+                        <Plus className="w-3.5 h-3.5" /> پایه
                       </button>
                       <button 
-                        onClick={() => setActionOn(false)}
-                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${!actionOn ? "bg-rose-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-rose-500"}`}
+                        onClick={() => addAction("macro")}
+                        className="flex-1 py-2 border border-dashed border-[var(--border-color)] rounded-xl text-xs text-[var(--text-muted)] md:hover:text-indigo-400 md:hover:border-indigo-400 transition-colors flex items-center justify-center gap-1"
                       >
-                        <Square className="w-3.5 h-3.5" /> خاموش (LOW)
+                        <Plus className="w-3.5 h-3.5" /> ماکرو
                       </button>
                     </div>
                   </div>
@@ -242,38 +315,41 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     هیچ اتوماسیونی ثبت نشده است.
                   </div>
                 ) : (
-                  automations.map((auto) => (
-                    <div key={auto.id} className={`p-4 rounded-2xl border transition-all shadow-sm flex items-center justify-between ${auto.enabled ? "bg-[var(--card-bg-solid)] border-[var(--border-color)]" : "bg-[var(--card-bg)] border-[var(--border-color)] opacity-60"}`}>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <div className={`w-2 h-2 rounded-full ${auto.actionOn ? "bg-emerald-500" : "bg-rose-500"}`} />
-                          <h4 className="font-bold text-[var(--text-primary)] text-sm">{auto.title}</h4>
+                  automations.map((auto) => {
+                    const hasMacros = auto.actions?.some(a => a.targetMacro);
+                    return (
+                      <div key={auto.id} className={`p-4 rounded-2xl border transition-all shadow-sm flex items-center justify-between ${auto.enabled ? "bg-[var(--card-bg-solid)] border-[var(--border-color)]" : "bg-[var(--card-bg)] border-[var(--border-color)] opacity-60"}`}>
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <div className={`w-2 h-2 rounded-full ${hasMacros ? "bg-indigo-400" : (auto.actions?.[0]?.actionOn ? "bg-emerald-500" : "bg-rose-500")}`} />
+                            <h4 className="font-bold text-[var(--text-primary)] text-sm">{auto.title}</h4>
+                          </div>
+                          <div className="text-xs text-[var(--text-secondary)] font-mono flex items-center gap-2">
+                            <span className="bg-[var(--card-hover-bg)] px-2 py-0.5 rounded text-[var(--accent3)]">{auto.time}</span>
+                            <span>عملیات: {auto.actions?.length || 0} مورد</span>
+                            <span className="text-[10px] bg-[var(--card-hover-bg)] px-1.5 py-0.5 rounded">
+                              {auto.days.map(d => DAYS_MAP.find(m => m.value === d)?.label).join("، ")}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-xs text-[var(--text-secondary)] font-mono flex items-center gap-2">
-                          <span className="bg-[var(--card-hover-bg)] px-2 py-0.5 rounded text-[var(--accent3)]">{auto.time}</span>
-                          <span>پایه: {auto.targetPin}</span>
-                          <span className="text-[10px] bg-[var(--card-hover-bg)] px-1.5 py-0.5 rounded">
-                            {auto.days.map(d => DAYS_MAP.find(m => m.value === d)?.label).join("، ")}
-                          </span>
+                        
+                        <div className="flex items-center gap-1.5">
+                          <button 
+                            onClick={() => handleToggle(auto.id, !auto.enabled)}
+                            className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${auto.enabled ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 md:hover:bg-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20 md:hover:bg-slate-500/20"}`}
+                          >
+                            {auto.enabled ? "فعال" : "غیرفعال"}
+                          </button>
+                          <button onClick={() => handleEdit(auto)} className="p-1.5 text-[var(--text-muted)] md:hover:text-blue-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDelete(auto.id)} className="p-1.5 text-[var(--text-muted)] md:hover:text-red-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-1.5">
-                        <button 
-                          onClick={() => handleToggle(auto.id, !auto.enabled)}
-                          className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${auto.enabled ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 md:hover:bg-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20 md:hover:bg-slate-500/20"}`}
-                        >
-                          {auto.enabled ? "فعال" : "غیرفعال"}
-                        </button>
-                        <button onClick={() => handleEdit(auto)} className="p-1.5 text-[var(--text-muted)] md:hover:text-blue-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button onClick={() => handleDelete(auto.id)} className="p-1.5 text-[var(--text-muted)] md:hover:text-red-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 

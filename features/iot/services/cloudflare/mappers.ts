@@ -35,6 +35,7 @@ export function serializeToCloudflare(config: any): any {
     automations: config.automations || [],
     macros: config.macros || [],
     voiceCommands: config.voiceCommands || [],
+    mqtt: config.mqtt,
     // آدرس ورکر فعلی را ذخیره کن تا بعد از refresh باقی بماند
     worker_url: config.worker_url || getCloudflareWorkerUrl(),
   };
@@ -71,9 +72,20 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
     },
     // Load from 'segments_definition' and fall back to 'segments'
     segments: cfData.segments_definition || cfData.segments || [],
-    automations: cfData.automations || [],
+    automations: (cfData.automations || []).map((auto: any) => {
+      // Migrate old schema to new multiple-actions schema
+      if (auto.targetPin !== undefined && !auto.actions) {
+        const { targetPin, actionOn, ...rest } = auto;
+        return {
+          ...rest,
+          actions: [{ targetPin, actionOn }],
+        };
+      }
+      return auto;
+    }),
     macros: cfData.macros || [],
     voiceCommands: cfData.voiceCommands || [],
+    mqtt: cfData.mqtt,
     // آدرس ورکر ذخیره‌شده
     worker_url: cfData.worker_url || undefined,
   };
