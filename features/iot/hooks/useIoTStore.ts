@@ -44,9 +44,12 @@ interface IoTStoreState {
     title: string;
     time: string;
     days: number[];
-    targetPin: string;
-    actionOn: boolean;
     enabled: boolean;
+    actions: Array<{
+      targetPin?: string;
+      targetMacro?: string;
+      actionOn?: boolean;
+    }>;
   }>;
   macros: Array<{
     id: string;
