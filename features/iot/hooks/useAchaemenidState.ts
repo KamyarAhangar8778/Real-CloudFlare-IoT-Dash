@@ -55,7 +55,7 @@ export function useAchaemenidState() {
     ...aesthetic,
   });
 
-  const { isLoadingIoT, updatePinOnServer, handleTogglePin, handleSetPinState } = usePinOperations({
+  const { isLoadingIoT, updatePinOnServer, handleTogglePin, handleSetPinState, handleBatchPinState } = usePinOperations({
     refetchIot,
   });
 
@@ -105,6 +105,7 @@ export function useAchaemenidState() {
     handleRemoveGroup,
     handleTogglePin,
     handleSetPinState,
+    handleBatchPinState,
     handleBypassSync,
     workerUrl,
     setWorkerUrl,

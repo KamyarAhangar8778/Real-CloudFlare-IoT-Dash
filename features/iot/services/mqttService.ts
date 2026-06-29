@@ -41,6 +41,7 @@ export const getMqttSettings = () => {
  * CMD 0x05: Update Rule [cmd(1), id(null-term), highCount(1), [highActions(11 each)], lowCount(1), [lowActions(11 each)]]
  * CMD 0x06: State Report (ESP->DB) [cmd(1), pin(1), state(1)]
  * CMD 0x07: Ping (ESP->DB) [cmd(1)]
+ * CMD 0x08: Batch Toggle [cmd(1), count(1), [actions(6 each: pin(1), state(1), timer(4))]]
  */
 
 export const initMqtt = () => {
@@ -131,6 +132,36 @@ export const publishPinCommand = (pinId: string, value: boolean, timer?: number)
     console.log(`[MQTT Binary] Published toggle command: pin=${buf[1]} state=${value} timer=${timer}`);
   } else {
     console.warn("[MQTT] Client not connected. Cannot publish.");
+  }
+};
+
+export const publishBatchPinCommand = (actions: Array<{ pin: string; state: boolean; timer?: number }>) => {
+  if (!client) initMqtt();
+
+  if (client?.connected && actions.length > 0) {
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
+    
+    // CMD 0x08: Batch Toggle Pins [cmd(1), count(1), action1(6)...]
+    // Total size = 2 + actions.length * 6
+    const buf = new Uint8Array(2 + actions.length * 6);
+    const view = new DataView(buf.buffer);
+    buf[0] = 0x08;
+    buf[1] = Math.min(actions.length, 255);
+    
+    let offset = 2;
+    for (let i = 0; i < buf[1]; i++) {
+      const action = actions[i];
+      buf[offset] = parseInt(action.pin, 10) || 0;
+      buf[offset + 1] = action.state ? 0x01 : 0x00;
+      view.setInt32(offset + 2, action.timer !== undefined ? action.timer : -1, true); // true = little-endian
+      offset += 6;
+    }
+    
+    client.publish(commandTopic, buf as Buffer, { qos: settings.qos });
+    console.log(`[MQTT Binary] Published batch toggle command with ${buf[1]} actions`);
+  } else if (!client?.connected) {
+    console.warn("[MQTT] Client not connected. Cannot publish batch.");
   }
 };
 

@@ -7,7 +7,7 @@ import { Play } from "lucide-react";
 import { ICON_MAP } from "@/features/iot/utils/icons";
 
 export default function MacroSidebar() {
-  const { macros, handleSetPinState, selectedGroupFilter, animationsEnabled, headerPosition } = useDashboard();
+  const { macros, handleBatchPinState, selectedGroupFilter, animationsEnabled, headerPosition } = useDashboard();
 
   // Only show if selectedGroupFilter is empty/null/all groups, and there are macros
   if (selectedGroupFilter || !macros || macros.length === 0) {
@@ -18,9 +18,7 @@ export default function MacroSidebar() {
     const macro = macros.find((m) => m.id === macroId);
     if (!macro) return;
     
-    macro.actions.forEach((action) => {
-      handleSetPinState(action.targetPin, action.actionOn);
-    });
+    handleBatchPinState(macro.actions);
   };
 
   const isHorizontal = headerPosition === "left";

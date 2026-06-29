@@ -5,8 +5,9 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import {
   isCloudflareEnabled,
   updatePinOnCloudflare,
+  updateBatchPinsOnCloudflare,
 } from "@/features/iot/services/cloudflareService";
-import { publishPinCommand, initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
+import { publishPinCommand, publishBatchPinCommand, initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
 import { soundManager } from "@/lib/audio";
 
 interface UsePinOperationsProps {
@@ -85,10 +86,67 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
     await updatePinOnServer(pin, state, preventMqtt, segment?.auto_off);
   };
 
+  const handleBatchPinState = async (actions: Array<{ targetPin: string; actionOn: boolean }>) => {
+    setIsLoadingIoT(true);
+    try {
+      let soundPlayed = false;
+      const stateUpdates: Record<string, boolean> = {};
+      const mqttActions: Array<{ pin: string; state: boolean; timer?: number }> = [];
+      const cfActions: Array<{ pin: string; state: boolean }> = [];
+
+      for (const action of actions) {
+        if (action.actionOn !== pinsState[action.targetPin]) {
+          soundPlayed = true;
+        }
+        stateUpdates[action.targetPin] = action.actionOn;
+        
+        const segment = useIoTStore.getState().segments.find((s) => s.pin === action.targetPin);
+        
+        mqttActions.push({
+          pin: action.targetPin,
+          state: action.actionOn,
+          timer: segment?.auto_off
+        });
+
+        if (isCloudflareEnabled() && segment?.mode !== "push") {
+          cfActions.push({ pin: action.targetPin, state: action.actionOn });
+        }
+      }
+
+      if (soundPlayed) soundManager.playToggleOn();
+      
+      setPinsState((prev) => ({ ...prev, ...stateUpdates }));
+      
+      publishBatchPinCommand(mqttActions);
+
+      if (cfActions.length > 0) {
+        try {
+          const result = await updateBatchPinsOnCloudflare(cfActions);
+          if (result.success) {
+            showToast(result.message, "success");
+          } else {
+            showToast(result.message, "error");
+          }
+        } catch (e) {
+          console.error(`Failed to batch sync pins to Cloudflare:`, e);
+          showToast(`تغییرات گروهی بنا به دلایل فنی ذخیره نشد.`, "error");
+        }
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await refetchIot();
+    } catch (error) {
+      console.error("Failed to update batch pin values:", error);
+    } finally {
+      setIsLoadingIoT(false);
+    }
+  };
+
   return {
     isLoadingIoT,
     updatePinOnServer,
     handleTogglePin,
     handleSetPinState,
+    handleBatchPinState,
   };
 }

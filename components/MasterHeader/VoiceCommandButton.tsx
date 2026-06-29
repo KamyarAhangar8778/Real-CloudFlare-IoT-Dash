@@ -12,7 +12,7 @@ interface VoiceCommandButtonProps {
 
 export default function VoiceCommandButton({ animationsEnabled, variant, isSidebarCollapsed }: VoiceCommandButtonProps) {
   const { isListening, transcript, startListening, stopListening } = useVoiceCommand();
-  const { showToast, segments, handleSetPinState } = useDashboard();
+  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState } = useDashboard();
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
@@ -21,6 +21,30 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       
       if (!cleanTranscript) return;
 
+      // 1. Check Custom Voice Commands first
+      const customCmd = (voiceCommands || []).find((c) => c.phrase.trim() === cleanTranscript);
+      if (customCmd && customCmd.actions && customCmd.actions.length > 0) {
+        const batchActions: Array<{ targetPin: string; actionOn: boolean }> = [];
+        
+        customCmd.actions.forEach((act) => {
+          if (act.targetPin) {
+            batchActions.push({ targetPin: act.targetPin, actionOn: act.actionOn ?? true });
+          } else if (act.targetMacro) {
+            const m = macros.find((m) => m.id === act.targetMacro);
+            if (m) {
+              batchActions.push(...m.actions);
+            }
+          }
+        });
+
+        if (batchActions.length > 0) {
+          handleBatchPinState(batchActions);
+          showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
+          return;
+        }
+      }
+
+      // 2. Fallback to parsing "<Segment Name> روشن/خاموش"
       let targetSegment = null;
       let targetState: boolean | null = null;
       let actionFound = false;
@@ -40,7 +64,7 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
         targetSegment = segments.find(s => s.title === segmentName);
         if (targetSegment && targetState !== null) {
           handleSetPinState(targetSegment.pin, targetState);
-          showToast(`فرمان اجرا شد: ${cleanTranscript}`, "success");
+          showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
         } else {
           showToast(`سگمنتی با نام «${segmentName}» یافت نشد.`, "error");
         }
