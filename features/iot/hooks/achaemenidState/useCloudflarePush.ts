@@ -45,6 +45,9 @@ export function useCloudflarePush({
     manualSaveMode,
     incrementUnsavedChanges,
     resetUnsavedChanges,
+    automations,
+    macros,
+    voiceCommands,
   } = useIoTStore();
   const isFirstRender = useRef(true);
 
@@ -79,9 +82,9 @@ export function useCloudflarePush({
         group_configs: groupConfigs,
       },
       segments: segments,
-      automations: useIoTStore.getState().automations,
-      macros: useIoTStore.getState().macros,
-      voiceCommands: useIoTStore.getState().voiceCommands,
+      automations: automations,
+      macros: macros,
+      voiceCommands: voiceCommands,
       worker_url: getCloudflareWorkerUrl(),
     };
 
@@ -112,6 +115,9 @@ export function useCloudflarePush({
     groupsCols,
     showToast,
     resetUnsavedChanges,
+    automations,
+    macros,
+    voiceCommands,
   ]);
 
   useEffect(() => {
@@ -148,6 +154,9 @@ export function useCloudflarePush({
     groupsOrder,
     groupConfigs,
     groupsCols,
+    automations,
+    macros,
+    voiceCommands,
   ]);
 
   return {

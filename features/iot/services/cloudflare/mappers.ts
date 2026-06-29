@@ -32,6 +32,9 @@ export function serializeToCloudflare(config: any): any {
     },
     // Map 'segments' list from our dashboard to 'segments_definition' key
     segments_definition: config.segments || [],
+    automations: config.automations || [],
+    macros: config.macros || [],
+    voiceCommands: config.voiceCommands || [],
     // آدرس ورکر فعلی را ذخیره کن تا بعد از refresh باقی بماند
     worker_url: config.worker_url || getCloudflareWorkerUrl(),
   };
@@ -68,6 +71,9 @@ export function deserializeFromCloudflare(cfData: any): EspConfig {
     },
     // Load from 'segments_definition' and fall back to 'segments'
     segments: cfData.segments_definition || cfData.segments || [],
+    automations: cfData.automations || [],
+    macros: cfData.macros || [],
+    voiceCommands: cfData.voiceCommands || [],
     // آدرس ورکر ذخیره‌شده
     worker_url: cfData.worker_url || undefined,
   };
