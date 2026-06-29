@@ -35,7 +35,7 @@ export default function LowDataModeBanner({
         <motion.div
           initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
           animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
-          className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-[var(--card-bg-solid)] border border-[var(--accent3-medium)]/85 text-right gap-4 w-full transition-all duration-300 shadow-md hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}
+          className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-[var(--card-bg-solid)] border border-[var(--accent3-medium)]/85 text-right gap-4 w-full transition-all duration-300 shadow-md md:hover:border-[var(--accent3)] md:hover:shadow-[0_0_15px_var(--accent3-transparent)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}
         >
           <div className="flex items-center gap-3">
             <WifiOff className="w-5 h-5 text-[var(--accent3)] animate-pulse shrink-0" />
@@ -47,7 +47,7 @@ export default function LowDataModeBanner({
             onClick={refetchIot}
             whileHover={animationsEnabled ? { scale: 1.05 } : undefined}
             whileTap={animationsEnabled ? { scale: 0.95 } : undefined}
-            className="px-5 py-2.5 bg-[var(--accent3)] text-black hover:bg-[var(--accent3)]/90 font-sans font-extrabold transition-all text-xs cursor-pointer select-none rounded-xl shadow-md"
+            className="px-5 py-2.5 bg-[var(--accent3)] text-black md:hover:bg-[var(--accent3)]/90 font-sans font-extrabold transition-all text-xs cursor-pointer select-none rounded-xl shadow-md"
           >
             به‌روزرسانی کنونی
           </motion.button>
@@ -58,7 +58,7 @@ export default function LowDataModeBanner({
         <motion.div
           initial={animationsEnabled ? { opacity: 0, y: -10 } : {}}
           animate={animationsEnabled ? { opacity: 1, y: 0 } : {}}
-          className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-emerald-950/20 border border-emerald-500/40 text-right gap-4 w-full transition-all duration-300 shadow-md hover:border-emerald-500 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}
+          className={`flex flex-col sm:flex-row-reverse items-center justify-between px-6 py-4 bg-emerald-950/20 border border-emerald-500/40 text-right gap-4 w-full transition-all duration-300 shadow-md md:hover:border-emerald-500 md:hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] ${headerPosition === "left" ? "rounded-b-2xl md:rounded-tl-md md:rounded-tr-md max-md:rounded-2xl" : "rounded-2xl"}`}
         >
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold shrink-0">
@@ -72,7 +72,7 @@ export default function LowDataModeBanner({
             onClick={triggerCloudflarePush}
             whileHover={animationsEnabled ? { scale: 1.05 } : undefined}
             whileTap={animationsEnabled ? { scale: 0.95 } : undefined}
-            className="px-5 py-2.5 bg-emerald-500 text-black hover:bg-emerald-400 font-sans font-extrabold transition-all text-xs cursor-pointer select-none rounded-xl shadow-md"
+            className="px-5 py-2.5 bg-emerald-500 text-black md:hover:bg-emerald-400 font-sans font-extrabold transition-all text-xs cursor-pointer select-none rounded-xl shadow-md"
           >
             ذخیره‌سازی تغییرات
           </motion.button>

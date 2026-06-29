@@ -7,6 +7,7 @@ import {
   updatePinOnCloudflare,
 } from "@/features/iot/services/cloudflareService";
 import { publishPinCommand, initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
+import { soundManager } from "@/lib/audio";
 
 interface UsePinOperationsProps {
   refetchIot: () => void;
@@ -39,7 +40,10 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
         publishPinCommand(pin, pinState, timer);
       }
 
-      if (isCloudflareEnabled()) {
+      const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
+      const isPushMode = segment?.mode === "push";
+
+      if (isCloudflareEnabled() && !isPushMode) {
         try {
           const result = await updatePinOnCloudflare(pin, pinState);
           if (result.success) {
@@ -64,12 +68,18 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
 
   const handleTogglePin = async (pin: string) => {
     const nextState = !pinsState[pin];
+    if (nextState) soundManager.playToggleOn();
+    else soundManager.playToggleOff();
     setPinsState((prev) => ({ ...prev, [pin]: nextState }));
     const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
     await updatePinOnServer(pin, nextState, false, segment?.auto_off);
   };
 
   const handleSetPinState = async (pin: string, state: boolean, preventMqtt: boolean = false) => {
+    if (state !== pinsState[pin]) {
+      if (state) soundManager.playToggleOn();
+      else soundManager.playToggleOff();
+    }
     setPinsState((prev) => ({ ...prev, [pin]: state }));
     const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
     await updatePinOnServer(pin, state, preventMqtt, segment?.auto_off);

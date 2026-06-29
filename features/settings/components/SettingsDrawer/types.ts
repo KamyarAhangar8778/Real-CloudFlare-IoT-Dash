@@ -1,5 +1,5 @@
 import React from "react";
-import { Palette, Type, Activity, LayoutGrid, Sparkles } from "lucide-react";
+import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic } from "lucide-react";
 
 export interface SettingsDrawerProps {
   isOpen: boolean;
@@ -45,6 +45,18 @@ export const SETTINGS_TABS = [
     Icon: Activity,
   },
   {
+    id: "macros",
+    title: "مدیریت دکمه‌های سفارشی (ماکروها)",
+    compactTitle: "تعریف ماکرو و سناریو",
+    Icon: Command,
+  },
+  {
+    id: "voice-commands",
+    title: "مدیریت دستیار صوتی هوشمند",
+    compactTitle: "دستورات صوتی و ویس",
+    Icon: Mic,
+  },
+  {
     id: "header-settings",
     title: "موقعیت و تنظیمات هدر",
     compactTitle: "طرح قرارگیری هدر بورد",
@@ -55,5 +67,17 @@ export const SETTINGS_TABS = [
     title: "تنظیمات کتیبه خط میخی",
     compactTitle: "پدیداری و کنتراست پس‌زمینه",
     Icon: Sparkles,
+  },
+  {
+    id: "audio",
+    title: "تنظیمات صدا و موسیقی",
+    compactTitle: "پخش موزیک پس‌زمینه",
+    Icon: Music,
+  },
+  {
+    id: "mqtt",
+    title: "ارتباطات و پروتکل MQTT",
+    compactTitle: "تنظیمات اتصال و QoS",
+    Icon: Radio,
   },
 ];

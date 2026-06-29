@@ -44,7 +44,29 @@ export default function WorkspaceDragOverlay({
         (() => {
           const seg = segments.find(s => s.id === activeSegmentId);
           if (!seg) return null;
+          const groupSegments = segments.filter(s => (s.group || "Test") === (seg.group || "Test"));
+          const index = groupSegments.findIndex(s => s.id === activeSegmentId);
           const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
+          
+          const groupsOrder = Array.from(new Set(segments.map(s => s.group || "Test")));
+          let actualParentGroupsCols = groupsCols;
+
+          if (groupsCols > 1 && groupsOrder.length > 0) {
+            const groupIndex = groupsOrder.indexOf(seg.group || "Test");
+            if (groupIndex !== -1) {
+              const totalRows = Math.ceil(groupsOrder.length / groupsCols);
+              const currentRow = Math.floor(groupIndex / groupsCols);
+              const isLastRow = currentRow === totalRows - 1;
+              
+              if (isLastRow) {
+                const itemsInLastRow = groupsOrder.length % groupsCols || groupsCols;
+                actualParentGroupsCols = itemsInLastRow;
+              }
+            }
+          }
+
+          const effectiveGroupsCols = Math.min(groupsOrder.length, actualParentGroupsCols);
+
           return (
             <div style={{ opacity: 0.8, cursor: "grabbing" }}>
               <SortableSegmentCard
@@ -57,8 +79,10 @@ export default function WorkspaceDragOverlay({
                 onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
                 onUpdateSegmentRule={handleUpdateSegmentRule}
                 isLoadingIoT={isLoadingIoT}
-                parentGroupsCols={groupsCols}
+                parentGroupsCols={effectiveGroupsCols}
                 groupMaxCols={originalGroupCols}
+                groupItemsCount={groupSegments.length}
+                index={index >= 0 ? index : 0}
                 animationsEnabled={animationsEnabled}
               />
             </div>
@@ -76,6 +100,7 @@ export default function WorkspaceDragOverlay({
                 items={groupSegments.map(s => s.id)} 
                 segmentCount={groupSegments.length}
                 maxCols={groupConfigs[groupId]?.maxCols || 3}
+                icon={groupConfigs[groupId]?.icon}
                 parentGroupsCols={groupsCols}
                 onColsChange={() => {}}
                 onAddPlaceholder={() => {}}

@@ -112,5 +112,7 @@ export function useAchaemenidState() {
     triggerCloudflarePush,
     automations: store.automations,
     setAutomations: store.setAutomations,
+    macros: store.macros,
+    setMacros: store.setMacros,
   };
 }

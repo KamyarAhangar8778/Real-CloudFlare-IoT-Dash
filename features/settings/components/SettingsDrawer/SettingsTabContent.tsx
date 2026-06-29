@@ -4,6 +4,10 @@ import TypographySection from "../TypographySection";
 import StabilitySection from "../StabilitySection";
 import CuneiformSection from "../CuneiformSection";
 import HeaderSettingsSection from "../HeaderSettingsSection";
+import AudioSection from "../audio-section/AudioSection";
+import MqttSection from "../mqtt-section/MqttSection";
+import MacrosSection from "../macros-section/MacrosSection";
+import VoiceCommandsSection from "../voice-commands-section/VoiceCommandsSection";
 
 import { SettingsDrawerProps } from "./types";
 
@@ -62,6 +66,10 @@ export function SettingsTabContent({
           isDark={isDark}
         />
       );
+    case "macros":
+      return <MacrosSection />;
+    case "voice-commands":
+      return <VoiceCommandsSection />;
     case "header-settings":
       return (
         <HeaderSettingsSection
@@ -84,6 +92,10 @@ export function SettingsTabContent({
           hideHeader={true}
         />
       );
+    case "audio":
+      return <AudioSection />;
+    case "mqtt":
+      return <MqttSection />;
     default:
       return null;
   }

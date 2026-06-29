@@ -15,6 +15,7 @@ export function useAestheticState() {
     "accent3",
   );
   const [headerPosition, setHeaderPosition] = useState<"top" | "left">("top");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const cuneiformColorValue =
     cuneiformColor === "accent3"
@@ -50,6 +51,8 @@ export function useAestheticState() {
     setCuneiformColor,
     headerPosition,
     setHeaderPosition,
+    isSidebarCollapsed,
+    setIsSidebarCollapsed,
     cuneiformColorValue,
   };
 }

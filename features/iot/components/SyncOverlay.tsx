@@ -73,7 +73,7 @@ export default function SyncOverlay({
               <div className="text-center text-[10px] font-bold text-cyan-400">
                 ورکر هدف کلودفلر (سرور مانیتورینگ)
               </div>
-              <div className="text-[10px] font-mono text-zinc-300 select-all break-all border border-slate-850 bg-slate-950/50 p-2 rounded-xl text-center">
+              <div className="text-[10px] font-mono text-zinc-300 select-all break-all border border-slate-800 bg-slate-950/50 p-2 rounded-xl text-center">
                 {workerUrl || "https://api.agkalaa.ir"}
               </div>
               <div className="text-[9px] text-zinc-500 text-center leading-relaxed">
@@ -83,7 +83,7 @@ export default function SyncOverlay({
               <button
                 type="button"
                 onClick={onBypass}
-                className="w-full mt-2 py-2 bg-cyan-950/40 hover:bg-cyan-900/60 border border-cyan-800/60 hover:border-cyan-500/80 text-cyan-300 hover:text-cyan-100 rounded-xl text-[10px] font-bold transition-all cursor-pointer font-sans"
+                className="w-full mt-2 py-2 bg-cyan-950/40 md:hover:bg-cyan-900/60 border border-cyan-800/60 md:hover:border-cyan-500/80 text-cyan-300 md:hover:text-cyan-100 rounded-xl text-[10px] font-bold transition-all cursor-pointer font-sans"
               >
                 دور زدن لودینگ و ورود به داشبورد
               </button>

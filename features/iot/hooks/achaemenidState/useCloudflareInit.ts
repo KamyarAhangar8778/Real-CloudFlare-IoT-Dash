@@ -10,6 +10,8 @@ import {
   setCloudflareWorkerUrl,
 } from "@/features/iot/services/cloudflareService";
 
+const IGNORE_CONFIG_FETCH_ERROR = true;
+
 interface UseCloudflareInitProps {
   mounted: boolean;
   handleApplyEspConfig: (config: EspConfig) => void;
@@ -25,6 +27,13 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
     setWorkerUrlState(url);
     setCloudflareWorkerUrl(url);
   };
+
+  const handleBypassSync = useCallback(() => {
+    bypassedRef.current = true;
+    handleApplyEspConfig(DEFAULT_ESP_CONFIG);
+    setSyncStatus(false, 100, "تایید هویت مستقل.");
+    setIsFullyReady(true);
+  }, [handleApplyEspConfig, setSyncStatus]);
 
   const initCloudflareSync = useCallback(async () => {
     let attemptCount = 0;
@@ -49,9 +58,18 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
           setSyncStatus(false, 100, "همگام‌سازی چیدمان و تنظیمات از کلودفلر انجام شد.");
           setIsFullyReady(true);
           return;
+        } else if (IGNORE_CONFIG_FETCH_ERROR) {
+          console.warn("Ignoring Cloudflare config fetch error (empty config), bypassing sync.");
+          handleBypassSync();
+          return;
         }
       } catch (e) {
         console.error(`Attempt ${attemptCount} failed to sync from Cloudflare:`, e);
+        if (IGNORE_CONFIG_FETCH_ERROR) {
+          console.warn("Ignoring Cloudflare config fetch error, bypassing sync.");
+          handleBypassSync();
+          return;
+        }
       }
 
       if (bypassedRef.current) return;
@@ -65,19 +83,12 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
       await new Promise((resolve) => setTimeout(resolve, 3000));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleApplyEspConfig, setSyncStatus]);
+  }, [handleApplyEspConfig, setSyncStatus, handleBypassSync]);
 
   useEffect(() => {
     initCloudflareSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleBypassSync = () => {
-    bypassedRef.current = true;
-    handleApplyEspConfig(DEFAULT_ESP_CONFIG);
-    setSyncStatus(false, 100, "تایید هویت مستقل.");
-    setIsFullyReady(true);
-  };
 
   return {
     isFullyReady,

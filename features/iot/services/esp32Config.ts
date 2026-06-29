@@ -31,6 +31,7 @@ export interface EspConfig {
     pin: string;
     title: string;
     group: string;
+    icon?: string;
     state?: boolean;
     mode?: "switch" | "push";
     auto_off?: number;
@@ -73,6 +74,24 @@ export interface EspConfig {
     targetPin: string;
     actionOn: boolean;
     enabled: boolean;
+  }>;
+  macros?: Array<{
+    id: string;
+    title: string;
+    icon?: string;
+    actions: Array<{
+      targetPin: string;
+      actionOn: boolean;
+    }>;
+  }>;
+  voiceCommands?: Array<{
+    id: string;
+    phrase: string;
+    actions: Array<{
+      targetPin?: string;
+      targetMacro?: string;
+      actionOn?: boolean;
+    }>;
   }>;
   /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
   worker_url?: string;
@@ -131,6 +150,8 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     },
   ],
   automations: [],
+  macros: [],
+  voiceCommands: [],
 };
 
 /**

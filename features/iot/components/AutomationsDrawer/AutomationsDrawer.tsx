@@ -125,7 +125,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                 </div>
                 <h2 className="font-bold text-lg text-[var(--text-primary)]">مدیریت اتوماسیون‌ها</h2>
               </div>
-              <button onClick={onClose} className="p-2 text-[var(--text-muted)] hover:text-red-500 bg-[var(--card-hover-bg)] rounded-xl transition-all hover:rotate-90">
+              <button onClick={onClose} className="p-2 text-[var(--text-muted)] md:hover:text-red-500 bg-[var(--card-hover-bg)] rounded-xl transition-all md:hover:rotate-90">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -194,7 +194,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                             if (days.includes(d.value)) setDays(days.filter(x => x !== d.value));
                             else setDays([...days, d.value].sort());
                           }}
-                          className={`w-9 h-9 rounded-full text-xs font-bold transition-all ${days.includes(d.value) ? "bg-[var(--accent3)] text-white shadow-md shadow-[var(--accent3-transparent)]" : "bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:border-[var(--accent3)]"}`}
+                          className={`w-9 h-9 rounded-full text-xs font-bold transition-all ${days.includes(d.value) ? "bg-[var(--accent3)] text-white shadow-md shadow-[var(--accent3-transparent)]" : "bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--text-secondary)] md:hover:border-[var(--accent3)]"}`}
                         >
                           {d.label}
                         </button>
@@ -207,13 +207,13 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     <div className="flex gap-2 p-1 bg-[var(--card-bg)] rounded-xl border border-[var(--border-color)]">
                       <button 
                         onClick={() => setActionOn(true)}
-                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${actionOn ? "bg-emerald-500 text-white shadow-sm" : "text-[var(--text-muted)] hover:text-emerald-500"}`}
+                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${actionOn ? "bg-emerald-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-emerald-500"}`}
                       >
                         <Play className="w-3.5 h-3.5" /> روشن (HIGH)
                       </button>
                       <button 
                         onClick={() => setActionOn(false)}
-                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${!actionOn ? "bg-rose-500 text-white shadow-sm" : "text-[var(--text-muted)] hover:text-rose-500"}`}
+                        className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all ${!actionOn ? "bg-rose-500 text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-rose-500"}`}
                       >
                         <Square className="w-3.5 h-3.5" /> خاموش (LOW)
                       </button>
@@ -223,11 +223,11 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                 </div>
 
                 <div className="flex gap-2 pt-2">
-                  <button onClick={handleSave} className="flex-1 py-2.5 bg-[var(--accent3)] hover:bg-[var(--accent2)] text-white font-bold rounded-xl text-sm transition-all shadow-md active:scale-[0.98]">
+                  <button onClick={handleSave} className="flex-1 py-2.5 bg-[var(--accent3)] md:hover:bg-[var(--accent2)] text-white font-bold rounded-xl text-sm transition-all shadow-md active:scale-[0.98]">
                     {editingId ? "ذخیره تغییرات" : "افزودن به لیست"}
                   </button>
                   {editingId && (
-                    <button onClick={resetForm} className="px-4 py-2.5 bg-[var(--card-hover-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] hover:text-[var(--text-primary)] font-bold rounded-xl text-sm transition-all active:scale-[0.98]">
+                    <button onClick={resetForm} className="px-4 py-2.5 bg-[var(--card-hover-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] md:hover:text-[var(--text-primary)] font-bold rounded-xl text-sm transition-all active:scale-[0.98]">
                       انصراف
                     </button>
                   )}
@@ -261,14 +261,14 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                       <div className="flex items-center gap-1.5">
                         <button 
                           onClick={() => handleToggle(auto.id, !auto.enabled)}
-                          className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${auto.enabled ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20 hover:bg-slate-500/20"}`}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${auto.enabled ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 md:hover:bg-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20 md:hover:bg-slate-500/20"}`}
                         >
                           {auto.enabled ? "فعال" : "غیرفعال"}
                         </button>
-                        <button onClick={() => handleEdit(auto)} className="p-1.5 text-[var(--text-muted)] hover:text-blue-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
+                        <button onClick={() => handleEdit(auto)} className="p-1.5 text-[var(--text-muted)] md:hover:text-blue-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => handleDelete(auto.id)} className="p-1.5 text-[var(--text-muted)] hover:text-red-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
+                        <button onClick={() => handleDelete(auto.id)} className="p-1.5 text-[var(--text-muted)] md:hover:text-red-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>

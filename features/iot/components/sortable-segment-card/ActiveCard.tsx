@@ -10,8 +10,11 @@ interface ActiveCardProps
   extends Omit<SortableSegmentCardProps, "onSetupPlaceholder" | "isLoadingIoT"> {
   isCompact: boolean;
   isUltraCompact: boolean;
+  densityFactor?: number;
   attributes: any;
   listeners: any;
+  isSettingsOpen?: boolean;
+  setIsSettingsOpen?: (val: boolean) => void;
 }
 
 export default function ActiveCard({
@@ -28,8 +31,11 @@ export default function ActiveCard({
   animationsEnabled = true,
   isCompact,
   isUltraCompact,
+  densityFactor,
   attributes,
   listeners,
+  isSettingsOpen,
+  setIsSettingsOpen,
 }: ActiveCardProps) {
   const mode = segment.mode || "switch";
   const buttonProps = useSegmentButtonProps({
@@ -75,19 +81,19 @@ export default function ActiveCard({
           ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } }
           : undefined
       }
-      whileHover={animationsEnabled ? { y: -1.5, scale: 1.002 } : undefined}
-      className={`w-full flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] hover:border-[var(--accent3)]/50 transition-all duration-300 relative group h-full shadow-sm hover:shadow-lg rounded-2xl ${
+      className={`flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] transition-all duration-350 md:hover:-translate-y-1.5 md:hover:shadow-xl md:hover:border-[var(--accent3)] relative group h-full shadow-sm rounded-2xl ${
         isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
       }`}
     >
-      <div className="absolute top-0 right-0 w-3 h-3 hover:border-accent3/40 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-3 h-3 hover:border-accent3/40 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-3 h-3 md:hover:border-accent3/40 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-3 h-3 md:hover:border-accent3/40 pointer-events-none" />
 
       <div className="flex flex-col h-full justify-between">
         <CardHeader
           segment={segment}
           isPinOn={isPinOn}
           isUltraCompact={isUltraCompact}
+          isCompact={isCompact}
           mode={mode}
           onRemove={onRemove}
           onUpdateSegmentMode={onUpdateSegmentMode}
@@ -96,6 +102,8 @@ export default function ActiveCard({
           countdown={countdown}
           onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
           onUpdateSegmentRule={onUpdateSegmentRule}
+          isSettingsOpen={isSettingsOpen}
+          setIsSettingsOpen={setIsSettingsOpen}
         />
 
         <CardBody
@@ -103,6 +111,7 @@ export default function ActiveCard({
           isPinOn={isPinOn}
           isCompact={isCompact}
           isUltraCompact={isUltraCompact}
+          densityFactor={densityFactor}
           mode={mode}
           buttonProps={buttonProps}
           animationsEnabled={animationsEnabled}

@@ -79,6 +79,9 @@ export function useCloudflarePush({
         group_configs: groupConfigs,
       },
       segments: segments,
+      automations: useIoTStore.getState().automations,
+      macros: useIoTStore.getState().macros,
+      voiceCommands: useIoTStore.getState().voiceCommands,
       worker_url: getCloudflareWorkerUrl(),
     };
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Vazirmatn, JetBrains_Mono } from "next/font/google";
 import "./globals.css"; // Global styles
 import QueryProvider from "@/components/QueryProvider";
+import AudioInitializer from "@/components/AudioInitializer";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning
         className="bg-[#0b0c10] text-[#c5a880] min-h-screen selection:bg-amber-500/20 selection:text-amber-300 font-sans"
       >
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AudioInitializer />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

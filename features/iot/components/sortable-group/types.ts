@@ -10,5 +10,6 @@ export interface SortableGroupProps {
   onDeleteGroup: (groupId: string) => void;
   parentGroupsCols?: number;
   animationsEnabled?: boolean;
+  icon?: string;
   children: React.ReactNode;
 }

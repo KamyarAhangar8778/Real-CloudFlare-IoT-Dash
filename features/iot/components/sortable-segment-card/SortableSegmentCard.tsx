@@ -3,13 +3,30 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { SortableSegmentCardProps } from "./types";
 import PlaceholderCard from "./PlaceholderCard";
 import ActiveCard from "./ActiveCard";
 
 export default function SortableSegmentCard(props: SortableSegmentCardProps) {
-  const { segment, parentGroupsCols = 1, groupMaxCols = 3, animationsEnabled = true } = props;
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    segment,
+    parentGroupsCols = 1,
+    groupMaxCols = 3,
+    groupItemsCount = 1,
+    index = 0,
+    animationsEnabled = true,
+  } = props;
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: segment.id,
     data: {
       type: "Segment",
@@ -22,18 +39,41 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
     transition: animationsEnabled
       ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
       : "none",
-    zIndex: isDragging ? 50 : "auto",
+    zIndex: isDragging ? 50 : isSettingsOpen ? 40 : "auto",
     opacity: isDragging ? 0.35 : 1,
     scale: isDragging ? 0.96 : 1,
   };
 
-  const densityFactor = groupMaxCols * parentGroupsCols;
+  const effectiveGroupCols = Math.min(groupMaxCols, groupItemsCount);
+
+  let rowOccupiedCols = effectiveGroupCols;
+  if (effectiveGroupCols > 1 && groupItemsCount > 0) {
+    const totalRows = Math.ceil(groupItemsCount / effectiveGroupCols);
+    const currentRow = Math.floor(index / effectiveGroupCols);
+    const isLastRow = currentRow === totalRows - 1;
+
+    if (isLastRow) {
+      const itemsInLastRow =
+        groupItemsCount % effectiveGroupCols || effectiveGroupCols;
+      rowOccupiedCols = itemsInLastRow;
+    }
+  }
+
+  const isMobilePortrait = useMediaQuery(
+    "(max-width: 767px) and (orientation: portrait)",
+  );
+  const effectiveParentCols = isMobilePortrait ? 1 : parentGroupsCols;
+  const densityFactor = rowOccupiedCols * effectiveParentCols;
   const isUltraCompact = densityFactor >= 6;
   const isCompact = densityFactor === 4 || densityFactor === 3;
 
   if (isDragging) {
     return (
-      <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={`touch-none relative h-full ${isSettingsOpen ? "!basis-full !max-w-full" : ""}`}
+      >
         <div
           className={`w-full border-2 border-dashed border-[var(--accent3-medium)]/35 bg-[var(--card-bg)]/20 backdrop-blur-md rounded-2xl transition-all duration-300 ${
             isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
@@ -47,7 +87,7 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
 
   if (segment.type === "placeholder") {
     return (
-      <div ref={setNodeRef} style={style} className="touch-none w-full relative">
+      <div ref={setNodeRef} style={style} className="touch-none relative">
         <PlaceholderCard
           segment={segment}
           onRemove={props.onRemove}
@@ -63,13 +103,20 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="touch-none w-full relative h-full">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`touch-none relative h-full transition-all duration-300 ${isSettingsOpen ? "z-40" : ""}`}
+    >
       <ActiveCard
         {...props}
         isCompact={isCompact}
         isUltraCompact={isUltraCompact}
+        densityFactor={densityFactor}
         attributes={attributes}
         listeners={listeners}
+        isSettingsOpen={isSettingsOpen}
+        setIsSettingsOpen={setIsSettingsOpen}
       />
     </div>
   );

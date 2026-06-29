@@ -6,7 +6,7 @@ This file contains build, test, lint, and code style guidelines for the Achaemen
 
 - **Run Dev Server**: `npm run dev` (Runs Next.js with Turbopack)
 - **Build Production**: `npm run build`
-- **Start Production**: `npm run start`
+- **Start Production**: `npm run start` (Requires serving static export if standard start is not used)
 - **Lint Code**: `npm run lint` (Runs Biome linter)
 - **Format Code**: `npm run format` (Runs Biome formatter)
 - **Clean Cache**: `npm run clean` (Cleans Next.js cache)
@@ -14,13 +14,15 @@ This file contains build, test, lint, and code style guidelines for the Achaemen
 ## Project Stack & Standards
 
 - **Core Framework**: Next.js 15 (App Router), React 19, TypeScript
+- **Export Method**: Static Export (`output: "export"`) - **No API Routes support**
 - **Styling**: Tailwind CSS v4 (using `@theme` and CSS variables, no legacy `tailwind.config.js`)
 - **State Management**: Zustand
-- **Data Fetching**: TanStack React Query v5
+- **Data Fetching**: TanStack React Query v5 (Client-side fetches)
 - **Forms/Validation**: React Hook Form, Zod
 - **Animations**: Motion (Framer Motion)
 - **Linter/Formatter**: Biome (replaces ESLint and Prettier)
 - **IoT Integration**: MQTT (`mqtt` library)
+- **Audio Handling**: Built-in HTML5 Web Audio and `AudioContext` for ambient tracks and UI effects.
 
 ## Coding Guidelines
 
@@ -30,8 +32,8 @@ This file contains build, test, lint, and code style guidelines for the Achaemen
 - **Types/Interfaces**: PascalCase (e.g., `MasterHeaderProps`)
 - **Files/Folders**: Use feature-based folders in lower kebab-case/camelCase.
 
-### 2. Code Structure
-- Prefer functional components with TypeScript interfaces.
-- Separate features into the `features/` directory (modular design).
-- Keep shared/global UI components in the `components/` directory.
-- Avoid using legacy UI libraries. Rely on Tailwind CSS v4 and modern CSS features.
+### 2. Code Structure & Architecture Constraints
+- **Static Export Limitations**: Next.js is configured for static site generation (`output: "export"`). You cannot create backend endpoints in `app/api/`. Any network requests to third parties (like the Internet Archive API) must happen directly on the client side.
+- **Client Components**: Rely heavily on `"use client"` for interactivity, particularly since many modules integrate with the Web Audio API, Web Storage API, and external websockets (MQTT).
+- **Modularity**: Prefer functional components with TypeScript interfaces. Separate features into the `features/` directory. Keep shared/global UI components in the `components/` directory.
+- **Styling constraints**: Avoid using legacy UI libraries. Rely on Tailwind CSS v4 and modern CSS features.

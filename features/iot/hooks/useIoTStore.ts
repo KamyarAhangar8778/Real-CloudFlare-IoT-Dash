@@ -8,6 +8,7 @@ interface IoTStoreState {
     pin: string;
     title: string;
     group: string;
+    icon?: string;
     state?: boolean;
     mode?: "switch" | "push";
     auto_off?: number;
@@ -29,7 +30,7 @@ interface IoTStoreState {
     };
   }>;
   groupsOrder: string[];
-  groupConfigs: Record<string, { maxCols: number }>;
+  groupConfigs: Record<string, { maxCols: number; icon?: string }>;
   groupsCols: number;
   pinsState: Record<string, boolean>;
   isInitialSyncLoading: boolean;
@@ -47,9 +48,29 @@ interface IoTStoreState {
     actionOn: boolean;
     enabled: boolean;
   }>;
+  macros: Array<{
+    id: string;
+    title: string;
+    icon?: string;
+    actions: Array<{
+      targetPin: string;
+      actionOn: boolean;
+    }>;
+  }>;
 
+  voiceCommands: Array<{
+    id: string;
+    phrase: string;
+    actions: Array<{
+      targetPin?: string;
+      targetMacro?: string;
+      actionOn?: boolean;
+    }>;
+  }>;
+  selectedGroupFilter: string | null;
   // Actions
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
+  setSelectedGroupFilter: (group: string | null) => void;
   setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
   setGroupConfigs: (
     configs:
@@ -89,6 +110,12 @@ interface IoTStoreState {
   setAutomations: (
     automations: any[] | ((prev: any[]) => any[]),
   ) => void;
+  setMacros: (
+    macros: any[] | ((prev: any[]) => any[]),
+  ) => void;
+  setVoiceCommands: (
+    voiceCommands: any[] | ((prev: any[]) => any[]),
+  ) => void;
 }
 
 export const useIoTStore = create<IoTStoreState>((set, get) => ({
@@ -105,6 +132,13 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   unsavedChangesCount: 0,
   toast: null,
   automations: [],
+  macros: [],
+  voiceCommands: [],
+  selectedGroupFilter: null,
+
+  setSelectedGroupFilter: (group) => {
+    set({ selectedGroupFilter: group });
+  },
 
   setSegments: (segments) => {
     set((state) => {
@@ -190,6 +224,20 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     });
   },
 
+  setMacros: (macros) => {
+    set((state) => {
+      const next = typeof macros === "function" ? macros(state.macros) : macros;
+      return { macros: next };
+    });
+  },
+
+  setVoiceCommands: (voiceCommands) => {
+    set((state) => {
+      const next = typeof voiceCommands === "function" ? voiceCommands(state.voiceCommands) : voiceCommands;
+      return { voiceCommands: next };
+    });
+  },
+
   applyEspConfig: (config) => {
     if (!config) return;
 
@@ -199,6 +247,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
       groupConfigs: config.layout.group_configs,
       groupsCols: config.layout.groups_cols || 1,
       automations: config.automations || [],
+      macros: config.macros || [],
+      voiceCommands: config.voiceCommands || [],
     });
 
     const importedPins: Record<string, boolean> = {};

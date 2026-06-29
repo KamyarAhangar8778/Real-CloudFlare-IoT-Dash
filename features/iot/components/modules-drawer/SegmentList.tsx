@@ -31,11 +31,11 @@ export default function SegmentList({ segments, onRemoveSegment }: SegmentListPr
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 key={seg.id}
-                className="p-3 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl flex items-center justify-between gap-3 text-right group hover:border-[var(--accent3-medium)] transition-all shadow-sm"
+                className="p-3 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl flex items-center justify-between gap-3 text-right group md:hover:border-[var(--accent3-medium)] transition-all shadow-sm"
               >
                 <button
                   onClick={() => onRemoveSegment(seg.id)}
-                  className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-colors cursor-pointer rounded-lg"
+                  className="p-1.5 bg-red-500/10 md:hover:bg-red-500/20 text-red-500 md:hover:text-red-400 transition-colors cursor-pointer rounded-lg"
                   title="حذف سگمنت"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

@@ -82,5 +82,17 @@ export function getThemeStyles({
     html, body, button, h1, h2, h3, h4, h5, h6, select, span, input, textarea, .font-sans {
       font-family: var(--selected-font) !important;
     }
+
+    /* Override classes for the FontGrid preview */
+    .font-preview-vazir { font-family: var(--font-vazir) !important; }
+    .font-preview-lalezar { font-family: var(--font-lalezar) !important; }
+    .font-preview-mono { font-family: var(--font-mono) !important; }
+    .font-preview-playfair { font-family: var(--font-playfair) !important; }
+    .font-preview-space { font-family: var(--font-space) !important; }
+    .font-preview-cairo { font-family: var(--font-cairo) !important; }
+    .font-preview-amiri { font-family: var(--font-amiri) !important; }
+    .font-preview-changa { font-family: var(--font-changa) !important; }
+    .font-preview-reem { font-family: var(--font-reem) !important; }
+    .font-preview-tajawal { font-family: var(--font-tajawal) !important; }
   `;
 }

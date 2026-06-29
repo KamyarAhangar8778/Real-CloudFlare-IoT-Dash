@@ -6,6 +6,7 @@ interface ThemeToggleProps {
   setIsDark: (val: boolean) => void;
   animationsEnabled?: boolean;
   variant: "vertical" | "horizontal";
+  isSidebarCollapsed?: boolean;
 }
 
 export default function ThemeToggle({
@@ -13,8 +14,9 @@ export default function ThemeToggle({
   setIsDark,
   animationsEnabled,
   variant,
+  isSidebarCollapsed,
 }: ThemeToggleProps) {
-  if (variant === "vertical") {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
       <div className="pt-4 border-t border-[var(--border-color)]">
         <button
@@ -41,20 +43,24 @@ export default function ThemeToggle({
   }
 
   return (
-    <button
-      onClick={() => setIsDark(!isDark)}
-      className="hidden md:flex p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all active:scale-[0.97]"
-      title="تغییر رنگ پوسته"
-    >
-      {isDark ? (
-        <Sun
-          className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`}
-        />
-      ) : (
-        <Moon
-          className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`}
-        />
-      )}
-    </button>
+    <div className={variant === "vertical" ? "pt-4 border-t border-[var(--border-color)] flex justify-center" : ""}>
+      <button
+        onClick={() => setIsDark(!isDark)}
+        className={`${variant === "vertical" ? "w-full flex justify-center items-center" : "hidden md:flex"} p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all active:scale-[0.97]`}
+        title="تغییر رنگ پوسته"
+      >
+        {isDark ? (
+          <Sun
+            className={`w-4 h-4 text-orange-400 ${animationsEnabled ? "animate-[spin_20s_linear_infinite]" : ""}`}
+          />
+        ) : (
+          <Moon
+            className={`w-4 h-4 text-indigo-400 ${animationsEnabled ? "animate-[bounce_3s_infinite]" : ""}`}
+          />
+        )}
+      </button>
+    </div>
   );
 }
+
+

@@ -1,12 +1,14 @@
 import React from "react";
 import { Settings as SettingsIcon, Layers } from "lucide-react";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import VoiceCommandButton from "./VoiceCommandButton";
 
 interface QuickAccessControlsProps {
   setIsModulesMenuOpen: (val: boolean) => void;
   setIsMenuOpen: (val: boolean) => void;
   animationsEnabled?: boolean;
   variant: "vertical" | "horizontal";
+  isSidebarCollapsed?: boolean;
 }
 
 export default function QuickAccessControls({
@@ -14,10 +16,11 @@ export default function QuickAccessControls({
   setIsMenuOpen,
   animationsEnabled,
   variant,
+  isSidebarCollapsed,
 }: QuickAccessControlsProps) {
   const { setIsAutomationsMenuOpen } = useDashboard();
 
-  if (variant === "vertical") {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
       <div className="space-y-2 mt-4">
         <span className="text-[10px] text-[var(--text-muted)] font-black block text-right uppercase tracking-wider">
@@ -45,11 +48,15 @@ export default function QuickAccessControls({
         {/* Automations Drawer Trigger */}
         <button
           onClick={() => setIsAutomationsMenuOpen(true)}
-          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98] group"
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
-              <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="12" x2="12" y2="6" className={animationsEnabled ? "animate-[spin_1s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
+                <line x1="12" y1="12" x2="16" y2="12" className={animationsEnabled ? "animate-[spin_12s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
+              </svg>
             </div>
             <span className="text-xs font-semibold">اتوماسیون‌ها</span>
           </div>
@@ -57,6 +64,13 @@ export default function QuickAccessControls({
             Time
           </span>
         </button>
+
+        {/* Voice Command */}
+        <VoiceCommandButton 
+          animationsEnabled={animationsEnabled} 
+          variant={variant} 
+          isSidebarCollapsed={isSidebarCollapsed} 
+        />
 
         {/* System config trigger */}
         <button
@@ -80,38 +94,48 @@ export default function QuickAccessControls({
   }
 
   return (
-    <>
+    <div className={variant === "vertical" ? "flex flex-col gap-2" : "flex items-center gap-1"}>
+      {/* Voice Command */}
+      <VoiceCommandButton 
+        animationsEnabled={animationsEnabled} 
+        variant={variant} 
+        isSidebarCollapsed={isSidebarCollapsed} 
+      />
+
       {/* Modules trigger */}
       <button
         onClick={() => setIsModulesMenuOpen(true)}
-        className="flex items-center gap-1.5 px-3 py-1.5 md:py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-secondary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97]"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center"
         title="مدیریت ماژول‌ها و ابزارها"
       >
         <Layers
-          className={`w-3.5 h-3.5 text-[var(--accent4)] ${animationsEnabled ? "animate-[pulse_3s_ease-in-out_infinite]" : ""}`}
+          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}
         />
-        <span>ماژول‌ها</span>
       </button>
 
       {/* Automations trigger */}
       <button
         onClick={() => setIsAutomationsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="اتوماسیون‌های زمانی"
       >
-        <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}>
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="12" x2="12" y2="6" className={animationsEnabled ? "animate-[spin_1s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
+          <line x1="12" y1="12" x2="16" y2="12" className={animationsEnabled ? "animate-[spin_12s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
+        </svg>
       </button>
 
       {/* General system Settings trigger */}
       <button
         onClick={() => setIsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="پیکربندی سیستم"
       >
         <SettingsIcon
           className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
         />
       </button>
-    </>
+    </div>
   );
 }

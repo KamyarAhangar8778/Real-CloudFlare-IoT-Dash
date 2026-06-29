@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Columns2, LayoutGrid } from "lucide-react";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 interface LayoutSelectorProps {
   maxCols: number;
@@ -14,47 +15,95 @@ export default function LayoutSelector({
   onColsChange,
   parentGroupsCols,
 }: LayoutSelectorProps) {
-  if (parentGroupsCols === 3) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Always show on mobile, hide on desktop if parentGroupsCols is 3
+  if (parentGroupsCols === 3 && !isMobile) {
     return null;
   }
 
   return (
-    <div className="hidden sm:flex items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-0.5 rounded-xl text-xs gap-0.5 shrink-0 shadow-sm">
+    <div className={`flex ${parentGroupsCols === 3 ? "flex-col" : "flex-col sm:flex-row"} items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-1 rounded-xl text-xs gap-0.5 shrink-0 shadow-sm`}>
       <button
         onClick={() => onColsChange(1)}
         aria-label="تک ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 1
-            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
         }`}
         title="نمایش تک ستونه"
       >
-        <Columns2 className="w-3.5 h-3.5 rotate-90" />
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-4 h-4 sm:w-4 sm:h-4"
+        >
+          <rect width="18" height="6" x="3" y="5" rx="2" />
+          <rect width="18" height="6" x="3" y="13" rx="2" />
+        </svg>
       </button>
       <button
         onClick={() => onColsChange(2)}
         aria-label="دو ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 2
-            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
         }`}
         title="نمایش دو ستونه"
       >
-        <LayoutGrid className="w-3.5 h-3.5" />
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-4 h-4 sm:w-4 sm:h-4"
+        >
+          <circle cx="7" cy="7" r="3" />
+          <circle cx="17" cy="7" r="3" />
+          <circle cx="7" cy="17" r="3" />
+          <circle cx="17" cy="17" r="3" />
+        </svg>
       </button>
       <button
         onClick={() => onColsChange(3)}
         aria-label="سه ستون"
-        className={`p-1 rounded-lg transition-all cursor-pointer select-none ${
+        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 3
-            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
         }`}
         title="نمایش سه ستونه"
       >
-        <LayoutGrid className="w-3.5 h-3.5 scale-x-110" />
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-4 h-4 sm:w-4 sm:h-4"
+        >
+          <circle cx="5" cy="7" r="2" />
+          <circle cx="12" cy="7" r="2" />
+          <circle cx="19" cy="7" r="2" />
+          <circle cx="5" cy="17" r="2" />
+          <circle cx="12" cy="17" r="2" />
+          <circle cx="19" cy="17" r="2" />
+        </svg>
       </button>
     </div>
   );

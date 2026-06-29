@@ -37,11 +37,13 @@ export default function FontGrid({ selectedFont, setSelectedFont }: FontGridProp
               {/* Top Meta info */}
               <div className="flex items-center justify-between w-full gap-1">
                 <span
-                  className={`text-[8.5px] font-sans font-bold tracking-tight ${isSelected ? "text-[var(--accent3)]" : "theme-text-muted"}`}
+                  className={`text-[8.5px] font-bold tracking-tight font-preview-${font.id} ${isSelected ? "text-[var(--accent3)]" : "theme-text-muted"}`}
                 >
                   {font.desc}
                 </span>
-                <span className="font-sans font-black text-[10px] theme-text-primary">
+                <span 
+                  className={`font-black text-[10px] theme-text-primary font-preview-${font.id}`}
+                >
                   {font.name}
                 </span>
               </div>
@@ -49,12 +51,11 @@ export default function FontGrid({ selectedFont, setSelectedFont }: FontGridProp
               {/* Central Dynamic Scribe Preview Text */}
               <div className="w-full py-2 flex items-center justify-center overflow-hidden">
                 <span
-                  className={`text-[12px] font-bold text-center leading-relaxed transition-colors duration-300 ${
+                  className={`text-[12px] font-bold text-center leading-relaxed transition-colors duration-300 font-preview-${font.id} ${
                     isSelected
                       ? "text-[var(--accent3)]"
                       : "theme-text-secondary group-hover:theme-text-primary"
                   }`}
-                  style={{ fontFamily: font.family }}
                 >
                   درود بر شما، به داشبورد خودتون خوش اومدین!!
                 </span>

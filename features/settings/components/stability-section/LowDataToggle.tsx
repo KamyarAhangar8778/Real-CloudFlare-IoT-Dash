@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WifiOff } from "lucide-react";
+import { soundManager } from "@/lib/audio";
 
 interface LowDataToggleProps {
   lowDataMode: boolean;
@@ -16,6 +17,13 @@ export default function LowDataToggle({
   animationsEnabled,
   isDark = true,
 }: LowDataToggleProps) {
+  const handleToggle = () => {
+    const nextVal = !lowDataMode;
+    setLowDataMode(nextVal);
+    if (nextVal) soundManager.playToggleOn();
+    else soundManager.playToggleOff();
+  };
+
   return (
     <div className="border-b border-accent3-medium/10 pb-4 space-y-2">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
@@ -24,8 +32,8 @@ export default function LowDataToggle({
       </p>
 
       <button
-        onClick={() => setLowDataMode(!lowDataMode)}
-        className={`w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
+        onClick={handleToggle}
+        className={`switch-toggle w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
           lowDataMode
             ? isDark
               ? "bg-amber-950/20 border-accent3/60 shadow-[0_0_12px_rgba(212,175,55,0.1)]"

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { soundManager } from "@/lib/audio";
 
 interface AnimationsToggleProps {
   animationsEnabled: boolean;
@@ -13,6 +14,13 @@ export default function AnimationsToggle({
   setAnimationsEnabled,
   isDark = true,
 }: AnimationsToggleProps) {
+  const handleToggle = () => {
+    const nextVal = !animationsEnabled;
+    setAnimationsEnabled(nextVal);
+    if (nextVal) soundManager.playToggleOn();
+    else soundManager.playToggleOff();
+  };
+
   return (
     <div className="space-y-2 border-b border-accent3-medium/10 pb-4">
       <p className="text-[10px] theme-text-tertiary leading-relaxed">
@@ -21,8 +29,8 @@ export default function AnimationsToggle({
       </p>
 
       <button
-        onClick={() => setAnimationsEnabled(!animationsEnabled)}
-        className={`w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
+        onClick={handleToggle}
+        className={`switch-toggle w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
           animationsEnabled
             ? isDark
               ? "bg-emerald-950/20 border-accent4/60 shadow-[0_0_12px_rgba(16,185,129,0.1)]"

@@ -4,6 +4,7 @@ export interface SegmentData {
   pin: string;
   title: string;
   group?: string;
+  icon?: string;
   state?: boolean;
   mode?: "switch" | "push";
   auto_off?: number;
@@ -56,5 +57,7 @@ export interface SortableSegmentCardProps {
   onSetupPlaceholder?: (id: string) => void;
   parentGroupsCols?: number;
   groupMaxCols?: number;
+  groupItemsCount?: number;
+  index?: number;
   animationsEnabled?: boolean;
 }

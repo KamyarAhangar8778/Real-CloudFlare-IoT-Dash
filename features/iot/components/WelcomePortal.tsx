@@ -83,10 +83,10 @@ export default function WelcomePortal({
             y: -1,
           }}
           whileTap={{ scale: 0.985 }}
-          className="relative group flex items-center justify-between gap-3 px-5 py-3.5 bg-[var(--card-bg-solid)] border border-[var(--border-color)] hover:border-[var(--accent3)] hover:bg-[var(--card-hover-bg)] text-[var(--text-primary)] rounded-xl font-sans font-extrabold text-xs md:text-sm cursor-pointer shadow-sm transition-all duration-300 text-right w-full"
+          className="relative group flex items-center justify-between gap-3 px-5 py-3.5 bg-[var(--card-bg-solid)] border border-[var(--border-color)] md:hover:border-[var(--accent3)] md:hover:bg-[var(--card-hover-bg)] text-[var(--text-primary)] rounded-xl font-sans font-extrabold text-xs md:text-sm cursor-pointer shadow-sm transition-all duration-300 text-right w-full"
         >
-          <div className="p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--accent3)] group-hover:bg-[var(--accent3-transparent)] transition-colors">
-            <SettingsIcon className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+          <div className="p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--accent3)] md:group-hover:bg-[var(--accent3-transparent)] transition-colors">
+            <SettingsIcon className="w-4 h-4 group-md:hover:rotate-45 transition-transform duration-300" />
           </div>
           <span className="flex-1 pr-2 text-[var(--text-primary)] font-sans font-bold">
             مشاهده تنظیمات سامانه
@@ -102,10 +102,10 @@ export default function WelcomePortal({
             y: -1,
           }}
           whileTap={{ scale: 0.985 }}
-          className="relative group flex items-center justify-between gap-3 px-5 py-3.5 bg-[var(--card-bg-solid)] border border-[var(--border-color)] hover:border-[var(--accent4)] hover:bg-[var(--card-hover-bg)] text-[var(--text-primary)] rounded-xl font-sans font-extrabold text-xs md:text-sm cursor-pointer shadow-sm transition-all duration-300 text-right w-full"
+          className="relative group flex items-center justify-between gap-3 px-5 py-3.5 bg-[var(--card-bg-solid)] border border-[var(--border-color)] md:hover:border-[var(--accent4)] md:hover:bg-[var(--card-hover-bg)] text-[var(--text-primary)] rounded-xl font-sans font-extrabold text-xs md:text-sm cursor-pointer shadow-sm transition-all duration-300 text-right w-full"
         >
-          <div className="p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--accent4)] group-hover:bg-[var(--accent4-transparent)] transition-colors">
-            <Layers className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
+          <div className="p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--accent4)] group-md:hover:bg-[var(--accent4-transparent)] transition-colors">
+            <Layers className="w-4 h-4 group-md:hover:translate-x-0.5 transition-transform duration-300" />
           </div>
           <span className="flex-1 pr-2 text-[var(--text-primary)] font-sans font-bold">
             مدیریت ماژول‌ها و پایه‌ها

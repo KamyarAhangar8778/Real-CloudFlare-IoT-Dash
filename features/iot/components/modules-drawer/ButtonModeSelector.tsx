@@ -26,7 +26,7 @@ export default function ButtonModeSelector({
           className={`py-2 text-[10px] font-bold font-sans transition-all border rounded-xl cursor-pointer ${
             buttonMode === "switch"
               ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_12px_var(--accent3-transparent)]"
-              : "border-[var(--border-color)] bg-black/10 text-gray-400 hover:text-gray-300 hover:bg-black/20"
+              : "border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
           }`}
         >
           سوییچ (دائمی Toggle)
@@ -39,7 +39,7 @@ export default function ButtonModeSelector({
           className={`py-2 text-[10px] font-bold font-sans transition-all border rounded-xl cursor-pointer ${
             buttonMode === "push"
               ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_12px_var(--accent3-transparent)]"
-              : "border-[var(--border-color)] bg-black/10 text-gray-400 hover:text-gray-300 hover:bg-black/20"
+              : "border-[var(--border-color)] bg-[var(--bg-main)] text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
           }`}
         >
           شستی (لحظه‌ای Shasti)

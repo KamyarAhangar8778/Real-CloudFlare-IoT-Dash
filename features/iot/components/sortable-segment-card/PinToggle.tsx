@@ -5,6 +5,7 @@ interface PinToggleProps {
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>;
   animationsEnabled?: boolean;
   isUltraCompact?: boolean;
+  isVertical?: boolean;
 }
 
 export default function PinToggle({
@@ -12,11 +13,12 @@ export default function PinToggle({
   buttonProps,
   animationsEnabled = true,
   isUltraCompact = false,
+  isVertical = false,
 }: PinToggleProps) {
   return (
     <button
       {...(buttonProps as any)}
-      className={`relative inline-flex h-6 w-11 rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none hover:scale-110 active:scale-95 hover:brightness-110 ${
+      className={`switch-toggle relative inline-flex ${isVertical ? "w-6 h-11 flex-col" : "h-6 w-11"} rounded-full p-0.5 items-center transition-all duration-300 shrink-0 cursor-pointer focus:outline-none select-none md:hover:scale-110 active:scale-95 md:hover:brightness-110 ${
         isUltraCompact ? "shadow-inner" : ""
       } ${
         isPinOn
@@ -29,7 +31,7 @@ export default function PinToggle({
       <span
         className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-[var(--text-primary)] shadow-md transform ${
           animationsEnabled ? "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" : ""
-        } ${isPinOn ? "-translate-x-5" : "translate-x-0"}`}
+        } ${isVertical ? (isPinOn ? "translate-y-0" : "translate-y-5") : (isPinOn ? "-translate-x-5" : "translate-x-0")}`}
       />
     </button>
   );

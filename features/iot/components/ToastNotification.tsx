@@ -4,6 +4,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { soundManager } from "@/lib/audio";
 
 /**
  * کامپوننت نمایش اعلان‌های ACK به صورت toast
@@ -16,6 +17,13 @@ export default function ToastNotification() {
   // حذف خودکار بعد از 3.5 ثانیه
   useEffect(() => {
     if (!toast) return;
+
+    if (toast.type === "success") {
+      soundManager.playSuccess();
+    } else {
+      soundManager.playError();
+    }
+
     const timer = setTimeout(() => {
       clearToast();
     }, 3500);
@@ -47,7 +55,7 @@ export default function ToastNotification() {
             <span className="text-xs font-bold leading-relaxed">{toast.message}</span>
             <button
               onClick={clearToast}
-              className="mr-auto text-white/40 hover:text-white/80 transition-colors text-[10px] font-bold cursor-pointer shrink-0"
+              className="mr-auto text-white/40 md:hover:text-white/80 transition-colors text-[10px] font-bold cursor-pointer shrink-0"
             >
               ✕
             </button>

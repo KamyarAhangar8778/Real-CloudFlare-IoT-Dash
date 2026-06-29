@@ -57,11 +57,7 @@ export function useAchaemenidDnd({
         const overIdx = prev.findIndex((s) => s.id === over.id);
         if (activeIdx === -1 || overIdx === -1) return prev;
         if (activeGroup !== overGroup) {
-          const updated = [...prev];
-          updated[activeIdx] = { ...updated[activeIdx], group: overGroup };
-          const [moved] = updated.splice(activeIdx, 1);
-          updated.splice(overIdx, 0, moved);
-          return updated;
+          return prev;
         }
         return activeIdx !== overIdx ? arrayMove(prev, activeIdx, overIdx) : prev;
       });
@@ -73,13 +69,7 @@ export function useAchaemenidDnd({
           ? overIdStr
           : "";
       if (targetGroup && (activeSeg.group || "Test") !== targetGroup) {
-        setSegments((prev) => {
-          const idx = prev.findIndex((s) => s.id === active.id);
-          if (idx === -1) return prev;
-          const updated = [...prev];
-          updated[idx] = { ...updated[idx], group: targetGroup };
-          return updated;
-        });
+        // Do nothing to prevent cross-group dragging
       }
     }
   };

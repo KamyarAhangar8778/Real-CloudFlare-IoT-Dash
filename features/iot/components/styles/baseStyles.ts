@@ -19,8 +19,10 @@ export function getBaseStyles(isDark: boolean): string {
       box-shadow: 0 0 12px var(--accent4-transparent) !important;
       outline: none;
     }
-    select:hover, input:hover {
-      border-color: var(--accent3) !important;
+    @media (min-width: 768px) {
+      select:hover, input:hover {
+        border-color: var(--accent3) !important;
+      }
     }
     select option {
       background-color: ${isDark ? "#080c14" : "#ffffff"} !important;
@@ -42,8 +44,10 @@ export function getBaseStyles(isDark: boolean): string {
       border-radius: 4px;
       border: 2px solid var(--bg-main);
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--accent3);
+    @media (min-width: 768px) {
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent3);
+      }
     }
   `;
 }

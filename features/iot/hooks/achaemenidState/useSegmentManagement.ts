@@ -27,6 +27,8 @@ export function useSegmentManagement({
     group?: string,
     mode?: "switch" | "push",
     auto_off?: number,
+    icon?: string,
+    groupIcon?: string,
   ) => {
     const randomId = Math.random().toString(36).substring(2, 9);
     const finalGroup = group || "Test";
@@ -38,7 +40,19 @@ export function useSegmentManagement({
       group: finalGroup,
       mode: mode || "switch",
       auto_off: auto_off || 0,
+      icon,
     };
+
+    setGroupConfigs((prev) => {
+      const current = prev[finalGroup] || { maxCols: 3 };
+      if (groupIcon && !('icon' in current && current.icon)) {
+        return { ...prev, [finalGroup]: { ...current, icon: groupIcon } };
+      }
+      if (!prev[finalGroup]) {
+        return { ...prev, [finalGroup]: current };
+      }
+      return prev;
+    });
 
     setGroupsOrder((prev) => (prev.includes(finalGroup) ? prev : [...prev, finalGroup]));
 

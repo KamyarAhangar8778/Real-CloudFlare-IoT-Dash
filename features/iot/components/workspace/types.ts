@@ -5,12 +5,13 @@ export interface IoTWorkspaceProps {
   groupsOrder: string[];
   groupsCols: number;
   segments: any[];
-  groupConfigs: Record<string, { maxCols: number }>;
+  groupConfigs: Record<string, { maxCols: number; icon?: string }>;
   pinsState: Record<string, boolean>;
   isLoadingIoT: boolean;
   activeSegmentId: string | null;
   activeGroupId: string | null;
   animationsEnabled?: boolean;
+  selectedGroupFilter?: string | null;
 
   handleDragStart: (event: DragStartEvent) => void;
   handleDragOver: (event: DragOverEvent) => void;

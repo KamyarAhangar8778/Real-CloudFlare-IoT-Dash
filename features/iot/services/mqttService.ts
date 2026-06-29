@@ -13,6 +13,22 @@ export const onMqttStateChange = (cb: StateChangeCallback) => {
   };
 };
 
+export const getMqttSettings = () => {
+  if (typeof window === 'undefined') {
+    return {
+      brokerUrl: "wss://broker.emqx.io:8084/mqtt",
+      baseTopic: "KamyarIoT/Achaemenid",
+      qos: 1 as 0 | 1 | 2
+    };
+  }
+  
+  return {
+    brokerUrl: localStorage.getItem("mqtt_broker_url") || "wss://broker.emqx.io:8084/mqtt",
+    baseTopic: localStorage.getItem("mqtt_base_topic") || "KamyarIoT/Achaemenid",
+    qos: (parseInt(localStorage.getItem("mqtt_qos") || "1", 10) as 0 | 1 | 2)
+  };
+};
+
 /**
  * CUSTOM BINARY PROTOCOL DEFINITION:
  * Extensibility Note: The first byte defines the Command Type (CMD). 
@@ -29,23 +45,27 @@ export const onMqttStateChange = (cb: StateChangeCallback) => {
 
 export const initMqtt = () => {
   if (!client) {
-    // استفاده از broker.emqx.io چون داشبورد نیازمند اتصال WebSocket ایمن (WSS) است.
-    client = mqtt.connect("wss://broker.emqx.io:8084/mqtt", {
-      clientId: "dashboard_" + Math.random().toString(16).substr(2, 8),
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
+    const stateTopic = `${settings.baseTopic}/State`;
+    const qos = settings.qos;
+
+    client = mqtt.connect(settings.brokerUrl, {
+      clientId: "dashboard_" + Math.random().toString(16).substring(2, 10),
       reconnectPeriod: 5000,
     });
 
     client.on("connect", () => {
-      console.log("[MQTT] Connected to EMQX via WSS!");
-      client?.subscribe("KamyarIoT/Achaemenid/State");
+      console.log(`[MQTT] Connected to ${settings.brokerUrl}!`);
+      client?.subscribe(stateTopic);
       
       // Announce presence immediately (CMD 0x04: Dashboard Presence)
       const presenceBuf = new Uint8Array([0x04, 0x01]);
-      client?.publish("KamyarIoT/Achaemenid/Command", presenceBuf as Buffer, { qos: 1 });
+      client?.publish(commandTopic, presenceBuf as Buffer, { qos });
     });
 
     client.on("message", (topic, payload) => {
-      if (topic === "KamyarIoT/Achaemenid/State") {
+      if (topic === stateTopic) {
         try {
           if (payload.length > 0) {
             const cmdType = payload[0];
@@ -53,7 +73,7 @@ export const initMqtt = () => {
             // CMD 0x07: Ping from ESP
             if (cmdType === 0x07) {
               const presenceBuf = new Uint8Array([0x04, 0x01]);
-              client?.publish("KamyarIoT/Achaemenid/Command", presenceBuf as Buffer, { qos: 1 });
+              client?.publish(commandTopic, presenceBuf as Buffer, { qos });
             } 
             // CMD 0x06: State Report
             else if (cmdType === 0x06 && payload.length >= 3) {
@@ -66,7 +86,7 @@ export const initMqtt = () => {
               const data = JSON.parse(payload.toString());
               if (data.command === "ping") {
                 const presenceBuf = new Uint8Array([0x04, 0x01]);
-                client?.publish("KamyarIoT/Achaemenid/Command", presenceBuf as Buffer, { qos: 1 });
+                client?.publish(commandTopic, presenceBuf as Buffer, { qos });
               } else if (data.id !== undefined && data.value !== undefined) {
                 stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
               }
@@ -84,10 +104,21 @@ export const initMqtt = () => {
   }
 };
 
+export const reconnectMqtt = () => {
+  if (client) {
+    client.end(true);
+    client = null;
+  }
+  initMqtt();
+};
+
 export const publishPinCommand = (pinId: string, value: boolean, timer?: number) => {
   if (!client) initMqtt();
 
   if (client?.connected) {
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
+    
     // CMD 0x01: Toggle Pin [cmd(1), pin(1), state(1), timer(4)] = 7 bytes
     const buf = new Uint8Array(7);
     const view = new DataView(buf.buffer);
@@ -96,7 +127,7 @@ export const publishPinCommand = (pinId: string, value: boolean, timer?: number)
     buf[2] = value ? 0x01 : 0x00;
     view.setInt32(3, timer !== undefined ? timer : -1, true); // true = little-endian
     
-    client.publish("KamyarIoT/Achaemenid/Command", buf as Buffer, { qos: 1 });
+    client.publish(commandTopic, buf as Buffer, { qos: settings.qos });
     console.log(`[MQTT Binary] Published toggle command: pin=${buf[1]} state=${value} timer=${timer}`);
   } else {
     console.warn("[MQTT] Client not connected. Cannot publish.");
@@ -106,6 +137,9 @@ export const publishPinCommand = (pinId: string, value: boolean, timer?: number)
 export const publishAddSegmentCommand = (id: string, type: string, pin: number, value: boolean) => {
   if (!client) initMqtt();
   if (client?.connected) {
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
+    
     // CMD 0x02: Add Segment [cmd(1), pin(1), state(1), id(null-term), type(null-term)]
     const idBytes = new TextEncoder().encode(id);
     const typeBytes = new TextEncoder().encode(type);
@@ -121,7 +155,7 @@ export const publishAddSegmentCommand = (id: string, type: string, pin: number, 
     buf.set(typeBytes, offset); offset += typeBytes.length;
     buf[offset++] = 0; // null term
 
-    client.publish("KamyarIoT/Achaemenid/Command", buf as Buffer, { qos: 1 });
+    client.publish(commandTopic, buf as Buffer, { qos: settings.qos });
     console.log(`[MQTT Binary] Published add_segment: pin=${pin} id=${id}`);
   }
 };
@@ -129,6 +163,9 @@ export const publishAddSegmentCommand = (id: string, type: string, pin: number, 
 export const publishDeleteSegmentCommand = (id: string) => {
   if (!client) initMqtt();
   if (client?.connected) {
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
+    
     // CMD 0x03: Delete Segment [cmd(1), id(null-term)]
     const idBytes = new TextEncoder().encode(id);
     const buf = new Uint8Array(1 + idBytes.length + 1);
@@ -136,7 +173,7 @@ export const publishDeleteSegmentCommand = (id: string) => {
     buf.set(idBytes, 1);
     buf[1 + idBytes.length] = 0; // null term
     
-    client.publish("KamyarIoT/Achaemenid/Command", buf as Buffer, { qos: 1 });
+    client.publish(commandTopic, buf as Buffer, { qos: settings.qos });
     console.log(`[MQTT Binary] Published delete_segment: id=${id}`);
   }
 };
@@ -160,6 +197,8 @@ export const publishUpdateRuleCommand = (
 ) => {
   if (!client) initMqtt();
   if (client?.connected) {
+    const settings = getMqttSettings();
+    const commandTopic = `${settings.baseTopic}/Command`;
     const idBytes = new TextEncoder().encode(id);
     
     // CMD 0x05: Update Rule 
@@ -192,7 +231,7 @@ export const publishUpdateRuleCommand = (
         view.setInt32(offset, a.delay || 0, true); offset += 4;
     });
 
-    client.publish("KamyarIoT/Achaemenid/Command", buf as Buffer, { qos: 1 });
+    client.publish(commandTopic, buf as Buffer, { qos: settings.qos });
     console.log(`[MQTT Binary] Published update_rule: id=${id} size=${bufSize}b`);
   }
 };

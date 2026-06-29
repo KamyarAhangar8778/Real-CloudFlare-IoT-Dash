@@ -30,7 +30,7 @@ export default function DrawerHeader({ onClose, animationsEnabled }: DrawerHeade
         onClick={onClose}
         whileHover={animationsEnabled ? { scale: 1.15, rotate: 90 } : undefined}
         whileTap={animationsEnabled ? { scale: 0.9 } : undefined}
-        className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary hover:text-accent3 hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
+        className="p-1.5 rounded-full theme-card-bg-solid border theme-border theme-text-tertiary md:hover:text-accent3 md:hover:border-accent3 transition-colors cursor-pointer focus:outline-none"
       >
         <X className="w-5 h-5" />
       </motion.button>

@@ -41,7 +41,7 @@ export default function PlaceholderCard({
         <button
           onClick={() => onRemove(segment.id)}
           onPointerDown={(e) => e.stopPropagation()}
-          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] transition-colors cursor-pointer rounded-lg shadow-sm"
+          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 md:hover:bg-[var(--accent3-transparent)] dark:md:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 md:hover:text-[var(--accent3)] transition-colors cursor-pointer rounded-lg shadow-sm"
           title="حذف جایگاه خالی"
         >
           <X className="w-3.5 h-3.5" />
@@ -49,7 +49,7 @@ export default function PlaceholderCard({
         <div
           {...attributes}
           {...listeners}
-          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 hover:bg-[var(--accent3-transparent)] dark:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors rounded-lg shadow-sm"
+          className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 md:hover:bg-[var(--accent3-transparent)] dark:md:hover:bg-[var(--accent3-transparent)] text-slate-700 dark:text-gray-300 md:hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-colors rounded-lg shadow-sm"
           title="کشیدن جایگاه"
         >
           <GripVertical className="w-3.5 h-3.5" />
@@ -57,7 +57,7 @@ export default function PlaceholderCard({
       </div>
       <button
         onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
-        className={`w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 hover:border-[var(--accent3)] hover:shadow-[0_0_15px_var(--accent3-transparent)] bg-[var(--card-bg)] hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 cursor-pointer text-center group rounded-2xl ${
+        className={`w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 md:hover:border-[var(--accent3)] md:hover:shadow-xl bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 md:hover:-translate-y-1.5 cursor-pointer text-center group rounded-2xl ${
           isUltraCompact
             ? "p-3 min-h-[90px]"
             : isCompact
@@ -66,14 +66,14 @@ export default function PlaceholderCard({
         }`}
       >
         <div
-          className="p-2 bg-[var(--accent3-transparent)] group-hover:bg-[var(--accent3)] group-hover:text-black text-[var(--accent3)] transition-colors"
+          className="p-2 bg-[var(--accent3-transparent)] md:group-hover:bg-[var(--accent3)] md:group-hover:text-black text-[var(--accent3)] transition-colors"
           style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
         >
           <Plus className="w-4 h-4" />
         </div>
         {!isUltraCompact && (
           <div>
-            <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary group-hover:text-[var(--accent3)] transition-colors">
+            <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary group-md:hover:text-[var(--accent3)] transition-colors">
               {isCompact ? "تعیین سگمنت" : "جایگذاری سگمنت در اینجا"}
             </span>
           </div>
