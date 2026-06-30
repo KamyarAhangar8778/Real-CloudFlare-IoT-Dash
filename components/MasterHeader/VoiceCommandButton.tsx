@@ -4,6 +4,20 @@ import { useVoiceCommand } from '@/features/iot/hooks/useVoiceCommand';
 import { useDashboard } from '@/features/dashboard/context/DashboardContext';
 import { motion } from 'motion/react';
 
+function normalizePhonetics(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/[غق]/g, 'ق')
+    .replace(/[سصث]/g, 'س')
+    .replace(/[زضظذ]/g, 'ز')
+    .replace(/[هح]/g, 'ح')
+    .replace(/[تط]/g, 'ت')
+    .replace(/ي/g, 'ی')
+    .replace(/ك/g, 'ک')
+    .replace(/[\u200C\s]+/g, ' ') // یکپارچه‌سازی فاصله‌ها و نیم‌فاصله‌ها
+    .trim();
+}
+
 interface VoiceCommandButtonProps {
   animationsEnabled?: boolean;
   variant: "vertical" | "horizontal";
@@ -18,11 +32,12 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
     e.preventDefault();
     startListening((finalTranscript) => {
       const cleanTranscript = finalTranscript.trim().replace(/[.،!؟]+$/, '').trim();
+      const normalizedTranscript = normalizePhonetics(cleanTranscript);
       
       if (!cleanTranscript) return;
 
       // 1. Check Custom Voice Commands first
-      const customCmd = (voiceCommands || []).find((c) => c.phrase.trim() === cleanTranscript);
+      const customCmd = (voiceCommands || []).find((c) => normalizePhonetics(c.phrase) === normalizedTranscript);
       if (customCmd && customCmd.actions && customCmd.actions.length > 0) {
         const batchActions: Array<{ targetPin: string; actionOn: boolean }> = [];
         
@@ -61,7 +76,7 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       }
 
       if (actionFound) {
-        targetSegment = segments.find(s => s.title === segmentName);
+        targetSegment = segments.find(s => normalizePhonetics(s.title) === normalizePhonetics(segmentName));
         if (targetSegment && targetState !== null) {
           handleSetPinState(targetSegment.pin, targetState);
           showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
