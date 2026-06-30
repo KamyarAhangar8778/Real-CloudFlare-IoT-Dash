@@ -58,6 +58,9 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
+    if (e.currentTarget && e.currentTarget.setPointerCapture) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
     setIsMenuOpen(true);
     setActiveSettingsTab("voice-commands");
     startListening();
@@ -145,9 +148,24 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
 
   const handlePointerUp = (e: React.PointerEvent) => {
     e.preventDefault();
+    if (e.currentTarget && e.currentTarget.releasePointerCapture) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
     stopListening();
     // Execute immediately using the current transcript
     executeCommand(transcript);
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent) => {
+    e.preventDefault();
+    if (e.currentTarget && e.currentTarget.releasePointerCapture) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
+    stopListening();
   };
 
   if (variant === "vertical" && !isSidebarCollapsed) {
@@ -155,7 +173,7 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       <button
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
         onContextMenu={(e) => e.preventDefault()}
         style={{ touchAction: 'none' }}
         className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 transform active:scale-[0.98] group select-none ${
@@ -182,7 +200,7 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       whileTap={{ scale: 0.95 }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       onContextMenu={(e) => e.preventDefault()}
       style={{ touchAction: 'none' }}
       className={`p-2 md:p-2.5 transition-all border rounded-xl flex justify-center items-center group select-none ${
