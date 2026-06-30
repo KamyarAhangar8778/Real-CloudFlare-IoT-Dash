@@ -1,18 +1,10 @@
 "use client";
 
 import React from "react";
-import dynamic from "next/dynamic";
+import SettingsDrawer from "@/features/settings/components/SettingsDrawer";
+import ModulesDrawer from "@/features/iot/components/ModulesDrawer";
+import AutomationsDrawer from "@/features/iot/components/AutomationsDrawer";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
-
-const SettingsDrawer = dynamic(() => import("@/features/settings/components/SettingsDrawer"), {
-  ssr: false,
-});
-const ModulesDrawer = dynamic(() => import("@/features/iot/components/ModulesDrawer"), {
-  ssr: false,
-});
-const AutomationsDrawer = dynamic(() => import("@/features/iot/components/AutomationsDrawer"), {
-  ssr: false,
-});
 
 export default function DashboardDrawers() {
   const {
