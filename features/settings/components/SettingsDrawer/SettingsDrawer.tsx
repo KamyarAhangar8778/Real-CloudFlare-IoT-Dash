@@ -10,8 +10,11 @@ import { SettingsFooter } from "./SettingsFooter";
 import { SettingsTabContent } from "./SettingsTabContent";
 
 export default function SettingsDrawer(props: SettingsDrawerProps) {
-  const { isOpen, onClose, accent3, accent4, isDark, animationsEnabled } = props;
-  const [activeTab, setActiveTab] = useState<string>("colors");
+  const { isOpen, onClose, accent3, accent4, isDark, animationsEnabled, activeTab: propActiveTab, setActiveTab: propSetActiveTab } = props;
+  const [localActiveTab, setLocalActiveTab] = useState<string>("colors");
+
+  const activeTab = propActiveTab !== undefined ? propActiveTab : localActiveTab;
+  const setActiveTab = propSetActiveTab !== undefined ? propSetActiveTab : setLocalActiveTab;
 
   const settingsSignature = `${accent3}-${accent4}-${props.selectedFont}-${animationsEnabled}-${props.headerAnimationType}-${props.headerTitle}-${props.cuneiformOpacity}-${props.cuneiformColor}-${props.headerPosition}-${isDark}`;
   const { isAdjusting } = useSettingsAdjuster(isOpen, settingsSignature);

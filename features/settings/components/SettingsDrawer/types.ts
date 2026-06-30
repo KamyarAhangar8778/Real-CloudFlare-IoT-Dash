@@ -4,6 +4,8 @@ import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, M
 export interface SettingsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  activeTab?: string;
+  setActiveTab?: (tab: string) => void;
   accent3: string;
   setAccent3: (val: string) => void;
   accent4: string;

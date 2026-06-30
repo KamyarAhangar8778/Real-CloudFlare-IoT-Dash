@@ -2,11 +2,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useIoTStore } from './useIoTStore';
 
 export const useVoiceCommand = () => {
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const { isListening, setIsListening, voiceTranscript: transcript, setVoiceTranscript: setTranscript, showToast } = useIoTStore();
   const transcriptRef = useRef("");
   const recognitionRef = useRef<any>(null);
-  const { showToast } = useIoTStore();
   const onCommandCompleteRef = useRef<((text: string) => void) | null>(null);
 
   useEffect(() => {

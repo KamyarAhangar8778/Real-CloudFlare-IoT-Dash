@@ -22,6 +22,8 @@ export default function DashboardDrawers() {
     setIsModulesMenuOpen,
     isAutomationsMenuOpen,
     setIsAutomationsMenuOpen,
+    activeSettingsTab,
+    setActiveSettingsTab,
     accent3,
     setAccent3,
     accent4,
@@ -52,6 +54,8 @@ export default function DashboardDrawers() {
         <SettingsDrawer
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
+          activeTab={activeSettingsTab}
+          setActiveTab={setActiveSettingsTab}
           accent3={accent3}
           setAccent3={setAccent3}
           accent4={accent4}

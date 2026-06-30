@@ -18,6 +18,34 @@ function normalizePhonetics(text: string): string {
     .trim();
 }
 
+function getSimilarity(a: string, b: string): number {
+  if (a.length === 0 && b.length === 0) return 1;
+  if (a.length === 0 || b.length === 0) return 0;
+  
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+        );
+      }
+    }
+  }
+  const dist = matrix[b.length][a.length];
+  const maxLen = Math.max(a.length, b.length);
+  return (maxLen - dist) / maxLen;
+}
+
 interface VoiceCommandButtonProps {
   animationsEnabled?: boolean;
   variant: "vertical" | "horizontal";
@@ -26,72 +54,100 @@ interface VoiceCommandButtonProps {
 
 export default function VoiceCommandButton({ animationsEnabled, variant, isSidebarCollapsed }: VoiceCommandButtonProps) {
   const { isListening, transcript, startListening, stopListening } = useVoiceCommand();
-  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState } = useDashboard();
+  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState, setIsMenuOpen, setActiveSettingsTab } = useDashboard();
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
-    startListening((finalTranscript) => {
-      const cleanTranscript = finalTranscript.trim().replace(/[.،!؟]+$/, '').trim();
-      const normalizedTranscript = normalizePhonetics(cleanTranscript);
+    setIsMenuOpen(true);
+    setActiveSettingsTab("voice-commands");
+    startListening();
+  };
+
+  const executeCommand = (finalTranscript: string) => {
+    const cleanTranscript = finalTranscript.trim().replace(/[.،!؟]+$/, '').trim();
+    const normalizedTranscript = normalizePhonetics(cleanTranscript);
+    
+    if (!cleanTranscript) return;
+
+    // 1. Check Custom Voice Commands first (Fuzzy Matching > 80%)
+    let bestMatchCmd = null;
+    let highestSim = 0;
+    
+    for (const c of (voiceCommands || [])) {
+      const sim = getSimilarity(normalizePhonetics(c.phrase), normalizedTranscript);
+      if (sim > highestSim && sim >= 0.8) {
+        highestSim = sim;
+        bestMatchCmd = c;
+      }
+    }
+
+    if (bestMatchCmd && bestMatchCmd.actions && bestMatchCmd.actions.length > 0) {
+      const batchActions: Array<{ targetPin: string; actionOn: boolean }> = [];
       
-      if (!cleanTranscript) return;
-
-      // 1. Check Custom Voice Commands first
-      const customCmd = (voiceCommands || []).find((c) => normalizePhonetics(c.phrase) === normalizedTranscript);
-      if (customCmd && customCmd.actions && customCmd.actions.length > 0) {
-        const batchActions: Array<{ targetPin: string; actionOn: boolean }> = [];
-        
-        customCmd.actions.forEach((act) => {
-          if (act.targetPin) {
-            batchActions.push({ targetPin: act.targetPin, actionOn: act.actionOn ?? true });
-          } else if (act.targetMacro) {
-            const m = macros.find((m) => m.id === act.targetMacro);
-            if (m) {
-              batchActions.push(...m.actions);
-            }
+      bestMatchCmd.actions.forEach((act) => {
+        if (act.targetPin) {
+          batchActions.push({ targetPin: act.targetPin, actionOn: act.actionOn ?? true });
+        } else if (act.targetMacro) {
+          const m = macros.find((m) => m.id === act.targetMacro);
+          if (m) {
+            batchActions.push(...m.actions);
           }
-        });
+        }
+      });
 
-        if (batchActions.length > 0) {
-          handleBatchPinState(batchActions);
-          showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
-          return;
+      if (batchActions.length > 0) {
+        handleBatchPinState(batchActions);
+        showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
+        return;
+      }
+    }
+
+    // 2. Fallback to parsing "<Segment Name> روشن/خاموش"
+    let targetSegment = null;
+    let targetState: boolean | null = null;
+    let actionFound = false;
+    let segmentName = "";
+
+    if (cleanTranscript.endsWith(" روشن")) {
+      targetState = true;
+      actionFound = true;
+      segmentName = cleanTranscript.slice(0, -" روشن".length).trim();
+    } else if (cleanTranscript.endsWith(" خاموش")) {
+      targetState = false;
+      actionFound = true;
+      segmentName = cleanTranscript.slice(0, -" خاموش".length).trim();
+    }
+
+    if (actionFound) {
+      // Fuzzy match for segment name too
+      const normalizedSegName = normalizePhonetics(segmentName);
+      let bestSeg = null;
+      let highestSegSim = 0;
+      
+      for (const s of segments) {
+        const sim = getSimilarity(normalizePhonetics(s.title), normalizedSegName);
+        if (sim > highestSegSim && sim >= 0.8) {
+          highestSegSim = sim;
+          bestSeg = s;
         }
       }
 
-      // 2. Fallback to parsing "<Segment Name> روشن/خاموش"
-      let targetSegment = null;
-      let targetState: boolean | null = null;
-      let actionFound = false;
-      let segmentName = "";
-
-      if (cleanTranscript.endsWith(" روشن")) {
-        targetState = true;
-        actionFound = true;
-        segmentName = cleanTranscript.slice(0, -" روشن".length).trim();
-      } else if (cleanTranscript.endsWith(" خاموش")) {
-        targetState = false;
-        actionFound = true;
-        segmentName = cleanTranscript.slice(0, -" خاموش".length).trim();
-      }
-
-      if (actionFound) {
-        targetSegment = segments.find(s => normalizePhonetics(s.title) === normalizePhonetics(segmentName));
-        if (targetSegment && targetState !== null) {
-          handleSetPinState(targetSegment.pin, targetState);
-          showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
-        } else {
-          showToast(`سگمنتی با نام «${segmentName}» یافت نشد.`, "error");
-        }
+      if (bestSeg && targetState !== null) {
+        handleSetPinState(bestSeg.pin, targetState);
+        showToast(`فرمان صوتی اجرا شد: ${cleanTranscript}`, "success");
       } else {
-        showToast(`فرمان نامعتبر: ${cleanTranscript}`, "error");
+        showToast(`سگمنتی با نام مشابه «${segmentName}» یافت نشد.`, "error");
       }
-    });
+    } else {
+      showToast(`فرمان نامعتبر: ${cleanTranscript}`, "error");
+    }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     e.preventDefault();
     stopListening();
+    // Execute immediately using the current transcript
+    executeCommand(transcript);
   };
 
   if (variant === "vertical" && !isSidebarCollapsed) {

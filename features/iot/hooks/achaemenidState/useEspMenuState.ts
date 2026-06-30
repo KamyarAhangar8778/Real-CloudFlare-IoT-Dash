@@ -7,6 +7,7 @@ export function useEspMenuState() {
   const [isModulesMenuOpen, setIsModulesMenuOpen] = useState(false);
   const [isEspDrawerOpen, setIsEspDrawerOpen] = useState(false);
   const [isAutomationsMenuOpen, setIsAutomationsMenuOpen] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState("colors");
 
   return {
     isMenuOpen,
@@ -17,5 +18,7 @@ export function useEspMenuState() {
     setIsEspDrawerOpen,
     isAutomationsMenuOpen,
     setIsAutomationsMenuOpen,
+    activeSettingsTab,
+    setActiveSettingsTab,
   };
 }

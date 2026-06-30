@@ -119,6 +119,10 @@ interface IoTStoreState {
   setVoiceCommands: (
     voiceCommands: any[] | ((prev: any[]) => any[]),
   ) => void;
+  isListening: boolean;
+  setIsListening: (b: boolean) => void;
+  voiceTranscript: string;
+  setVoiceTranscript: (t: string) => void;
 }
 
 export const useIoTStore = create<IoTStoreState>((set, get) => ({
@@ -137,6 +141,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   automations: [],
   macros: [],
   voiceCommands: [],
+  isListening: false,
+  voiceTranscript: "",
   selectedGroupFilter: null,
 
   setSelectedGroupFilter: (group) => {
@@ -241,6 +247,8 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     });
   },
 
+  setIsListening: (b) => set({ isListening: b }),
+  setVoiceTranscript: (t) => set({ voiceTranscript: t }),
   applyEspConfig: (config) => {
     if (!config) return;
 
