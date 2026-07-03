@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info, Layers, Thermometer } from "lucide-react";
+import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info, Layers, Thermometer, MapPin } from "lucide-react";
 import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
 
 interface AutomationsDrawerProps {
@@ -42,6 +42,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
   
   const [intervalMinutes, setIntervalMinutes] = useState<number | "">("");
   const [hasWeatherCondition, setHasWeatherCondition] = useState<boolean>(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   // Actions state
   const [actions, setActions] = useState<Array<{
@@ -49,6 +50,28 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     targetMacro?: string;
     actionOn?: boolean;
   }>>([]);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      showToast("مرورگر شما از قابلیت مکان‌یابی پشتیبانی نمی‌کند.", "error");
+      return;
+    }
+    
+    setIsGettingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(4);
+        const lon = position.coords.longitude.toFixed(4);
+        setCity(`${lat},${lon}`);
+        setIsGettingLocation(false);
+        showToast("مکان شما با موفقیت ثبت شد.", "success");
+      },
+      (error) => {
+        setIsGettingLocation(false);
+        showToast("خطا در دریافت مکان. لطفاً دسترسی دستگاه را بررسی کنید.", "error");
+      }
+    );
+  };
 
   const resetForm = () => {
     setTitle("");
@@ -376,15 +399,17 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
 
                   {autoType === "weather" && (
                     <div className="col-span-2">
-                      <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">دوره بررسی (دقیقه):</label>
-                      <input 
-                        type="number" 
-                        min="1"
-                        value={intervalMinutes}
-                        onChange={(e) => setIntervalMinutes(e.target.value === "" ? "" : Number(e.target.value))}
-                        placeholder="مثال: 60"
+                      <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">دوره بررسی (ساعت):</label>
+                      <select 
+                        value={intervalMinutes ? intervalMinutes / 60 : ""}
+                        onChange={(e) => setIntervalMinutes(e.target.value === "" ? "" : Number(e.target.value) * 60)}
                         className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                      />
+                      >
+                        <option value="" disabled>انتخاب کنید...</option>
+                        {Array.from({length: 24}, (_, i) => i + 1).map(h => (
+                          <option key={h} value={h}>هر {h} ساعت</option>
+                        ))}
+                      </select>
                     </div>
                   )}
 
@@ -405,15 +430,30 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                   {(autoType === "weather" || hasWeatherCondition) && (
                     <>
                       <div className="col-span-2">
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">نام شهر (انگلیسی):</label>
-                        <input 
-                          type="text" 
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          placeholder="مثال: Tehran"
-                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                          dir="ltr"
-                        />
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">نام شهر یا مختصات (انگلیسی):</label>
+                        <div className="flex gap-2">
+                          <input 
+                            type="text" 
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            placeholder="مثال: Tehran یا 36.26,59.61"
+                            className="flex-1 bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                            dir="ltr"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleGetLocation}
+                            disabled={isGettingLocation}
+                            className={`p-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center min-w-[44px] ${isGettingLocation ? "bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-muted)] cursor-not-allowed" : "bg-[var(--card-hover-bg)] border-[var(--border-color)] text-[var(--text-secondary)] md:hover:border-[var(--accent3)] md:hover:text-[var(--accent3)]"}`}
+                            title="دریافت مکان فعلی"
+                          >
+                            {isGettingLocation ? (
+                              <div className="w-5 h-5 border-2 border-[var(--accent3)] border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <MapPin className="w-5 h-5" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                       <div className="col-span-2 flex gap-3">
                         <div className="flex-1">
@@ -585,7 +625,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                                 <Thermometer className="w-5 h-5 text-[var(--accent3)]" />
                                 <span className="text-sm font-bold text-[var(--text-primary)]">
                                   {auto.city}: دما {auto.temperatureCondition === "greater" ? "بیشتر از" : "کمتر از"} <span className="font-mono text-lg" dir="ltr">{auto.temperatureThreshold}°C</span>
-                                  <span className="text-xs text-[var(--text-secondary)] block mt-1">هر {auto.intervalMinutes} دقیقه</span>
+                                  <span className="text-xs text-[var(--text-secondary)] block mt-1">هر {auto.intervalMinutes / 60} ساعت</span>
                                 </span>
                               </div>
                             ) : (
