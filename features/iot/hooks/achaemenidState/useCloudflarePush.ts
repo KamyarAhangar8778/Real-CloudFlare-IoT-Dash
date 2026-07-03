@@ -73,6 +73,7 @@ export function useCloudflarePush({
     macros,
     voiceCommands,
     wifiNetworks,
+    mqttConfig,
   } = useIoTStore();
   const isFirstRender = useRef(true);
 
@@ -125,6 +126,7 @@ export function useCloudflarePush({
       wifi: {
         networks: wifiNetworks,
       },
+      mqtt: mqttConfig || undefined,
       worker_url: getCloudflareWorkerUrl(),
     };
 
@@ -171,6 +173,7 @@ export function useCloudflarePush({
     macros,
     voiceCommands,
     wifiNetworks,
+    mqttConfig,
   ]);
 
   useEffect(() => {
@@ -223,6 +226,7 @@ export function useCloudflarePush({
     macros,
     voiceCommands,
     wifiNetworks,
+    mqttConfig,
   ]);
 
   return {

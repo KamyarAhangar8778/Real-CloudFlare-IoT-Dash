@@ -80,6 +80,13 @@ interface IoTStoreState {
     ssid: string;
     password?: string;
   }>;
+  mqttConfig: {
+    broker_ws_url: string;
+    broker_host: string;
+    broker_port: number;
+    base_topic: string;
+    qos: 0 | 1 | 2;
+  } | null;
   selectedGroupFilter: string | null;
   isPageVisible: boolean;
   // Actions
@@ -138,6 +145,7 @@ interface IoTStoreState {
   setIsListening: (b: boolean) => void;
   voiceTranscript: string;
   setVoiceTranscript: (t: string) => void;
+  setMqttConfig: (config: any) => void;
 }
 
 export const useIoTStore = create<IoTStoreState>((set, get) => ({
@@ -157,6 +165,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   macros: [],
   voiceCommands: [],
   wifiNetworks: [],
+  mqttConfig: null,
   isListening: false,
   voiceTranscript: "",
   selectedGroupFilter: null,
@@ -277,6 +286,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
 
   setIsListening: (b) => set({ isListening: b }),
   setVoiceTranscript: (t) => set({ voiceTranscript: t }),
+  setMqttConfig: (config) => set({ mqttConfig: config }),
   applyEspConfig: (config) => {
     if (!config) return;
 
@@ -292,6 +302,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     });
 
     if (config.mqtt && typeof window !== "undefined") {
+      set({ mqttConfig: config.mqtt });
       const { broker_ws_url, base_topic, qos } = config.mqtt;
       let changed = false;
       

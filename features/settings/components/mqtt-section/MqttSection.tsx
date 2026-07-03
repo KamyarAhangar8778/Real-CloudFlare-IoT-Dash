@@ -4,6 +4,7 @@ import { reconnectMqtt, getMqttSettings } from "@/features/iot/services/mqttServ
 import { Radio, RefreshCw, Save } from "lucide-react";
 import { fetchConfigFromCloudflare, saveConfigToCloudflare } from "@/features/iot/services/cloudflare/api";
 import { DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export default function MqttSection() {
   const [brokerWsUrl, setBrokerWsUrl] = useState("");
@@ -12,6 +13,8 @@ export default function MqttSection() {
   const [baseTopic, setBaseTopic] = useState("");
   const [qos, setQos] = useState<0 | 1 | 2>(1);
   const [isSaved, setIsSaved] = useState(false);
+  const setMqttConfig = useIoTStore((state) => state.setMqttConfig);
+  const showToast = useIoTStore((state) => state.showToast);
 
   useEffect(() => {
     // Load initially from local
@@ -41,26 +44,34 @@ export default function MqttSection() {
     localStorage.setItem("mqtt_broker_url", brokerWsUrl);
     localStorage.setItem("mqtt_base_topic", baseTopic);
     localStorage.setItem("mqtt_qos", qos.toString());
+
+    const newMqttConfig = {
+      broker_ws_url: brokerWsUrl,
+      broker_host: brokerHost,
+      broker_port: brokerPort,
+      base_topic: baseTopic,
+      qos: qos
+    };
+    setMqttConfig(newMqttConfig);
     
     // Save to Cloudflare for Worker & ESP32
     try {
       const config = await fetchConfigFromCloudflare() || DEFAULT_ESP_CONFIG;
-      config.mqtt = {
-        broker_ws_url: brokerWsUrl,
-        broker_host: brokerHost,
-        broker_port: brokerPort,
-        base_topic: baseTopic,
-        qos: qos
-      };
-      await saveConfigToCloudflare(config);
+      config.mqtt = newMqttConfig;
+      const res = await saveConfigToCloudflare(config);
+      if (res.success) {
+        showToast(res.message, "success");
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 2000);
+      } else {
+        showToast(res.message, "error");
+      }
     } catch (e) {
       console.error("Failed to save MQTT settings to cloud", e);
+      showToast("خطا در ارتباط با سرور کلودفلر", "error");
     }
 
     reconnectMqtt();
-    
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
   };
 
   return (
