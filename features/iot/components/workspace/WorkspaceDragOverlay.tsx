@@ -20,6 +20,7 @@ type WorkspaceDragOverlayProps = Pick<
   | "handleUpdateSegmentMode"
   | "handleUpdateSegmentAutoOff"
   | "handleUpdateSegmentRule"
+  | "dashboardWidth"
 >;
 
 export default function WorkspaceDragOverlay({
@@ -37,6 +38,7 @@ export default function WorkspaceDragOverlay({
   handleUpdateSegmentMode,
   handleUpdateSegmentAutoOff,
   handleUpdateSegmentRule,
+  dashboardWidth,
 }: WorkspaceDragOverlayProps) {
   return (
     <DragOverlay>
@@ -84,6 +86,7 @@ export default function WorkspaceDragOverlay({
                 groupItemsCount={groupSegments.length}
                 index={index >= 0 ? index : 0}
                 animationsEnabled={animationsEnabled}
+                dashboardWidth={dashboardWidth}
               />
             </div>
           );
@@ -93,6 +96,26 @@ export default function WorkspaceDragOverlay({
         (() => {
           const groupId = activeGroupId.replace("group-", "");
           const groupSegments = segments.filter(s => (s.group || "Test") === groupId);
+          
+          const groupsOrder = Array.from(new Set(segments.map(s => s.group || "Test")));
+          let actualParentGroupsCols = groupsCols;
+
+          if (groupsCols > 1 && groupsOrder.length > 0) {
+            const groupIndex = groupsOrder.indexOf(groupId);
+            if (groupIndex !== -1) {
+              const totalRows = Math.ceil(groupsOrder.length / groupsCols);
+              const currentRow = Math.floor(groupIndex / groupsCols);
+              const isLastRow = currentRow === totalRows - 1;
+              
+              if (isLastRow) {
+                const itemsInLastRow = groupsOrder.length % groupsCols || groupsCols;
+                actualParentGroupsCols = itemsInLastRow;
+              }
+            }
+          }
+
+          const effectiveGroupsCols = Math.min(groupsOrder.length, actualParentGroupsCols);
+
           return (
             <div style={{ opacity: 0.8, cursor: "grabbing" }}>
               <SortableGroup 
@@ -105,8 +128,30 @@ export default function WorkspaceDragOverlay({
                 onColsChange={() => {}}
                 onAddPlaceholder={() => {}}
                 onDeleteGroup={() => {}}
+                animationsEnabled={animationsEnabled}
+                isOverlayItem={true}
               >
-                <></>
+                {groupSegments.map((seg, index) => (
+                  <SortableSegmentCard
+                    key={seg.id}
+                    segment={seg}
+                    isPinOn={!!pinsState[seg.pin]}
+                    onRemove={handleRemoveSegment}
+                    onTogglePin={handleTogglePin}
+                    onSetPinState={handleSetPinState}
+                    onUpdateSegmentMode={handleUpdateSegmentMode}
+                    onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
+                    onUpdateSegmentRule={handleUpdateSegmentRule}
+                    isLoadingIoT={isLoadingIoT}
+                    parentGroupsCols={effectiveGroupsCols}
+                    groupMaxCols={groupConfigs[groupId]?.maxCols || 3}
+                    groupItemsCount={groupSegments.length}
+                    index={index}
+                    animationsEnabled={animationsEnabled}
+                    isOverlayItem={true}
+                    dashboardWidth={dashboardWidth}
+                  />
+                ))}
               </SortableGroup>
             </div>
           );

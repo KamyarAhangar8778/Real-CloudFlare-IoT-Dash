@@ -10,6 +10,7 @@ interface ActiveCardProps
   extends Omit<SortableSegmentCardProps, "onSetupPlaceholder" | "isLoadingIoT"> {
   isCompact: boolean;
   isUltraCompact: boolean;
+  isMobileTwoCol?: boolean;
   densityFactor?: number;
   attributes: any;
   listeners: any;
@@ -17,7 +18,7 @@ interface ActiveCardProps
   setIsSettingsOpen?: (val: boolean) => void;
 }
 
-export default function ActiveCard({
+function ActiveCard({
   segment,
   isPinOn,
   onRemove,
@@ -31,6 +32,7 @@ export default function ActiveCard({
   animationsEnabled = true,
   isCompact,
   isUltraCompact,
+  isMobileTwoCol,
   densityFactor,
   attributes,
   listeners,
@@ -104,6 +106,7 @@ export default function ActiveCard({
           onUpdateSegmentRule={onUpdateSegmentRule}
           isSettingsOpen={isSettingsOpen}
           setIsSettingsOpen={setIsSettingsOpen}
+          groupMaxCols={groupMaxCols}
         />
 
         <CardBody
@@ -111,6 +114,7 @@ export default function ActiveCard({
           isPinOn={isPinOn}
           isCompact={isCompact}
           isUltraCompact={isUltraCompact}
+          isMobileTwoCol={isMobileTwoCol}
           densityFactor={densityFactor}
           mode={mode}
           buttonProps={buttonProps}
@@ -122,3 +126,18 @@ export default function ActiveCard({
     </motion.div>
   );
 }
+
+export default React.memo(ActiveCard, (prev, next) => {
+  return (
+    prev.segment === next.segment &&
+    prev.isPinOn === next.isPinOn &&
+    prev.isCompact === next.isCompact &&
+    prev.isUltraCompact === next.isUltraCompact &&
+    prev.isMobileTwoCol === next.isMobileTwoCol &&
+    prev.densityFactor === next.densityFactor &&
+    prev.parentGroupsCols === next.parentGroupsCols &&
+    prev.groupMaxCols === next.groupMaxCols &&
+    prev.animationsEnabled === next.animationsEnabled &&
+    prev.isSettingsOpen === next.isSettingsOpen
+  );
+});

@@ -23,7 +23,7 @@ export default function LayoutPositionSwitcher({
       <div className={`grid ${isSidebarCollapsed ? "grid-cols-1" : "grid-cols-2"} gap-2`}>
         <button
           onClick={() => handleTogglePosition("top")}
-          className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-[var(--border-color)] text-[11px] font-bold text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--card-hover-bg)] transition-all"
+          className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-[var(--border-color)] text-[11px] font-bold text-[var(--text-tertiary)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-hover-bg)] transition-all"
           title="قرارگیری هدر در بالای صفحه"
         >
           <PanelTop className="w-3.5 h-3.5" />
@@ -54,7 +54,7 @@ export default function LayoutPositionSwitcher({
       </button>
       <button
         onClick={() => handleTogglePosition("left")}
-        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all"
+        className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold text-[var(--text-tertiary)] md:hover:text-[var(--text-primary)] transition-all"
         title="نمای منوی ستونی چپ"
       >
         <PanelLeft className="w-3 h-3" />

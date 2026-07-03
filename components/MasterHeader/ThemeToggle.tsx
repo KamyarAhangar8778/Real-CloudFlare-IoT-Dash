@@ -21,7 +21,7 @@ export default function ThemeToggle({
       <div className="pt-4 border-t border-[var(--border-color)]">
         <button
           onClick={() => setIsDark(!isDark)}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-main)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] transition-all text-xs font-medium"
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-main)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] transition-all text-xs font-medium"
         >
           <span className="text-[11px] text-[var(--text-secondary)]">
             {isDark ? "حالت تیره" : "حالت روشن"}
@@ -46,7 +46,7 @@ export default function ThemeToggle({
     <div className={variant === "vertical" ? "pt-4 border-t border-[var(--border-color)] flex justify-center" : ""}>
       <button
         onClick={() => setIsDark(!isDark)}
-        className={`${variant === "vertical" ? "w-full flex justify-center items-center" : "hidden md:flex"} p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all active:scale-[0.97]`}
+        className={`${variant === "vertical" ? "w-full flex justify-center items-center" : "hidden md:flex"} p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all active:scale-[0.97]`}
         title="تغییر رنگ پوسته"
       >
         {isDark ? (

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info, Layers } from "lucide-react";
+import { Clock, X, Plus, Trash2, Edit2, Play, Square, Info, Layers, Thermometer } from "lucide-react";
 import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
 
 interface AutomationsDrawerProps {
@@ -13,13 +13,13 @@ interface AutomationsDrawerProps {
 }
 
 const DAYS_MAP = [
-  { value: 0, label: "ی" },
-  { value: 1, label: "د" },
-  { value: 2, label: "س" },
-  { value: 3, label: "چ" },
-  { value: 4, label: "پ" },
-  { value: 5, label: "ج" },
-  { value: 6, label: "ش" },
+  { value: 6, label: "شنبه" },
+  { value: 0, label: "یکشنبه" },
+  { value: 1, label: "دوشنبه" },
+  { value: 2, label: "سه‌شنبه" },
+  { value: 3, label: "چهارشنبه" },
+  { value: 4, label: "پنج‌شنبه" },
+  { value: 5, label: "جمعه" },
 ];
 
 export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsEnabled }: AutomationsDrawerProps) {
@@ -30,7 +30,16 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
   const [title, setTitle] = useState("");
   const [time, setTime] = useState("");
   const [days, setDays] = useState<number[]>([]);
+  const [repeatCount, setRepeatCount] = useState<number | "">("");
   
+  const [autoType, setAutoType] = useState<"schedule" | "timer" | "weather">("schedule");
+  const [delayHours, setDelayHours] = useState<number | "">("");
+  const [delayMinutes, setDelayMinutes] = useState<number | "">("");
+  
+  const [city, setCity] = useState("");
+  const [temperatureThreshold, setTemperatureThreshold] = useState<number | "">("");
+  const [temperatureCondition, setTemperatureCondition] = useState<"greater" | "less">("greater");
+
   // Actions state
   const [actions, setActions] = useState<Array<{
     targetPin?: string;
@@ -42,6 +51,13 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     setTitle("");
     setTime("");
     setDays([]);
+    setRepeatCount("");
+    setAutoType("schedule");
+    setDelayHours("");
+    setDelayMinutes("");
+    setCity("");
+    setTemperatureThreshold("");
+    setTemperatureCondition("greater");
     setActions([]);
     setEditingId(null);
   };
@@ -49,14 +65,62 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
   const handleEdit = (auto: any) => {
     setEditingId(auto.id);
     setTitle(auto.title);
-    setTime(auto.time);
-    setDays([...auto.days]);
+    setTime(auto.time || "");
+    setDays(auto.days ? [...auto.days] : []);
+    setRepeatCount(auto.repeatCount || "");
+    if (auto.conditionType === "weather") {
+      setAutoType("weather");
+      setCity(auto.city || "");
+      setTemperatureThreshold(auto.temperatureThreshold || "");
+      setTemperatureCondition(auto.temperatureCondition || "greater");
+    } else {
+      setAutoType("schedule");
+    }
     setActions(auto.actions ? [...auto.actions] : []);
   };
 
   const handleSave = () => {
-    if (!title || !time || days.length === 0) {
-      showToast("لطفاً تمامی فیلدها را پر کنید.", "error");
+    let finalTime = time;
+    let finalDays = [...days];
+    let finalRepeatCount = typeof repeatCount === 'number' && repeatCount > 0 ? repeatCount : undefined;
+    let finalConditionType: "time" | "weather" = "time";
+    let finalCity = city;
+    let finalTempThresh = typeof temperatureThreshold === 'number' ? temperatureThreshold : undefined;
+    let finalTempCond = temperatureCondition;
+
+    if (autoType === "timer") {
+      const dHours = Number(delayHours) || 0;
+      const dMins = Number(delayMinutes) || 0;
+      
+      if (dHours === 0 && dMins === 0) {
+        showToast("لطفاً زمان تاخیر را مشخص کنید.", "error");
+        return;
+      }
+      
+      const now = new Date();
+      now.setHours(now.getHours() + dHours);
+      now.setMinutes(now.getMinutes() + dMins);
+      
+      finalTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      finalDays = [now.getDay()]; // 0=Sun, 1=Mon, etc. Matches DAYS_MAP
+      finalRepeatCount = 1;
+    } else if (autoType === "weather") {
+      if (!city || finalTempThresh === undefined) {
+        showToast("لطفاً شهر و دمای مورد نظر را مشخص کنید.", "error");
+        return;
+      }
+      finalConditionType = "weather";
+      finalTime = ""; // Weather condition might not need time, or we can make it check interval. We'll leave it empty.
+      finalDays = [];
+    } else {
+      if (!time || days.length === 0) {
+        showToast("لطفاً زمان و روزهای هفته را مشخص کنید.", "error");
+        return;
+      }
+    }
+
+    if (!title) {
+      showToast("لطفاً عنوان را وارد کنید.", "error");
       return;
     }
     
@@ -68,8 +132,13 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     const newAuto = {
       id: editingId || `auto_${Date.now()}`,
       title,
-      time,
-      days,
+      time: finalTime,
+      days: finalDays,
+      repeatCount: finalRepeatCount,
+      conditionType: finalConditionType,
+      city: finalCity,
+      temperatureThreshold: finalTempThresh,
+      temperatureCondition: finalTempCond,
       actions,
       enabled: true,
     };
@@ -117,20 +186,22 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={{ backdropFilter: "blur(16px)", background: backdropBackground }}
-            className="fixed inset-0 z-50 cursor-pointer"
-          />
-
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+        <motion.div
+          key="automations-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={{ backdropFilter: "blur(16px)", background: backdropBackground }}
+          className="fixed inset-0 z-50 cursor-pointer"
+        />
+      )}
+      {isOpen && (
+        <motion.div
+          key="automations-panel"
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 24, stiffness: 200 }}
             className="fixed top-0 right-0 h-full w-full max-w-md bg-gradient-to-b from-[var(--drawer-gradient-from)] to-[var(--drawer-gradient-to)] border-l border-[var(--accent3-medium)] rounded-l-[2.5rem] shadow-2xl z-50 flex flex-col transition-colors duration-500 overflow-hidden"
             dir="rtl"
@@ -179,34 +250,134 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     />
                   </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">زمان (ساعت):</label>
-                    <input 
-                      type="time" 
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                      dir="ltr"
-                    />
+                  {/* Auto Type Toggle */}
+                  <div className="col-span-2 flex bg-[var(--card-bg)] p-1 rounded-xl border border-[var(--border-color)] overflow-hidden">
+                    <button
+                      onClick={() => setAutoType("schedule")}
+                      className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${autoType === "schedule" ? "bg-[var(--accent3)] text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"}`}
+                    >
+                      زمان‌بندی دوره‌ای
+                    </button>
+                    <button
+                      onClick={() => setAutoType("timer")}
+                      className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${autoType === "timer" ? "bg-[var(--accent3)] text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"}`}
+                    >
+                      تایمر یک‌بار مصرف
+                    </button>
+                    <button
+                      onClick={() => setAutoType("weather")}
+                      className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${autoType === "weather" ? "bg-[var(--accent3)] text-white shadow-sm" : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"}`}
+                    >
+                      مبتنی بر دما
+                    </button>
                   </div>
 
-                  <div className="col-span-2">
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2">روزهای هفته:</label>
-                    <div className="flex justify-between gap-1">
-                      {DAYS_MAP.map((d) => (
-                        <button
-                          key={d.value}
-                          onClick={() => {
-                            if (days.includes(d.value)) setDays(days.filter(x => x !== d.value));
-                            else setDays([...days, d.value].sort());
-                          }}
-                          className={`w-9 h-9 rounded-full text-xs font-bold transition-all ${days.includes(d.value) ? "bg-[var(--accent3)] text-white shadow-md shadow-[var(--accent3-transparent)]" : "bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--text-secondary)] md:hover:border-[var(--accent3)]"}`}
-                        >
-                          {d.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  {autoType === "schedule" ? (
+                    <>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">زمان (ساعت):</label>
+                        <input 
+                          type="time" 
+                          value={time}
+                          onChange={(e) => setTime(e.target.value)}
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                          dir="ltr"
+                        />
+                      </div>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تعداد تکرار:</label>
+                        <input 
+                          type="number" 
+                          min="0"
+                          value={repeatCount}
+                          onChange={(e) => setRepeatCount(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="0 (بی‌نهایت)"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2">روزهای هفته:</label>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {DAYS_MAP.map((d) => (
+                            <button
+                              key={d.value}
+                              onClick={() => {
+                                if (days.includes(d.value)) setDays(days.filter(x => x !== d.value));
+                                else setDays([...days, d.value].sort());
+                              }}
+                              className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${days.includes(d.value) ? "bg-[var(--accent3)] text-white shadow-md shadow-[var(--accent3-transparent)]" : "bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--text-secondary)] md:hover:border-[var(--accent3)]"}`}
+                            >
+                              {d.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : autoType === "weather" ? (
+                    <>
+                      <div className="col-span-2">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">نام شهر (انگلیسی):</label>
+                        <input 
+                          type="text" 
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="مثال: Tehran"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                          dir="ltr"
+                        />
+                      </div>
+                      <div className="col-span-2 flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">شرط دما:</label>
+                          <select
+                            value={temperatureCondition}
+                            onChange={(e) => setTemperatureCondition(e.target.value as "greater" | "less")}
+                            className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                          >
+                            <option value="greater">بیشتر از</option>
+                            <option value="less">کمتر از</option>
+                          </select>
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">دما (°C):</label>
+                          <input 
+                            type="number" 
+                            value={temperatureThreshold}
+                            onChange={(e) => setTemperatureThreshold(e.target.value === "" ? "" : Number(e.target.value))}
+                            placeholder="مثال: 30"
+                            className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                            dir="ltr"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (ساعت):</label>
+                        <input 
+                          type="number" 
+                          min="0"
+                          value={delayHours}
+                          onChange={(e) => setDelayHours(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="مثال: 10"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                        />
+                      </div>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (دقیقه):</label>
+                        <input 
+                          type="number" 
+                          min="0"
+                          max="59"
+                          value={delayMinutes}
+                          onChange={(e) => setDelayMinutes(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="مثال: 30"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                        />
+                      </div>
+                    </>
+                  )}
 
                   {/* Actions Section */}
                   <div className="col-span-2 space-y-3 pt-2">
@@ -308,54 +479,112 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
               </div>
 
               {/* List Section */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-sm text-[var(--text-secondary)] px-1">لیست اتوماسیون‌ها</h3>
+              <div className="space-y-4 mt-6 border-t border-[var(--border-color)] pt-6">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="font-bold text-[var(--text-primary)]">مدیریت اتوماسیون‌ها</h3>
+                  <span className="text-xs font-mono bg-[var(--card-hover-bg)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full">
+                    {automations.length} مورد
+                  </span>
+                </div>
+                
                 {automations.length === 0 ? (
-                  <div className="text-center py-8 bg-[var(--card-bg-solid)] rounded-2xl border border-dashed border-[var(--border-color)] text-[var(--text-muted)] text-sm">
+                  <div className="text-center py-10 bg-[var(--card-bg-solid)] rounded-2xl border border-dashed border-[var(--border-color)] text-[var(--text-muted)] text-sm flex flex-col items-center justify-center gap-2">
+                    <Clock className="w-8 h-8 opacity-20" />
                     هیچ اتوماسیونی ثبت نشده است.
                   </div>
                 ) : (
-                  automations.map((auto) => {
-                    const hasMacros = auto.actions?.some(a => a.targetMacro);
-                    return (
-                      <div key={auto.id} className={`p-4 rounded-2xl border transition-all shadow-sm flex items-center justify-between ${auto.enabled ? "bg-[var(--card-bg-solid)] border-[var(--border-color)]" : "bg-[var(--card-bg)] border-[var(--border-color)] opacity-60"}`}>
-                        <div>
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <div className={`w-2 h-2 rounded-full ${hasMacros ? "bg-indigo-400" : (auto.actions?.[0]?.actionOn ? "bg-emerald-500" : "bg-rose-500")}`} />
-                            <h4 className="font-bold text-[var(--text-primary)] text-sm">{auto.title}</h4>
+                  <div className="grid grid-cols-1 gap-3">
+                    {automations.map((auto) => {
+                      const hasMacros = auto.actions?.some(a => a.targetMacro);
+                      return (
+                        <div key={auto.id} className={`flex flex-col p-4 rounded-2xl border transition-all shadow-sm ${auto.enabled ? "bg-[var(--card-bg-solid)] border-[var(--border-color)]" : "bg-[var(--card-bg)] border-[var(--border-color)] opacity-70"}`}>
+                          
+                          {/* Card Header */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${auto.enabled ? (hasMacros ? "bg-indigo-500 shadow-indigo-500/40" : (auto.actions?.[0]?.actionOn ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500 shadow-rose-500/40")) : "bg-slate-500 shadow-slate-500/40"}`} />
+                              <h4 className="font-bold text-[var(--text-primary)] text-sm">{auto.title}</h4>
+                            </div>
+                            
+                            {/* Toggle Switch */}
+                            <button 
+                              onClick={() => handleToggle(auto.id, !auto.enabled)}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${auto.enabled ? "bg-[var(--accent3)]" : "bg-[var(--border-color)]"}`}
+                            >
+                              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${auto.enabled ? "translate-x-1" : "translate-x-4"}`} />
+                            </button>
                           </div>
-                          <div className="text-xs text-[var(--text-secondary)] font-mono flex items-center gap-2">
-                            <span className="bg-[var(--card-hover-bg)] px-2 py-0.5 rounded text-[var(--accent3)]">{auto.time}</span>
-                            <span>عملیات: {auto.actions?.length || 0} مورد</span>
-                            <span className="text-[10px] bg-[var(--card-hover-bg)] px-1.5 py-0.5 rounded">
-                              {auto.days.map(d => DAYS_MAP.find(m => m.value === d)?.label).join("، ")}
-                            </span>
+
+                          {/* Card Body - Time & Details */}
+                          <div className="flex items-center justify-between mb-4 bg-[var(--card-hover-bg)] p-3 rounded-xl">
+                            {auto.conditionType === "weather" ? (
+                              <div className="flex items-center gap-2">
+                                <Thermometer className="w-5 h-5 text-[var(--accent3)]" />
+                                <span className="text-sm font-bold text-[var(--text-primary)]">
+                                  {auto.city}: دما {auto.temperatureCondition === "greater" ? "بیشتر از" : "کمتر از"} <span className="font-mono text-lg" dir="ltr">{auto.temperatureThreshold}°C</span>
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <Clock className="w-5 h-5 text-[var(--accent3)]" />
+                                <span className="text-xl font-bold font-mono text-[var(--text-primary)] tracking-wider" dir="ltr">{auto.time}</span>
+                              </div>
+                            )}
+                            
+                            <div className="flex flex-col items-end gap-1.5">
+                              {auto.conditionType === "weather" ? (
+                                <span className="text-[10px] bg-blue-500/15 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md font-bold">
+                                  دما محور
+                                </span>
+                              ) : auto.repeatCount ? (
+                                <span className="text-[10px] font-bold bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                  <Info className="w-3 h-3" />
+                                  یک‌بار مصرف ({auto.repeatCount} بار)
+                                </span>
+                              ) : (
+                                <span className="text-[10px] bg-[var(--accent3-transparent)] text-[var(--accent3)] px-2 py-0.5 rounded-md font-bold">
+                                  دوره‌ای
+                                </span>
+                              )}
+                              
+                              {auto.conditionType !== "weather" && (
+                                <div className="flex flex-wrap justify-end gap-1 max-w-[150px]">
+                                  {auto.days.map(d => (
+                                    <span key={d} className="text-[9px] bg-[var(--card-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] px-1.5 py-0.5 rounded">
+                                      {DAYS_MAP.find(m => m.value === d)?.label}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
+                          
+                          {/* Card Footer - Actions summary & controls */}
+                          <div className="flex items-center justify-between mt-auto pt-3 border-t border-[var(--border-color)]">
+                            <div className="text-xs text-[var(--text-secondary)] font-medium flex items-center gap-1.5">
+                              <Layers className="w-3.5 h-3.5 opacity-70" />
+                              <span>{auto.actions?.length || 0} عملیات تنظیم شده</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => handleEdit(auto)} className="p-2 text-[var(--text-muted)] md:hover:text-blue-500 md:hover:bg-blue-500/10 rounded-lg transition-colors" title="ویرایش">
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => handleDelete(auto.id)} className="p-2 text-[var(--text-muted)] md:hover:text-rose-500 md:hover:bg-rose-500/10 rounded-lg transition-colors" title="حذف">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                          
                         </div>
-                        
-                        <div className="flex items-center gap-1.5">
-                          <button 
-                            onClick={() => handleToggle(auto.id, !auto.enabled)}
-                            className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${auto.enabled ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 md:hover:bg-emerald-500/20" : "bg-slate-500/10 text-slate-500 border-slate-500/20 md:hover:bg-slate-500/20"}`}
-                          >
-                            {auto.enabled ? "فعال" : "غیرفعال"}
-                          </button>
-                          <button onClick={() => handleEdit(auto)} className="p-1.5 text-[var(--text-muted)] md:hover:text-blue-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button onClick={() => handleDelete(auto.id)} className="p-1.5 text-[var(--text-muted)] md:hover:text-red-500 bg-[var(--card-hover-bg)] rounded-lg transition-colors">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })
+                      );
+                    })}
+                  </div>
                 )}
               </div>
 
             </div>
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   );

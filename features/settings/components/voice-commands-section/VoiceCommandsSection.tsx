@@ -117,7 +117,7 @@ export default function VoiceCommandsSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center py-6 bg-black/5 dark:bg-white/5 border border-dashed border-[var(--border-color)] rounded-2xl text-[var(--text-tertiary)] text-sm"
+              className="text-center py-6 bg-[var(--card-bg-solid)] border border-dashed border-[var(--border-color)] rounded-2xl text-[var(--text-tertiary)] text-sm"
             >
               هنوز دستور صوتی تعریف نشده است.
             </motion.div>
@@ -140,18 +140,18 @@ export default function VoiceCommandsSection() {
                       value={newCommandPhrase}
                       onChange={(e) => setNewCommandPhrase(e.target.value)}
                       placeholder="عبارت صوتی (مثلاً: رقص نور)..."
-                      className="flex-1 bg-black/5 dark:bg-white/5 border border-[var(--border-color)] rounded-xl px-3 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] transition-colors"
+                      className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
                     />
                     <button
                       onClick={() => handleSaveCommand(cmd.id)}
-                      className="p-2 bg-[var(--accent3)] text-white rounded-xl hover:bg-[var(--accent3-dark)] transition-colors shadow-sm"
+                      className="p-2.5 bg-[var(--accent3)] text-white rounded-xl hover:bg-[var(--accent3-dark)] transition-colors shadow-md shadow-[var(--accent3-transparent)]"
                       title="ذخیره"
                     >
                       <Check className="w-4 h-4" />
                     </button>
                     <button
                       onClick={handleCancelEdit}
-                      className="p-2 bg-black/10 dark:bg-white/10 text-[var(--text-secondary)] rounded-xl hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
+                      className="p-2.5 border border-[var(--border-color)] text-[var(--text-secondary)] rounded-xl hover:border-[var(--accent4)] hover:text-[var(--accent4)] transition-colors bg-[var(--card-bg-solid)]"
                       title="انصراف"
                     >
                       <X className="w-4 h-4" />
@@ -178,7 +178,7 @@ export default function VoiceCommandsSection() {
                     {tempActions.map((action, index) => {
                       const isMacroAction = action.targetMacro !== undefined;
                       return (
-                        <div key={index} className="flex flex-wrap items-center gap-2 bg-black/5 dark:bg-white/5 p-2 rounded-xl">
+                        <div key={index} className="flex flex-wrap items-center gap-2 bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-2 rounded-xl">
                           <select
                             value={isMacroAction ? "macro" : "pin"}
                             onChange={(e) => {
@@ -188,7 +188,7 @@ export default function VoiceCommandsSection() {
                                 handleUpdateAction(index, { targetPin: segments[0].pin });
                               }
                             }}
-                            className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                            className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)]"
                           >
                             <option value="pin">ماژول/سگمنت</option>
                             <option value="macro" disabled={macros.length === 0}>دکمه سفارشی (ماکرو)</option>
@@ -198,7 +198,7 @@ export default function VoiceCommandsSection() {
                             <select
                               value={action.targetMacro}
                               onChange={(e) => handleUpdateAction(index, { targetMacro: e.target.value })}
-                              className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                              className="flex-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)]"
                             >
                               {macros.map((m) => (
                                 <option key={m.id} value={m.id}>
@@ -211,7 +211,7 @@ export default function VoiceCommandsSection() {
                               <select
                                 value={action.targetPin}
                                 onChange={(e) => handleUpdateAction(index, { targetPin: e.target.value })}
-                                className="flex-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                                className="flex-1 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)]"
                               >
                                 {segments.map((seg) => (
                                   <option key={seg.id} value={seg.pin}>
@@ -222,7 +222,7 @@ export default function VoiceCommandsSection() {
                               <select
                                 value={action.actionOn ? "on" : "off"}
                                 onChange={(e) => handleUpdateAction(index, { actionOn: e.target.value === "on" })}
-                                className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                                className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg px-2 py-1.5 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)]"
                               >
                                 <option value="on">روشن شود</option>
                                 <option value="off">خاموش شود</option>
@@ -232,7 +232,7 @@ export default function VoiceCommandsSection() {
 
                           <button
                             onClick={() => handleRemoveAction(index)}
-                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-2 text-[var(--accent4)] hover:bg-[var(--accent4-transparent)] border border-transparent hover:border-[var(--accent4)] rounded-lg transition-colors"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -262,14 +262,14 @@ export default function VoiceCommandsSection() {
                         setNewCommandPhrase(cmd.phrase);
                         setTempActions(cmd.actions);
                       }}
-                      className="p-2 bg-black/5 dark:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--accent3)] rounded-xl transition-colors"
+                      className="p-2 bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--accent3)] hover:border-[var(--accent3)] rounded-xl transition-colors"
                       title="ویرایش"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteCommand(cmd.id)}
-                      className="p-2 bg-black/5 dark:bg-white/5 text-[var(--text-secondary)] hover:text-red-500 rounded-xl transition-colors"
+                      className="p-2 bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--accent4)] hover:border-[var(--accent4)] rounded-xl transition-colors"
                       title="حذف"
                     >
                       <Trash2 className="w-4 h-4" />

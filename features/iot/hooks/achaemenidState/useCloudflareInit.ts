@@ -10,8 +10,6 @@ import {
   setCloudflareWorkerUrl,
 } from "@/features/iot/services/cloudflareService";
 
-const IGNORE_CONFIG_FETCH_ERROR = true;
-
 interface UseCloudflareInitProps {
   mounted: boolean;
   handleApplyEspConfig: (config: EspConfig) => void;
@@ -31,20 +29,20 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
   const handleBypassSync = useCallback(() => {
     bypassedRef.current = true;
     handleApplyEspConfig(DEFAULT_ESP_CONFIG);
-    setSyncStatus(false, 100, "تایید هویت مستقل.");
+    setSyncStatus(false, 100, "تایید هویت مستقل. تنظیمات پیش‌فرض بارگذاری شد.");
     setIsFullyReady(true);
   }, [handleApplyEspConfig, setSyncStatus]);
 
   const initCloudflareSync = useCallback(async () => {
     let attemptCount = 0;
+    const maxAttempts = 5;
     
-    // Continuous loop until successfully fetched configuration or bypassed
-    while (!bypassedRef.current) {
+    while (!bypassedRef.current && attemptCount < maxAttempts) {
       attemptCount++;
       setSyncStatus(
         true,
-        Math.min(10 + attemptCount * 5, 95),
-        `در حال دریافت تنظیمات از ورکر کلودفلر (تلاش ${attemptCount})...`,
+        Math.min(10 + attemptCount * 15, 95),
+        `در حال دریافت تنظیمات از کلودفلر (تلاش ${attemptCount} از ${maxAttempts})...`,
       );
 
       try {
@@ -55,32 +53,29 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
             handleWorkerUrlChange(cfConfig.worker_url);
           }
           handleApplyEspConfig(cfConfig);
-          setSyncStatus(false, 100, "همگام‌سازی چیدمان و تنظیمات از کلودفلر انجام شد.");
+          setSyncStatus(false, 100, "همگام‌سازی تنظیمات از کلودفلر انجام شد.");
           setIsFullyReady(true);
-          return;
-        } else if (IGNORE_CONFIG_FETCH_ERROR) {
-          console.warn("Ignoring Cloudflare config fetch error (empty config), bypassing sync.");
-          handleBypassSync();
           return;
         }
       } catch (e) {
         console.error(`Attempt ${attemptCount} failed to sync from Cloudflare:`, e);
-        if (IGNORE_CONFIG_FETCH_ERROR) {
-          console.warn("Ignoring Cloudflare config fetch error, bypassing sync.");
-          handleBypassSync();
-          return;
-        }
       }
 
       if (bypassedRef.current) return;
 
-      // If configuration could not be loaded, wait 3 seconds and retry continuously
-      setSyncStatus(
-        true,
-        Math.min(10 + attemptCount * 5, 95),
-        `تنظیمات اولیه یافت نشد؛ در حال تلاش مجدد... (تلاش ${attemptCount + 1})`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (attemptCount < maxAttempts) {
+        setSyncStatus(
+          true,
+          Math.min(10 + attemptCount * 15, 95),
+          `دریافت تنظیمات ناموفق بود. در حال تلاش مجدد...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    }
+
+    if (!bypassedRef.current) {
+      console.warn("Failed to fetch Cloudflare config after 5 attempts, loading default empty config.");
+      handleBypassSync();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleApplyEspConfig, setSyncStatus, handleBypassSync]);

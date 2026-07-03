@@ -13,6 +13,8 @@ import CloudflareIntegration from "./CloudflareIntegration";
 export default function StabilitySection({
   animationsEnabled,
   setAnimationsEnabled,
+  animationsFps,
+  setAnimationsFps,
   expandedSection,
   toggleSection,
   hideHeader = false,
@@ -26,6 +28,8 @@ export default function StabilitySection({
       <AnimationsToggle
         animationsEnabled={animationsEnabled}
         setAnimationsEnabled={setAnimationsEnabled}
+        animationsFps={animationsFps}
+        setAnimationsFps={setAnimationsFps}
         isDark={isDark}
       />
       <LowDataToggle

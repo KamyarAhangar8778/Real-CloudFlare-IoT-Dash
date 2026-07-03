@@ -82,7 +82,7 @@ export default function MqttSection() {
             dir="ltr"
             value={brokerWsUrl}
             onChange={(e) => setBrokerWsUrl(e.target.value)}
-            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
             placeholder="wss://broker.emqx.io:8084/mqtt"
           />
         </div>
@@ -98,7 +98,7 @@ export default function MqttSection() {
               dir="ltr"
               value={brokerHost}
               onChange={(e) => setBrokerHost(e.target.value)}
-              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
               placeholder="broker.emqx.io"
             />
           </div>
@@ -111,7 +111,7 @@ export default function MqttSection() {
               dir="ltr"
               value={brokerPort}
               onChange={(e) => setBrokerPort(parseInt(e.target.value) || 1883)}
-              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
               placeholder="1883"
             />
           </div>
@@ -127,7 +127,7 @@ export default function MqttSection() {
             dir="ltr"
             value={baseTopic}
             onChange={(e) => setBaseTopic(e.target.value)}
-            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500/50 transition-colors"
+            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
             placeholder="KamyarIoT/Achaemenid"
           />
         </div>
@@ -147,8 +147,8 @@ export default function MqttSection() {
                 }}
                 className={`py-2 px-3 rounded-xl border text-xs font-mono transition-all duration-300 ${
                   qos === q
-                    ? "bg-indigo-500/20 border-indigo-500/50 text-indigo-400"
-                    : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)]"
+                    ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)]"
+                    : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4)]"
                 }`}
               >
                 QoS {q}
@@ -167,8 +167,8 @@ export default function MqttSection() {
         onClick={handleSaveAndReconnect}
         className={`w-full py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 text-sm font-bold ${
           isSaved
-            ? "bg-emerald-500/20 text-emerald-500 border border-emerald-500/30"
-            : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20"
+            ? "bg-[var(--accent4-transparent)] text-[var(--accent4)] border border-[var(--accent4)]"
+            : "bg-[var(--accent3)] hover:bg-[var(--accent3-dark)] text-white shadow-lg shadow-[var(--accent3-transparent)]"
         }`}
       >
         {isSaved ? (

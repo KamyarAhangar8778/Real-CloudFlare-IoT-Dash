@@ -7,21 +7,28 @@ import { serializeToCloudflare, deserializeFromCloudflare } from "./mappers";
  */
 export async function fetchConfigFromCloudflare(): Promise<EspConfig | null> {
   if (!isCloudflareEnabled()) return null;
-  const baseUrl = getCloudflareWorkerUrl().replace(/\/$/, "");
+  
+  const urls = [
+    "https://api.agkalaa.ir/config",
+    "https://durable-object-worker.kamyarahangar157.workers.dev/config"
+  ];
 
   try {
-    const res = await fetch(`${baseUrl}/config`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    const fetchPromises = urls.map(url => 
+      fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }).then(async res => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch Cloudflare config from ${url}: ${res.statusText}`);
+        }
+        return await res.json();
+      })
+    );
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch Cloudflare config: ${res.statusText}`);
-    }
-
-    const data = await res.json();
+    const data = await Promise.any(fetchPromises);
     return deserializeFromCloudflare(data);
   } catch (error) {
     console.error("Cloudflare fetchConfig error:", error);

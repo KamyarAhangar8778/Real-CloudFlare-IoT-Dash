@@ -1,4 +1,5 @@
 import mqtt, { MqttClient } from "mqtt";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 let client: MqttClient | null = null;
 
@@ -44,6 +45,15 @@ export const getMqttSettings = () => {
  * CMD 0x08: Batch Toggle [cmd(1), count(1), [actions(6 each: pin(1), state(1), timer(4))]]
  */
 
+export const publishPresence = (isVisible: boolean) => {
+  if (!client || !client.connected) return;
+  const settings = getMqttSettings();
+  const commandTopic = `${settings.baseTopic}/Command`;
+  const presenceBuf = new Uint8Array([0x04, isVisible ? 0x01 : 0x00]);
+  client.publish(commandTopic, presenceBuf as Buffer, { qos: settings.qos });
+  console.log(`[MQTT] Published presence: ${isVisible}`);
+};
+
 export const initMqtt = () => {
   if (!client) {
     const settings = getMqttSettings();
@@ -61,7 +71,8 @@ export const initMqtt = () => {
       client?.subscribe(stateTopic);
       
       // Announce presence immediately (CMD 0x04: Dashboard Presence)
-      const presenceBuf = new Uint8Array([0x04, 0x01]);
+      const isPageVisible = useIoTStore.getState().isPageVisible;
+      const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
       client?.publish(commandTopic, presenceBuf as Buffer, { qos });
     });
 
@@ -73,7 +84,8 @@ export const initMqtt = () => {
             
             // CMD 0x07: Ping from ESP
             if (cmdType === 0x07) {
-              const presenceBuf = new Uint8Array([0x04, 0x01]);
+              const isPageVisible = useIoTStore.getState().isPageVisible;
+              const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
               client?.publish(commandTopic, presenceBuf as Buffer, { qos });
             } 
             // CMD 0x06: State Report
@@ -86,7 +98,8 @@ export const initMqtt = () => {
             else if (payload[0] === 123) {
               const data = JSON.parse(payload.toString());
               if (data.command === "ping") {
-                const presenceBuf = new Uint8Array([0x04, 0x01]);
+                const isPageVisible = useIoTStore.getState().isPageVisible;
+                const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
                 client?.publish(commandTopic, presenceBuf as Buffer, { qos });
               } else if (data.id !== undefined && data.value !== undefined) {
                 stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));

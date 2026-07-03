@@ -8,26 +8,23 @@ interface LayoutSelectorProps {
   maxCols: number;
   onColsChange: (cols: number) => void;
   parentGroupsCols: number;
+  fullWidth?: boolean;
 }
 
 export default function LayoutSelector({
   maxCols,
   onColsChange,
   parentGroupsCols,
+  fullWidth = false,
 }: LayoutSelectorProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Always show on mobile, hide on desktop if parentGroupsCols is 3
-  if (parentGroupsCols === 3 && !isMobile) {
-    return null;
-  }
-
   return (
-    <div className={`flex ${parentGroupsCols === 3 ? "flex-col" : "flex-col sm:flex-row"} items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-1 rounded-xl text-xs gap-0.5 shrink-0 shadow-sm`}>
+    <div className={`flex ${parentGroupsCols === 3 ? "flex-row" : "flex-col sm:flex-row"} ${fullWidth ? "w-full *:flex-1" : ""} items-center bg-[var(--bg-main)] border border-[var(--border-color)] p-0.5 sm:p-1 rounded-xl text-xs gap-0.5 shrink-0 shadow-sm`}>
       <button
         onClick={() => onColsChange(1)}
         aria-label="تک ستون"
-        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
+        className={`${parentGroupsCols === 3 ? "p-0.5 sm:p-1" : "p-1.5"} flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 1
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
             : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
@@ -52,7 +49,7 @@ export default function LayoutSelector({
       <button
         onClick={() => onColsChange(2)}
         aria-label="دو ستون"
-        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
+        className={`${parentGroupsCols === 3 ? "p-0.5 sm:p-1" : "p-1.5"} flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 2
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
             : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"
@@ -79,7 +76,7 @@ export default function LayoutSelector({
       <button
         onClick={() => onColsChange(3)}
         aria-label="سه ستون"
-        className={`p-1.5 flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
+        className={`${parentGroupsCols === 3 ? "p-0.5 sm:p-1" : "p-1.5"} flex items-center justify-center rounded-lg transition-all cursor-pointer select-none ${
           maxCols === 3
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-inner"
             : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)] md:hover:bg-[var(--card-bg-solid)]"

@@ -73,11 +73,17 @@ interface ClockWidgetProps {
   isSidebarCollapsed?: boolean;
 }
 
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+
 export default function ClockWidget({ variant, isSidebarCollapsed }: ClockWidgetProps) {
   const [time, setTime] = useState<Date | null>(null);
+  const isPageVisible = useIoTStore((state) => state.isPageVisible);
 
   useEffect(() => {
     setTime(new Date());
+    
+    if (!isPageVisible) return;
+    
     const timer = setInterval(() => {
       setTime(prev => {
         const now = new Date();
@@ -86,7 +92,7 @@ export default function ClockWidget({ variant, isSidebarCollapsed }: ClockWidget
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isPageVisible]);
 
   if (!time) {
     return (
@@ -135,22 +141,22 @@ export default function ClockWidget({ variant, isSidebarCollapsed }: ClockWidget
   if (variant === "vertical") {
     if (isSidebarCollapsed) {
       return (
-        <div className="w-full flex justify-center items-center p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--accent3)] transition-all duration-350 hover:-translate-y-1 hover:shadow-md hover:border-[var(--accent3)] group" title={dateString}>
-          <RealTimeClock time={time} className="w-4 h-4 transition-transform duration-500 group-hover:rotate-90 shrink-0" />
+        <div className="w-full flex justify-center items-center p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--accent3)] transition-all duration-350 md:hover:-translate-y-1 md:hover:shadow-md md:hover:border-[var(--accent3)] group" title={dateString}>
+          <RealTimeClock time={time} className="w-4 h-4 transition-transform duration-500 md:group-hover:rotate-90 shrink-0" />
         </div>
       );
     }
     
     return (
-      <div className="w-full flex flex-col items-center justify-center p-3 gap-1 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-350 hover:-translate-y-1.5 hover:shadow-xl hover:border-[var(--accent3)] group">
+      <div className="w-full flex flex-col items-center justify-center p-3 gap-1 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-350 md:hover:-translate-y-1.5 md:hover:shadow-xl md:hover:border-[var(--accent3)] group">
         <div className="flex items-center gap-2 text-[var(--accent3)] mb-1">
-          <RealTimeClock time={time} className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180" />
+          <RealTimeClock time={time} className="w-4 h-4 transition-transform duration-500 md:group-hover:rotate-180" />
           <span className="font-mono font-bold text-lg tracking-widest" dir="ltr">{timeString}</span>
         </div>
-        <div className="text-[11px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+        <div className="text-[11px] font-bold text-[var(--text-secondary)] md:group-hover:text-[var(--text-primary)] transition-colors">
           {dateString}
         </div>
-        <div className="text-[9px] text-[var(--text-muted)] group-hover:text-[var(--accent3)] transition-colors mt-0.5">
+        <div className="text-[9px] text-[var(--text-muted)] md:group-hover:text-[var(--accent3)] transition-colors mt-0.5">
           تاریخ شاهنشاهی
         </div>
       </div>
@@ -159,13 +165,13 @@ export default function ClockWidget({ variant, isSidebarCollapsed }: ClockWidget
 
   // Horizontal variant
   return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-350 hover:-translate-y-1 hover:shadow-md hover:border-[var(--accent3)] group cursor-default">
-      <RealTimeClock time={time} className="w-4 h-4 text-[var(--text-tertiary)] group-hover:text-[var(--accent3)] transition-all duration-500 group-hover:rotate-180 shrink-0" />
+    <div className="flex items-center gap-3 px-4 py-2 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl transition-all duration-350 md:hover:-translate-y-1 md:hover:shadow-md md:hover:border-[var(--accent3)] group cursor-default">
+      <RealTimeClock time={time} className="w-4 h-4 text-[var(--text-tertiary)] md:group-hover:text-[var(--accent3)] transition-all duration-500 md:group-hover:rotate-180 shrink-0" />
       <div className="flex flex-col items-start justify-center">
-        <span className="font-mono font-bold text-sm text-[var(--text-primary)] group-hover:text-[var(--accent3)] transition-colors" dir="ltr">
+        <span className="font-mono font-bold text-sm text-[var(--text-primary)] md:group-hover:text-[var(--accent3)] transition-colors" dir="ltr">
           {timeString}
         </span>
-        <span className="text-[9px] font-bold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
+        <span className="text-[9px] font-bold text-[var(--text-secondary)] md:group-hover:text-[var(--text-primary)] transition-colors">
           {dateString}
         </span>
       </div>

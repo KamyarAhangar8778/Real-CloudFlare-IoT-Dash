@@ -60,4 +60,6 @@ export interface SortableSegmentCardProps {
   groupItemsCount?: number;
   index?: number;
   animationsEnabled?: boolean;
+  isOverlayItem?: boolean;
+  dashboardWidth?: number;
 }

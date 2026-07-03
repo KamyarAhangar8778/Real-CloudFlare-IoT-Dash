@@ -45,6 +45,11 @@ interface IoTStoreState {
     time: string;
     days: number[];
     enabled: boolean;
+    repeatCount?: number;
+    conditionType?: 'time' | 'weather';
+    city?: string;
+    temperatureThreshold?: number;
+    temperatureCondition?: 'greater' | 'less';
     actions: Array<{
       targetPin?: string;
       targetMacro?: string;
@@ -70,10 +75,17 @@ interface IoTStoreState {
       actionOn?: boolean;
     }>;
   }>;
+  wifiNetworks: Array<{
+    id: string;
+    ssid: string;
+    password?: string;
+  }>;
   selectedGroupFilter: string | null;
+  isPageVisible: boolean;
   // Actions
   setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
   setSelectedGroupFilter: (group: string | null) => void;
+  setIsPageVisible: (visible: boolean) => void;
   setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
   setGroupConfigs: (
     configs:
@@ -119,6 +131,9 @@ interface IoTStoreState {
   setVoiceCommands: (
     voiceCommands: any[] | ((prev: any[]) => any[]),
   ) => void;
+  setWifiNetworks: (
+    networks: any[] | ((prev: any[]) => any[]),
+  ) => void;
   isListening: boolean;
   setIsListening: (b: boolean) => void;
   voiceTranscript: string;
@@ -141,12 +156,18 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
   automations: [],
   macros: [],
   voiceCommands: [],
+  wifiNetworks: [],
   isListening: false,
   voiceTranscript: "",
   selectedGroupFilter: null,
+  isPageVisible: true,
 
   setSelectedGroupFilter: (group) => {
     set({ selectedGroupFilter: group });
+  },
+
+  setIsPageVisible: (visible) => {
+    set({ isPageVisible: visible });
   },
 
   setSegments: (segments) => {
@@ -247,6 +268,13 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
     });
   },
 
+  setWifiNetworks: (networks) => {
+    set((state) => {
+      const next = typeof networks === "function" ? networks(state.wifiNetworks) : networks;
+      return { wifiNetworks: next };
+    });
+  },
+
   setIsListening: (b) => set({ isListening: b }),
   setVoiceTranscript: (t) => set({ voiceTranscript: t }),
   applyEspConfig: (config) => {
@@ -260,6 +288,7 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
       automations: config.automations || [],
       macros: config.macros || [],
       voiceCommands: config.voiceCommands || [],
+      wifiNetworks: config.wifi?.networks || [],
     });
 
     const importedPins: Record<string, boolean> = {};

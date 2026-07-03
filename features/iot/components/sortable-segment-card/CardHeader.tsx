@@ -39,6 +39,7 @@ interface CardHeaderProps {
   listeners: any;
   isSettingsOpen?: boolean;
   setIsSettingsOpen?: (val: boolean) => void;
+  groupMaxCols?: number;
 }
 
 export default function CardHeader({
@@ -56,14 +57,21 @@ export default function CardHeader({
   listeners,
   isSettingsOpen,
   setIsSettingsOpen,
+  groupMaxCols,
 }: CardHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [showAutoOffMenu, setShowAutoOffMenu] = React.useState(false);
   const autoOffValue = segment.auto_off || 0;
   const isSmall = isUltraCompact || isCompact || isMobile;
 
+  const showIconInHeader = !isSmall || (isMobile && groupMaxCols === 1);
+  const showIconInMenu = isSmall && !showIconInHeader;
+
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement>(null);
+
+  const autoOffButtonRef = React.useRef<HTMLButtonElement>(null);
+  const autoOffMenuRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,14 +83,31 @@ export default function CardHeader({
       ) {
         setIsSettingsOpen?.(false);
       }
+      if (
+        autoOffMenuRef.current &&
+        !autoOffMenuRef.current.contains(event.target as Node) &&
+        autoOffButtonRef.current &&
+        !autoOffButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowAutoOffMenu(false);
+      }
     };
-    if (isSettingsOpen) {
+    if (isSettingsOpen || showAutoOffMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isSettingsOpen, setIsSettingsOpen]);
+  }, [isSettingsOpen, setIsSettingsOpen, showAutoOffMenu]);
+
+  const formatTime = (seconds: number) => {
+    if (seconds === 0) return "غیرفعال";
+    if (seconds < 60) return `${seconds} ثانیه`;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (s === 0) return `${m} دقیقه`;
+    return `${m} دقیقه و ${s} ثانیه`;
+  };
 
   React.useLayoutEffect(() => {
     if (isSettingsOpen && menuRef.current && buttonRef.current) {
@@ -142,11 +167,15 @@ export default function CardHeader({
         {onUpdateSegmentAutoOff && (
           <div className="relative flex items-center ml-1 pl-1 border-l border-slate-300 dark:border-slate-700">
             <button
+              ref={autoOffButtonRef}
               onClick={() => setShowAutoOffMenu(!showAutoOffMenu)}
-              className={`p-1 rounded-full transition-colors ${autoOffValue > 0 ? "text-[var(--accent3)]" : "text-slate-500 md:hover:text-slate-800 dark:md:hover:text-white"}`}
-              title="تنظیم زمان خاموشی خودکار (Auto-Off)"
+              className={`p-1 rounded-full transition-all group/timer-btn ${autoOffValue > 0 ? "text-[var(--accent3)] shadow-[0_0_8px_rgba(255,165,0,0.3)] bg-[var(--accent3)]/10" : "text-slate-500 md:hover:text-slate-800 dark:md:hover:text-white md:hover:bg-slate-200 dark:md:hover:bg-slate-800"}`}
+              title="تنظیم زمان تایمر خودکار"
             >
-              <svg
+              <motion.svg
+                animate={autoOffValue > 0 ? { rotate: [0, -10, 10, -10, 10, 0] } : {}}
+                transition={autoOffValue > 0 ? { repeat: Infinity, duration: 2, repeatDelay: 1 } : {}}
+                className="transition-transform group-hover/timer-btn:rotate-12"
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"
                 height="14"
@@ -159,7 +188,7 @@ export default function CardHeader({
               >
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
-              </svg>
+              </motion.svg>
             </button>
             {countdown !== null && countdown !== undefined && (
               <span className="text-[10px] font-bold text-[var(--accent3)] mr-1 tabular-nums">
@@ -170,22 +199,32 @@ export default function CardHeader({
             <AnimatePresence>
               {showAutoOffMenu && (
                 <motion.div
+                  ref={autoOffMenuRef}
                   initial={{ opacity: 0, scale: 0.9, y: -5 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: -5 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute top-full mt-2 left-0 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-3 z-50"
+                  className="absolute top-full mt-2 left-0 w-56 bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-xl shadow-xl p-3 z-50 cursor-default"
                 >
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                      خاموشی خودکار:{" "}
-                      {autoOffValue > 0 ? `${autoOffValue} ثانیه` : "غیرفعال"}
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-[11px] font-bold theme-text-primary">
+                      تایمر: {formatTime(autoOffValue)}
                     </span>
+                    {autoOffValue > 0 && (
+                      <button
+                        onClick={() => {
+                          onUpdateSegmentAutoOff(segment.id, 0);
+                        }}
+                        className="text-[9px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded md:hover:bg-red-500 md:hover:text-white transition-colors"
+                      >
+                        غیرفعال کردن
+                      </button>
+                    )}
                   </div>
                   <input
                     type="range"
                     min="0"
-                    max="60"
+                    max="600"
                     value={autoOffValue}
                     onChange={(e) => {
                       const val = parseInt(e.target.value);
@@ -194,11 +233,11 @@ export default function CardHeader({
                         onUpdateSegmentMode(segment.id, "switch");
                       }
                     }}
-                    className="w-full accent-[var(--accent3)] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-[var(--accent3)] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer hover:h-2 transition-all"
                   />
-                  <div className="flex justify-between text-[8px] text-slate-500 mt-1 px-1">
+                  <div className="flex justify-between text-[9px] text-slate-500 mt-2 px-1 font-medium">
                     <span>خاموش</span>
-                    <span>60s</span>
+                    <span>10 دقیقه</span>
                   </div>
                 </motion.div>
               )}
@@ -214,13 +253,15 @@ export default function CardHeader({
       {...(isSmall ? attributes : {})}
       {...(isSmall ? listeners : {})}
       className={`flex items-center border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${
-        isSmall
+        !showIconInHeader
           ? "justify-center p-2 cursor-grab active:cursor-grabbing"
-          : "justify-between p-4"
+          : isSmall
+            ? "justify-center gap-12 p-2 cursor-grab active:cursor-grabbing"
+            : "justify-between p-4"
       }`}
     >
       <div
-        className={`flex items-center ${isSmall ? "w-full justify-center" : "gap-1.5 md:gap-2"}`}
+        className={`flex items-center ${!showIconInHeader || isSmall ? "justify-center" : "gap-1.5 md:gap-2"}`}
       >
         {!isSmall && (
           <>
@@ -247,7 +288,7 @@ export default function CardHeader({
         )}
 
         {isSmall && (
-          <div className="relative flex justify-center w-full group/btn h-6 items-center">
+          <div className="relative flex justify-center group/btn h-6 items-center">
             <button
               ref={buttonRef}
               onClick={() => setIsSettingsOpen?.(!isSettingsOpen)}
@@ -275,21 +316,30 @@ export default function CardHeader({
                 >
                   <div className="w-[280px] sm:w-[340px] bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-sm p-4 flex flex-col gap-4 md:hover:-translate-y-1.5 md:hover:shadow-xl md:hover:border-[var(--accent3)] transition-all cursor-default">
                     <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
-                      <div className="flex flex-col gap-1 text-right">
-                        {isUltraCompact && (
-                          <span className="font-sans font-extrabold theme-text-primary text-sm">
-                            {segment.title}
-                          </span>
+                      <div className="flex items-center gap-3 text-right">
+                        {showIconInMenu && (
+                          <div
+                            className={`p-2 transition-colors ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
+                            style={{ clipPath: BUTTON_CLIP }}
+                          >
+                            {segment.icon ? (
+                              ICON_MAP[segment.icon] ? (
+                                React.createElement(ICON_MAP[segment.icon], { className: "w-4 h-4" })
+                              ) : (
+                                <span className="text-sm leading-none flex items-center justify-center w-4 h-4">{segment.icon}</span>
+                              )
+                            ) : (
+                              React.createElement(ICON_MAP["Cpu"], { className: "w-4 h-4" })
+                            )}
+                          </div>
                         )}
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded inline-block w-fit ${
-                          isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-500/10 text-gray-500"
-                        }`}>
-                          {segment.type === "input" 
-                            ? (isPinOn ? "فعال" : "غیرفعال") 
-                            : mode === "push" 
-                              ? (isPinOn ? "پالس فعال HIGH" : "آماده تحریک LOW") 
-                              : (isPinOn ? "روشن / فعال" : "خاموش / غیرفعال")}
-                        </span>
+                        <div className="flex flex-col gap-1 text-right">
+                          {isUltraCompact && (
+                            <span className="font-sans font-extrabold theme-text-primary text-sm">
+                              {segment.title}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <button
                         onClick={() => onRemove(segment.id)}
@@ -319,14 +369,18 @@ export default function CardHeader({
         )}
       </div>
 
-      {!isSmall && (
+      {showIconInHeader && (
         <div className="flex items-center gap-2">
           <div
             className={`p-2 transition-colors ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
             style={{ clipPath: BUTTON_CLIP }}
           >
-            {segment.icon && ICON_MAP[segment.icon] ? (
-              React.createElement(ICON_MAP[segment.icon], { className: "w-4 h-4" })
+            {segment.icon ? (
+              ICON_MAP[segment.icon] ? (
+                React.createElement(ICON_MAP[segment.icon], { className: "w-4 h-4" })
+              ) : (
+                <span className="text-sm leading-none flex items-center justify-center w-4 h-4">{segment.icon}</span>
+              )
             ) : (
               React.createElement(ICON_MAP["Cpu"], { className: "w-4 h-4" })
             )}

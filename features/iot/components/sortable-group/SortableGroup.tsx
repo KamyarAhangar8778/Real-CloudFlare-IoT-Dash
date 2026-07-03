@@ -23,6 +23,8 @@ export default function SortableGroup({
   animationsEnabled = true,
   icon,
   children,
+  isOverlayItem,
+  isSegmentsCompactLayout,
 }: SortableGroupProps) {
   const {
     attributes,
@@ -37,15 +39,88 @@ export default function SortableGroup({
       type: "Group",
       group: id,
     },
+    disabled: isOverlayItem,
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(isDragging ? null : transform),
     transition: animationsEnabled
       ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
       : "none",
-    zIndex: isDragging ? 50 : "auto",
-    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 0 : "auto",
+    opacity: isDragging ? 0.3 : 1,
+  };
+
+  const childrenArray = React.Children.toArray(children);
+  const itemsCount = childrenArray.length;
+  const effectiveCols = Math.min(Math.max(1, itemsCount), maxCols);
+
+  const itemsInLastRow = itemsCount % effectiveCols;
+  const hasSingleItemInLastRow = itemsInLastRow === 1;
+
+  const masonryChildren = hasSingleItemInLastRow ? childrenArray.slice(0, -1) : childrenArray;
+  const lastRowChild = hasSingleItemInLastRow ? childrenArray[itemsCount - 1] : null;
+
+  // For compact layout (masonry)
+  const columns: React.ReactNode[][] = Array.from({ length: effectiveCols }, () => []);
+  if (isSegmentsCompactLayout) {
+    masonryChildren.forEach((child, index) => {
+      columns[index % effectiveCols].push(child);
+    });
+  }
+
+  const renderContent = () => {
+    if (isSegmentsCompactLayout) {
+      return (
+        <div className="flex flex-col gap-4 w-full text-right p-4 relative z-10">
+          {masonryChildren.length > 0 && (
+            <div className="flex gap-4 w-full">
+              {columns.map((colChildren, colIndex) => (
+                colChildren.length > 0 ? (
+                  <div key={`col-${colIndex}`} className="flex-1 flex flex-col gap-4 min-w-0">
+                    <AnimatePresence mode="popLayout">{colChildren}</AnimatePresence>
+                  </div>
+                ) : null
+              ))}
+            </div>
+          )}
+          {lastRowChild && (
+            <div className="w-full">
+              <AnimatePresence mode="popLayout">{lastRowChild}</AnimatePresence>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={`flex flex-wrap gap-4 w-full text-right p-4 relative z-10 group-layout-${id.replace(
+          /\s+/g,
+          "-"
+        )}`}
+      >
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+          .group-layout-${id.replace(/\s+/g, "-")} > * {
+            flex-grow: 1;
+            flex-shrink: 0;
+            min-width: 0;
+            flex-basis: ${
+              effectiveCols === 1
+                ? "100%"
+                : effectiveCols === 2
+                  ? "calc(50% - 0.5rem - 0.1px)"
+                  : "calc(33.3333% - 0.6667rem - 0.1px)"
+            };
+          }
+        `,
+          }}
+        />
+        <AnimatePresence mode="popLayout">{children}</AnimatePresence>
+      </div>
+    );
   };
 
   return (
@@ -68,43 +143,24 @@ export default function SortableGroup({
       />
 
       {/* Body Island */}
-      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-lg transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl">
-        <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
-          <div
-            className={`flex flex-wrap gap-4 w-full text-right p-4 relative z-10 group-layout-${id.replace(
-              /\s+/g,
-              "-",
-            )}`}
-          >
-            <style
-              dangerouslySetInnerHTML={{
-                __html: `
-              .group-layout-${id.replace(/\s+/g, "-")} > * {
-                flex-grow: 1;
-                flex-shrink: 0;
-                min-width: 0;
-                flex-basis: ${
-                  maxCols === 1
-                    ? "100%"
-                    : maxCols === 2
-                      ? "calc(50% - 0.5rem - 0.1px)"
-                      : "calc(33.3333% - 0.6667rem - 0.1px)"
-                };
-              }
-            `,
-              }}
-            />
-            <AnimatePresence mode="popLayout">{children}</AnimatePresence>
-          </div>
-        </SortableContext>
+      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl">
+        {isOverlayItem ? (
+          renderContent()
+        ) : (
+          <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
+            {renderContent()}
+          </SortableContext>
+        )}
       </div>
 
       {/* Footer Island */}
-      <div className="p-3 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl flex justify-between flex-row-reverse items-center relative z-10 rounded-b-2xl rounded-t-none">
-        <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100">
-          {Array.from({ length: maxCols }).map((_, idx) => (
-            <div key={idx} className="w-2 h-1 bg-[var(--accent3)] rounded-full" />
-          ))}
+      <div className="flex justify-center mt-2 w-full">
+        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl flex justify-center items-center relative z-10 rounded-2xl w-fit">
+          <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100">
+            {Array.from({ length: maxCols }).map((_, idx) => (
+              <div key={idx} className="w-2.5 h-1.5 bg-[var(--accent3)] rounded-full" />
+            ))}
+          </div>
         </div>
       </div>
     </div>

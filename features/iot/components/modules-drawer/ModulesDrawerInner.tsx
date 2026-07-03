@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { motion } from "motion/react";
 import DrawerHeader from "./DrawerHeader";
 import AddSegmentForm from "./AddSegmentForm";
@@ -6,7 +6,7 @@ import SegmentList from "./SegmentList";
 import ConnectionNote from "./ConnectionNote";
 import { ModulesDrawerProps } from "./types";
 
-export default function ModulesDrawerInner({
+const ModulesDrawerInner = forwardRef<HTMLDivElement, Omit<ModulesDrawerProps, "isOpen" | "isDark">>(({
   onClose,
   onAddSegment,
   segments,
@@ -14,9 +14,10 @@ export default function ModulesDrawerInner({
   animationsEnabled = true,
   accent3,
   accent4,
-}: Omit<ModulesDrawerProps, "isOpen" | "isDark">) {
+}, ref) => {
   return (
     <motion.div
+      ref={ref}
       initial={{ x: "-100%" }}
       animate={{ x: 0 }}
       exit={{ x: "-100%" }}
@@ -36,4 +37,6 @@ export default function ModulesDrawerInner({
       <ConnectionNote accent3={accent3} />
     </motion.div>
   );
-}
+});
+
+export default ModulesDrawerInner;

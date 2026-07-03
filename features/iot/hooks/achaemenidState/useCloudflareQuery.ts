@@ -9,7 +9,7 @@ import {
 } from "@/features/iot/services/cloudflareService";
 
 export function useCloudflareQuery() {
-  const { segments, pinsState, setPinsState, lowDataMode } = useIoTStore();
+  const { segments, pinsState, setPinsState, lowDataMode, isPageVisible } = useIoTStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function useCloudflareQuery() {
       }
       return { pins: pinsState };
     },
-    refetchInterval: isCloudflareEnabled() && !lowDataMode ? 3000 : false,
+    refetchInterval: isCloudflareEnabled() && !lowDataMode && isPageVisible ? 3000 : false,
   });
 
   useEffect(() => {

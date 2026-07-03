@@ -30,7 +30,7 @@ export default function QuickAccessControls({
         {/* Modules Drawer Trigger */}
         <button
           onClick={() => setIsModulesMenuOpen(true)}
-          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-[var(--accent4-medium)] text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-[var(--accent4-transparent)] text-[var(--accent4)]">
@@ -48,7 +48,7 @@ export default function QuickAccessControls({
         {/* Automations Drawer Trigger */}
         <button
           onClick={() => setIsAutomationsMenuOpen(true)}
-          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98] group"
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98] group"
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
@@ -75,7 +75,7 @@ export default function QuickAccessControls({
         {/* System config trigger */}
         <button
           onClick={() => setIsMenuOpen(true)}
-          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
+          className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-gray-500/10 text-[var(--text-tertiary)] transition-all">
@@ -105,21 +105,21 @@ export default function QuickAccessControls({
       {/* Modules trigger */}
       <button
         onClick={() => setIsModulesMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center"
         title="مدیریت ماژول‌ها و ابزارها"
       >
         <Layers
-          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}
+          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "md:group-hover:scale-110" : ""}`}
         />
       </button>
 
       {/* Automations trigger */}
       <button
         onClick={() => setIsAutomationsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="اتوماسیون‌های زمانی"
       >
-        <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:scale-110" : ""}`}>
+        <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "md:group-hover:scale-110" : ""}`}>
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="12" x2="12" y2="6" className={animationsEnabled ? "animate-[spin_1s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
           <line x1="12" y1="12" x2="16" y2="12" className={animationsEnabled ? "animate-[spin_12s_linear_infinite]" : ""} style={{ transformOrigin: "12px 12px" }} />
@@ -129,7 +129,7 @@ export default function QuickAccessControls({
       {/* General system Settings trigger */}
       <button
         onClick={() => setIsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
+        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
         title="پیکربندی سیستم"
       >
         <SettingsIcon

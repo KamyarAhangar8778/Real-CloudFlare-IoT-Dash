@@ -1,5 +1,5 @@
 import React from "react";
-import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic } from "lucide-react";
+import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic, Wifi, Settings2 } from "lucide-react";
 
 export interface SettingsDrawerProps {
   isOpen: boolean;
@@ -14,20 +14,64 @@ export interface SettingsDrawerProps {
   setSelectedFont: (val: string) => void;
   animationsEnabled: boolean;
   setAnimationsEnabled: (val: boolean) => void;
+  animationsFps: number;
+  setAnimationsFps: (val: number) => void;
   headerAnimationType: "fade" | "chase";
   setHeaderAnimationType: (val: "fade" | "chase") => void;
   headerTitle: string;
   setHeaderTitle: (val: string) => void;
-  cuneiformOpacity: number;
-  setCuneiformOpacity: (val: number) => void;
-  cuneiformColor: "accent3" | "accent4" | "white" | "muted";
-  setCuneiformColor: (val: "accent3" | "accent4" | "white" | "muted") => void;
+  matrixDensity: number;
+  setMatrixDensity: (val: number) => void;
+  matrixSize: number;
+  setMatrixSize: (val: number) => void;
+  matrixHoverSize: number;
+  setMatrixHoverSize: (val: number) => void;
+  matrixOpacity: number;
+  setMatrixOpacity: (val: number) => void;
+  matrixColor: string;
+  setMatrixColor: (val: string) => void;
+  matrixMoving: boolean;
+  setMatrixMoving: (val: boolean) => void;
+  matrixMouseEffect: boolean;
+  setMatrixMouseEffect: (val: boolean) => void;
+  matrixTwinkleEffect: boolean;
+  setMatrixTwinkleEffect: (val: boolean) => void;
+  matrixTwinkleSpeed: number;
+  setMatrixTwinkleSpeed: (val: number) => void;
+  dashboardBgColor: string;
+  setDashboardBgColor: (val: string) => void;
+  dashboardBgOpacity: number;
+  setDashboardBgOpacity: (val: number) => void;
   isDark: boolean;
   headerPosition: "top" | "left";
   setHeaderPosition: (val: "top" | "left") => void;
+  dashboardWidth: 1 | 2 | 3 | 4 | 5;
+  setDashboardWidth: (val: 1 | 2 | 3 | 4 | 5) => void;
+  isGroupsCompactLayout: boolean;
+  setIsGroupsCompactLayout: (val: boolean) => void;
+  isSegmentsCompactLayout: boolean;
+  setIsSegmentsCompactLayout: (val: boolean) => void;
 }
 
 export const SETTINGS_TABS = [
+  {
+    id: "layout",
+    title: "تنظیمات عرض و نمای داشبورد",
+    compactTitle: "چیدمان و عرض",
+    Icon: LayoutGrid,
+  },
+  {
+    id: "wifi",
+    title: "تنظیمات شبکه وای‌فای (Wi-Fi)",
+    compactTitle: "اتصال به شبکه",
+    Icon: Wifi,
+  },
+  {
+    id: "conditions",
+    title: "مدیریت شرط‌ها و قوانین (Rules)",
+    compactTitle: "قوانین و شرط‌ها",
+    Icon: Settings2,
+  },
   {
     id: "colors",
     title: "تنظیم تنوع رنگ و تضاد",
@@ -65,9 +109,9 @@ export const SETTINGS_TABS = [
     Icon: LayoutGrid,
   },
   {
-    id: "cuneiform",
-    title: "تنظیمات کتیبه خط میخی",
-    compactTitle: "پدیداری و کنتراست پس‌زمینه",
+    id: "matrix",
+    title: "تنظیمات انیمیشن پس‌زمینه ماتریکس",
+    compactTitle: "انیمیشن پس‌زمینه",
     Icon: Sparkles,
   },
   {

@@ -16,11 +16,23 @@ interface UseCloudflarePushProps {
   accent4: string;
   selectedFont: string;
   animationsEnabled: boolean;
+  animationsFps: number;
   headerAnimationType: "fade" | "chase";
   headerTitle: string;
-  cuneiformOpacity: number;
-  cuneiformColor: "accent3" | "accent4" | "white" | "muted";
+  matrixDensity: number;
+  matrixSize: number;
+  matrixHoverSize: number;
+  matrixColor: string;
+  matrixMoving: boolean;
+  matrixMouseEffect: boolean;
+  matrixTwinkleEffect: boolean;
+  matrixTwinkleSpeed: number;
   headerPosition: "top" | "left";
+  dashboardWidth: 1 | 2 | 3 | 4 | 5;
+  dashboardBgColor: string;
+  dashboardBgOpacity: number;
+  isGroupsCompactLayout: boolean;
+  isSegmentsCompactLayout: boolean;
 }
 
 export function useCloudflarePush({
@@ -30,11 +42,23 @@ export function useCloudflarePush({
   accent4,
   selectedFont,
   animationsEnabled,
+  animationsFps,
   headerAnimationType,
   headerTitle,
-  cuneiformOpacity,
-  cuneiformColor,
+  matrixDensity,
+  matrixSize,
+  matrixHoverSize,
+  matrixColor,
+  matrixMoving,
+  matrixMouseEffect,
+  matrixTwinkleEffect,
+  matrixTwinkleSpeed,
   headerPosition,
+  dashboardWidth,
+  dashboardBgColor,
+  dashboardBgOpacity,
+  isGroupsCompactLayout,
+  isSegmentsCompactLayout,
 }: UseCloudflarePushProps) {
   const {
     segments,
@@ -48,6 +72,7 @@ export function useCloudflarePush({
     automations,
     macros,
     voiceCommands,
+    wifiNetworks,
   } = useIoTStore();
   const isFirstRender = useRef(true);
 
@@ -69,12 +94,24 @@ export function useCloudflarePush({
         accent_color_4: accent4,
         font_family: selectedFont,
         animations_enabled: animationsEnabled,
+        animations_fps: animationsFps,
         header_animation: headerAnimationType,
         header_title: headerTitle,
-        cuneiform_opacity: cuneiformOpacity,
-        cuneiform_color: cuneiformColor,
+        matrix_density: matrixDensity,
+        matrix_size: matrixSize,
+        matrix_hover_size: matrixHoverSize,
+        matrix_color: matrixColor,
+        matrix_moving: matrixMoving,
+        matrix_mouse_effect: matrixMouseEffect,
+        matrix_twinkle_effect: matrixTwinkleEffect,
+        matrix_twinkle_speed: matrixTwinkleSpeed,
         header_position: headerPosition,
+        dashboard_width: dashboardWidth,
+        dashboard_bg_color: dashboardBgColor,
+        dashboard_bg_opacity: dashboardBgOpacity,
         manual_save_mode: manualSaveMode,
+        groups_compact_layout: isGroupsCompactLayout,
+        segments_compact_layout: isSegmentsCompactLayout,
       },
       layout: {
         groups_order: groupsOrder,
@@ -85,6 +122,9 @@ export function useCloudflarePush({
       automations: automations,
       macros: macros,
       voiceCommands: voiceCommands,
+      wifi: {
+        networks: wifiNetworks,
+      },
       worker_url: getCloudflareWorkerUrl(),
     };
 
@@ -103,11 +143,23 @@ export function useCloudflarePush({
     accent4,
     selectedFont,
     animationsEnabled,
+    animationsFps,
     headerAnimationType,
     headerTitle,
-    cuneiformOpacity,
-    cuneiformColor,
+    matrixDensity,
+    matrixSize,
+    matrixHoverSize,
+    matrixColor,
+    matrixMoving,
+    matrixMouseEffect,
+    matrixTwinkleEffect,
+    matrixTwinkleSpeed,
     headerPosition,
+    dashboardWidth,
+    dashboardBgColor,
+    dashboardBgOpacity,
+    isGroupsCompactLayout,
+    isSegmentsCompactLayout,
     manualSaveMode,
     segments,
     groupsOrder,
@@ -118,6 +170,7 @@ export function useCloudflarePush({
     automations,
     macros,
     voiceCommands,
+    wifiNetworks,
   ]);
 
   useEffect(() => {
@@ -145,11 +198,23 @@ export function useCloudflarePush({
     accent4,
     selectedFont,
     animationsEnabled,
+    animationsFps,
     headerAnimationType,
     headerTitle,
-    cuneiformOpacity,
-    cuneiformColor,
+    matrixDensity,
+    matrixSize,
+    matrixHoverSize,
+    matrixColor,
+    matrixMoving,
+    matrixMouseEffect,
+    matrixTwinkleEffect,
+    matrixTwinkleSpeed,
     headerPosition,
+    dashboardWidth,
+    dashboardBgColor,
+    dashboardBgOpacity,
+    isGroupsCompactLayout,
+    isSegmentsCompactLayout,
     segments,
     groupsOrder,
     groupConfigs,
@@ -157,6 +222,7 @@ export function useCloudflarePush({
     automations,
     macros,
     voiceCommands,
+    wifiNetworks,
   ]);
 
   return {

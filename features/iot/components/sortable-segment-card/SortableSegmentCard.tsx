@@ -8,7 +8,7 @@ import { SortableSegmentCardProps } from "./types";
 import PlaceholderCard from "./PlaceholderCard";
 import ActiveCard from "./ActiveCard";
 
-export default function SortableSegmentCard(props: SortableSegmentCardProps) {
+function SortableSegmentCard(props: SortableSegmentCardProps) {
   const {
     segment,
     parentGroupsCols = 1,
@@ -32,6 +32,7 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
       type: "Segment",
       group: segment.group || "Test",
     },
+    disabled: props.isOverlayItem,
   });
 
   const style = {
@@ -62,10 +63,37 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
   const isMobilePortrait = useMediaQuery(
     "(max-width: 767px) and (orientation: portrait)",
   );
+  
+  const currentDashboardWidth = props.dashboardWidth || 1;
   const effectiveParentCols = isMobilePortrait ? 1 : parentGroupsCols;
-  const densityFactor = rowOccupiedCols * effectiveParentCols;
+  const rawDensityFactor = rowOccupiedCols * effectiveParentCols;
+  
+  // Adjust density factor based on dashboard width to allow more elements on wider screens
+  // dashboardWidth: 1 (normal) to 5 (widest)
+  const widthReductionFactor = isMobilePortrait ? 0 : (currentDashboardWidth - 1) * 1.5;
+  const densityFactor = Math.max(1, rawDensityFactor - widthReductionFactor);
+  
+  const isMobileTwoCol = isMobilePortrait && rowOccupiedCols >= 2;
   const isUltraCompact = densityFactor >= 6;
-  const isCompact = densityFactor === 4 || densityFactor === 3;
+  const isCompact = densityFactor >= 3 && densityFactor < 6 || isMobileTwoCol;
+
+  if (props.isOverlayItem) {
+    return (
+      <div className="relative h-full">
+        <ActiveCard
+          {...props}
+          isCompact={isCompact}
+          isUltraCompact={isUltraCompact}
+          isMobileTwoCol={isMobileTwoCol}
+          densityFactor={densityFactor}
+          attributes={{}}
+          listeners={{}}
+          isSettingsOpen={isSettingsOpen}
+          setIsSettingsOpen={setIsSettingsOpen}
+        />
+      </div>
+    );
+  }
 
   if (isDragging) {
     return (
@@ -112,6 +140,7 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
         {...props}
         isCompact={isCompact}
         isUltraCompact={isUltraCompact}
+        isMobileTwoCol={isMobileTwoCol}
         densityFactor={densityFactor}
         attributes={attributes}
         listeners={listeners}
@@ -121,3 +150,17 @@ export default function SortableSegmentCard(props: SortableSegmentCardProps) {
     </div>
   );
 }
+
+export default React.memo(SortableSegmentCard, (prevProps, nextProps) => {
+  return (
+    prevProps.segment === nextProps.segment &&
+    prevProps.isPinOn === nextProps.isPinOn &&
+    prevProps.isLoadingIoT === nextProps.isLoadingIoT &&
+    prevProps.parentGroupsCols === nextProps.parentGroupsCols &&
+    prevProps.groupMaxCols === nextProps.groupMaxCols &&
+    prevProps.groupItemsCount === nextProps.groupItemsCount &&
+    prevProps.index === nextProps.index &&
+    prevProps.animationsEnabled === nextProps.animationsEnabled &&
+    prevProps.isOverlayItem === nextProps.isOverlayItem
+  );
+});

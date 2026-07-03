@@ -85,13 +85,13 @@ export default function AudioSection() {
           disabled={isLoading}
           className={`switch-toggle w-full p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between cursor-pointer text-right group ${
             isMusicOn
-              ? "bg-indigo-950/20 border-indigo-500/60 shadow-[0_0_12px_rgba(99,102,241,0.1)]"
+              ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] shadow-[var(--accent3-transparent)]"
               : "bg-[var(--card-bg-solid)] border-[var(--border-color)] hover:border-[var(--text-muted)]"
           } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
         >
           <div
             className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 flex items-center ${
-              isMusicOn ? "bg-indigo-500" : "bg-[var(--card-hover-bg)] border border-[var(--border-color)]"
+              isMusicOn ? "bg-[var(--accent3)]" : "bg-[var(--card-hover-bg)] border border-[var(--border-color)]"
             }`}
           >
             <div
@@ -104,7 +104,7 @@ export default function AudioSection() {
           <div className="text-right space-y-0.5 max-w-[70%]">
             <span
               className={`block text-sm font-bold transition-colors ${
-                isMusicOn ? "text-indigo-400" : "text-[var(--text-secondary)]"
+                isMusicOn ? "text-[var(--accent3)]" : "text-[var(--text-secondary)]"
               }`}
             >
               موزیک پس‌زمینه
@@ -117,7 +117,7 @@ export default function AudioSection() {
           <div
             className={`p-2.5 rounded-xl transition-all duration-300 ${
               isMusicOn
-                ? "bg-indigo-500/20 text-indigo-400 shadow-[inset_0_0_8px_rgba(99,102,241,0.2)]"
+                ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] shadow-[inset_0_0_8px_rgba(99,102,241,0.2)]"
                 : "bg-[var(--card-hover-bg)] text-[var(--text-muted)]"
             }`}
           >
@@ -138,8 +138,8 @@ export default function AudioSection() {
              onClick={() => handleSourceChange('api')}
              className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 ${
                musicSource === 'api' 
-                 ? "bg-indigo-950/20 border-indigo-500/50 text-indigo-400" 
-                 : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)]"
+                 ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)]" 
+                 : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4)]"
              }`}
            >
               <Globe className="w-5 h-5" />
@@ -152,8 +152,8 @@ export default function AudioSection() {
              onClick={() => handleSourceChange('local')}
              className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 ${
                musicSource === 'local' 
-                 ? "bg-emerald-950/20 border-emerald-500/50 text-emerald-400" 
-                 : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)]"
+                 ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)]" 
+                 : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4)]"
              }`}
            >
               <HardDrive className="w-5 h-5" />
@@ -166,8 +166,8 @@ export default function AudioSection() {
       {isMusicOn && trackInfo && (
         <div className="p-4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3 max-w-[70%]">
-               <div className="w-8 h-8 shrink-0 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                 <Music className="w-4 h-4 text-indigo-400" />
+               <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--accent3-transparent)] flex items-center justify-center">
+                 <Music className="w-4 h-4 text-[var(--accent3)]" />
                </div>
                <div className="text-right overflow-hidden">
                   <span className="block text-xs font-bold text-[var(--text-primary)] truncate" title={trackInfo.title}>{trackInfo.title}</span>
@@ -200,14 +200,14 @@ export default function AudioSection() {
                   target="_blank" 
                   rel="noreferrer"
                   title="دانلود موزیک"
-                  className="p-1.5 rounded bg-[var(--bg-main)] text-[var(--text-secondary)] hover:text-indigo-400 transition-colors"
+                  className="p-1.5 rounded bg-[var(--bg-main)] text-[var(--text-secondary)] hover:text-[var(--accent3)] transition-colors"
                 >
                   <Download className="w-3.5 h-3.5" />
                 </a>
               )}
               <div className="flex gap-1">
                   {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="w-1 bg-indigo-500/60 rounded-full animate-pulse" style={{ height: `${Math.random() * 12 + 6}px`, animationDelay: `${i * 0.1}s` }} />
+                      <div key={i} className="w-1 bg-[var(--accent3)] rounded-full animate-pulse opacity-60" style={{ height: `${Math.random() * 12 + 6}px`, animationDelay: `${i * 0.1}s` }} />
                   ))}
               </div>
             </div>

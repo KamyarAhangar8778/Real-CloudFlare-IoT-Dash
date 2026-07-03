@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic } from 'lucide-react';
 import { useVoiceCommand } from '@/features/iot/hooks/useVoiceCommand';
 import { useDashboard } from '@/features/dashboard/context/DashboardContext';
 import { motion } from 'motion/react';
@@ -14,7 +14,7 @@ function normalizePhonetics(text: string): string {
     .replace(/[تط]/g, 'ت')
     .replace(/ي/g, 'ی')
     .replace(/ك/g, 'ک')
-    .replace(/[\u200C\s]+/g, ' ') // یکپارچه‌سازی فاصله‌ها و نیم‌فاصله‌ها
+    .replace(/[\u200C\s]+/g, ' ')
     .trim();
 }
 
@@ -46,24 +46,21 @@ function getSimilarity(a: string, b: string): number {
   return (maxLen - dist) / maxLen;
 }
 
-interface VoiceCommandButtonProps {
-  animationsEnabled?: boolean;
-  variant: "vertical" | "horizontal";
-  isSidebarCollapsed?: boolean;
-}
-
-export default function VoiceCommandButton({ animationsEnabled, variant, isSidebarCollapsed }: VoiceCommandButtonProps) {
+export default function MobileVoiceCommandButton() {
   const { isListening, transcript, startListening, stopListening } = useVoiceCommand();
-  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState, setIsMenuOpen, setActiveSettingsTab } = useDashboard();
+  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState, animationsEnabled, activeGroupId, activeSegmentId } = useDashboard();
+
+  const isDragging = !!activeGroupId || !!activeSegmentId;
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     if (e.currentTarget && e.currentTarget.setPointerCapture) {
       e.currentTarget.setPointerCapture(e.pointerId);
     }
-    setIsMenuOpen(true);
-    setActiveSettingsTab("voice-commands");
-    startListening();
+    // We don't open the settings menu here for the mobile floating button
+    startListening((finalTranscript) => {
+      executeCommand(finalTranscript);
+    });
   };
 
   const executeCommand = (finalTranscript: string) => {
@@ -72,7 +69,6 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
     
     if (!cleanTranscript) return;
 
-    // 1. Check Custom Voice Commands first (Fuzzy Matching > 80%)
     let bestMatchCmd = null;
     let highestSim = 0;
     
@@ -105,8 +101,6 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       }
     }
 
-    // 2. Fallback to parsing "<Segment Name> روشن/خاموش"
-    let targetSegment = null;
     let targetState: boolean | null = null;
     let actionFound = false;
     let segmentName = "";
@@ -122,7 +116,6 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
     }
 
     if (actionFound) {
-      // Fuzzy match for segment name too
       const normalizedSegName = normalizePhonetics(segmentName);
       let bestSeg = null;
       let highestSegSim = 0;
@@ -154,8 +147,6 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
       } catch (err) {}
     }
     stopListening();
-    // Execute immediately using the current transcript
-    executeCommand(transcript);
   };
 
   const handlePointerCancel = (e: React.PointerEvent) => {
@@ -168,49 +159,24 @@ export default function VoiceCommandButton({ animationsEnabled, variant, isSideb
     stopListening();
   };
 
-  if (variant === "vertical" && !isSidebarCollapsed) {
-    return (
-      <button
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
-        onContextMenu={(e) => e.preventDefault()}
-        style={{ touchAction: 'none' }}
-        className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 transform active:scale-[0.98] group select-none ${
-          isListening 
-            ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)]" 
-            : "border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-blue-500/50 text-[var(--text-secondary)] md:hover:text-blue-400"
-        }`}
-      >
-        <div className="flex items-center gap-2.5">
-          <div className={`p-1.5 rounded-lg transition-all ${isListening ? "bg-[var(--accent4)] text-white" : "bg-blue-500/10 text-blue-500"}`}>
-            <Mic className={`w-4 h-4 ${isListening && animationsEnabled ? "animate-pulse" : ""}`} />
-          </div>
-          <span className="text-xs font-semibold">{isListening ? "در حال شنیدن..." : "فرمان صوتی (نگه دارید)"}</span>
-        </div>
-        <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
-          Voice
-        </span>
-      </button>
-    );
-  }
+  if (isDragging) return null;
 
   return (
     <motion.button
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.9 }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
       onContextMenu={(e) => e.preventDefault()}
       style={{ touchAction: 'none' }}
-      className={`p-2 md:p-2.5 transition-all border rounded-xl flex justify-center items-center group select-none ${
+      className={`sm:hidden fixed bottom-6 left-6 z-50 p-4 rounded-full shadow-lg flex justify-center items-center select-none transition-all duration-300 ${
         isListening
-          ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)]"
-          : "bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border-[var(--border-color)] text-[var(--text-secondary)] md:hover:text-blue-400 md:hover:border-blue-500/50"
+          ? "bg-[var(--accent4)] shadow-[0_0_20px_var(--accent4-transparent)] text-white"
+          : "bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] shadow-[0_4px_15px_-5px_var(--border-color)]"
       }`}
       title="فرمان صوتی (نگه دارید)"
     >
-      <Mic className={`w-4 h-4 transition-transform duration-300 ${isListening && animationsEnabled ? "animate-pulse scale-110" : animationsEnabled ? "md:group-hover:scale-110" : ""}`} />
+      <Mic className={`w-6 h-6 ${isListening && animationsEnabled ? "animate-pulse" : ""}`} />
     </motion.button>
   );
 }

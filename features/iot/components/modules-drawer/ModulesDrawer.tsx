@@ -30,25 +30,27 @@ export default function ModulesDrawer({
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={backdropStyle}
-            className="fixed inset-0 z-50 cursor-pointer"
-          />
-          <ModulesDrawerInner
-            onClose={onClose}
-            onAddSegment={onAddSegment}
-            segments={segments}
-            onRemoveSegment={onRemoveSegment}
-            animationsEnabled={animationsEnabled}
-            accent3={accent3}
-            accent4={accent4}
-          />
-        </>
+        <motion.div
+          key="modules-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={backdropStyle}
+          className="fixed inset-0 z-50 cursor-pointer"
+        />
+      )}
+      {isOpen && (
+        <ModulesDrawerInner
+          key="modules-panel"
+          onClose={onClose}
+          onAddSegment={onAddSegment}
+          segments={segments}
+          onRemoveSegment={onRemoveSegment}
+          animationsEnabled={animationsEnabled}
+          accent3={accent3}
+          accent4={accent4}
+        />
       )}
     </AnimatePresence>
   );

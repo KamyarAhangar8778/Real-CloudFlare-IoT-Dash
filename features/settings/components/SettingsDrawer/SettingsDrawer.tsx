@@ -16,7 +16,7 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
   const activeTab = propActiveTab !== undefined ? propActiveTab : localActiveTab;
   const setActiveTab = propSetActiveTab !== undefined ? propSetActiveTab : setLocalActiveTab;
 
-  const settingsSignature = `${accent3}-${accent4}-${props.selectedFont}-${animationsEnabled}-${props.headerAnimationType}-${props.headerTitle}-${props.cuneiformOpacity}-${props.cuneiformColor}-${props.headerPosition}-${isDark}`;
+  const settingsSignature = `${accent3}-${accent4}-${props.selectedFont}-${animationsEnabled}-${props.animationsFps}-${props.headerAnimationType}-${props.headerTitle}-${props.matrixDensity}-${props.matrixSize}-${props.matrixHoverSize}-${props.matrixOpacity}-${props.matrixColor}-${props.matrixMoving}-${props.matrixMouseEffect}-${props.matrixTwinkleEffect}-${props.matrixTwinkleSpeed}-${props.headerPosition}-${isDark}`;
   const { isAdjusting } = useSettingsAdjuster(isOpen, settingsSignature);
 
   const backdropBackground = isAdjusting
@@ -35,20 +35,22 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={backdropStyle}
-            className="fixed inset-0 z-50 cursor-pointer"
-          />
-
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+        <motion.div
+          key="settings-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={backdropStyle}
+          className="fixed inset-0 z-50 cursor-pointer"
+        />
+      )}
+      {isOpen && (
+        <motion.div
+          key="settings-panel"
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 24, stiffness: 200 }}
             className="fixed top-0 right-0 h-full w-full max-w-sm bg-gradient-to-b from-[var(--drawer-gradient-from)] to-[var(--drawer-gradient-to)] border-l border-accent3-medium rounded-l-[2.5rem] shadow-2xl z-50 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] px-6 py-8 text-right flex flex-col justify-between transition-colors duration-500"
           >
@@ -80,7 +82,6 @@ export default function SettingsDrawer(props: SettingsDrawerProps) {
 
             <SettingsFooter />
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   );

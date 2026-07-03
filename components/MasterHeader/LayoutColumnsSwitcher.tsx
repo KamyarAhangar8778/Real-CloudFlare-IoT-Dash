@@ -26,7 +26,7 @@ export default function LayoutColumnsSwitcher({
               className={`px-2.5 py-0.5 rounded text-[10px] font-bold transition-all ${
                 groupsCols === cols
                   ? "bg-[var(--accent3)] text-black"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                  : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"
               }`}
             >
               {cols} ستون
@@ -45,7 +45,7 @@ export default function LayoutColumnsSwitcher({
         className={`p-1.5 flex items-center justify-center rounded-lg transition-all ${
           groupsCols === 1
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"
         }`}
         title="نمایش تک ستونه"
       >
@@ -60,7 +60,7 @@ export default function LayoutColumnsSwitcher({
         className={`p-1.5 flex items-center justify-center rounded-lg transition-all ${
           groupsCols === 2
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"
         }`}
         title="نمایش دو ستونه"
       >
@@ -77,7 +77,7 @@ export default function LayoutColumnsSwitcher({
         className={`p-1.5 flex items-center justify-center rounded-lg transition-all ${
           groupsCols === 3
             ? "bg-[var(--accent3-transparent)] text-[var(--accent3)] font-bold"
-            : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            : "text-[var(--text-muted)] md:hover:text-[var(--text-primary)]"
         }`}
         title="نمایش سه ستونه"
       >

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ICON_MAP, AVAILABLE_ICONS } from "@/features/iot/utils/icons";
+import { ICON_MAP, AVAILABLE_ICONS, SUGGESTED_EMOJIS } from "@/features/iot/utils/icons";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface FormDetailsInputProps {
@@ -28,6 +28,8 @@ export default function FormDetailsInput({
   const [isNewGroup, setIsNewGroup] = useState(existingGroups.length === 0);
   const [showSegmentIcons, setShowSegmentIcons] = useState(false);
   const [showGroupIcons, setShowGroupIcons] = useState(false);
+  const [segmentIconMode, setSegmentIconMode] = useState<"emoji" | "lucide">("lucide");
+  const [groupIconMode, setGroupIconMode] = useState<"emoji" | "lucide">("lucide");
 
   return (
     <>
@@ -60,30 +62,66 @@ export default function FormDetailsInput({
           {showSegmentIcons ? <ChevronUp className="w-4 h-4 opacity-50" /> : <ChevronDown className="w-4 h-4 opacity-50" />}
           <div className="flex items-center gap-2">
             <span>{segmentIcon ? "آیکون انتخاب شد" : "انتخاب آیکون"}</span>
-            {segmentIcon && ICON_MAP[segmentIcon] && React.createElement(ICON_MAP[segmentIcon], { className: "w-4 h-4 text-[var(--accent3)]" })}
+            {segmentIcon && (
+              ICON_MAP[segmentIcon] ? 
+              React.createElement(ICON_MAP[segmentIcon], { className: "w-4 h-4 text-[var(--accent3)]" }) :
+              <span className="text-lg leading-none">{segmentIcon}</span>
+            )}
           </div>
         </button>
         
         {showSegmentIcons && (
-          <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl grid grid-cols-6 gap-2 max-h-32 overflow-y-auto shadow-sm">
-            <button
-              type="button"
-              onClick={() => { setSegmentIcon(""); setShowSegmentIcons(false); }}
-              className={`p-2 rounded-lg flex items-center justify-center transition-all text-[9px] ${!segmentIcon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-gray-500"}`}
-            >
-              بدون آیکون
-            </button>
-            {AVAILABLE_ICONS.map((iconName) => (
-              <button
-                key={iconName}
+          <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl space-y-3 shadow-sm">
+            <div className="flex gap-2 p-1 bg-[var(--card-bg)] rounded-xl border border-[var(--border-color)]">
+              <button 
                 type="button"
-                onClick={() => { setSegmentIcon(iconName); setShowSegmentIcons(false); }}
-                className={`p-2 rounded-lg flex items-center justify-center transition-all ${segmentIcon === iconName ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
-                title={iconName}
+                onClick={() => setSegmentIconMode("emoji")} 
+                className={`flex-1 text-[11px] font-bold py-1.5 rounded-lg transition-colors ${segmentIconMode === "emoji" ? "bg-[var(--accent3)] text-white shadow-sm" : "bg-[var(--bg-primary)] hover:text-[var(--accent3)] text-[var(--text-secondary)]"}`}
               >
-                {React.createElement(ICON_MAP[iconName], { className: "w-4 h-4" })}
+                ایموجی
               </button>
-            ))}
+              <button 
+                type="button"
+                onClick={() => setSegmentIconMode("lucide")} 
+                className={`flex-1 text-[11px] font-bold py-1.5 rounded-lg transition-colors ${segmentIconMode === "lucide" ? "bg-[var(--accent3)] text-white shadow-sm" : "bg-[var(--bg-primary)] hover:text-[var(--accent3)] text-[var(--text-secondary)]"}`}
+              >
+                آیکون ساده
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-6 gap-2 max-h-32 overflow-y-auto custom-scrollbar pr-1">
+              <button
+                type="button"
+                onClick={() => { setSegmentIcon(""); setShowSegmentIcons(false); }}
+                className={`p-2 rounded-lg flex items-center justify-center transition-all text-[9px] col-span-2 ${!segmentIcon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+              >
+                بدون آیکون
+              </button>
+              {segmentIconMode === "emoji" ? (
+                SUGGESTED_EMOJIS.map((icon) => (
+                  <button
+                    key={icon}
+                    type="button"
+                    onClick={() => { setSegmentIcon(icon); setShowSegmentIcons(false); }}
+                    className={`p-2 rounded-lg flex items-center justify-center text-lg leading-none transition-all ${segmentIcon === icon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+                  >
+                    {icon}
+                  </button>
+                ))
+              ) : (
+                AVAILABLE_ICONS.map((iconName) => (
+                  <button
+                    key={iconName}
+                    type="button"
+                    onClick={() => { setSegmentIcon(iconName); setShowSegmentIcons(false); }}
+                    className={`p-2 rounded-lg flex items-center justify-center transition-all ${segmentIcon === iconName ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+                    title={iconName}
+                  >
+                    {React.createElement(ICON_MAP[iconName], { className: "w-4 h-4" })}
+                  </button>
+                ))
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -112,7 +150,7 @@ export default function FormDetailsInput({
             dir="rtl"
           >
             {existingGroups.map((group) => (
-              <option key={group} value={group} className="bg-slate-900">{group}</option>
+              <option key={group} value={group} className="bg-[var(--bg-main)]">{group}</option>
             ))}
           </select>
         ) : (
@@ -138,30 +176,66 @@ export default function FormDetailsInput({
                 {showGroupIcons ? <ChevronUp className="w-4 h-4 opacity-50" /> : <ChevronDown className="w-4 h-4 opacity-50" />}
                 <div className="flex items-center gap-2">
                   <span>{groupIcon ? "آیکون انتخاب شد" : "انتخاب آیکون"}</span>
-                  {groupIcon && ICON_MAP[groupIcon] && React.createElement(ICON_MAP[groupIcon], { className: "w-4 h-4 text-[var(--accent3)]" })}
+                  {groupIcon && (
+                    ICON_MAP[groupIcon] ? 
+                    React.createElement(ICON_MAP[groupIcon], { className: "w-4 h-4 text-[var(--accent3)]" }) :
+                    <span className="text-lg leading-none">{groupIcon}</span>
+                  )}
                 </div>
               </button>
               
               {showGroupIcons && (
-                <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl grid grid-cols-6 gap-2 max-h-32 overflow-y-auto shadow-sm">
-                  <button
-                    type="button"
-                    onClick={() => { setGroupIcon(""); setShowGroupIcons(false); }}
-                    className={`p-2 rounded-lg flex items-center justify-center transition-all text-[9px] ${!groupIcon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-gray-500"}`}
-                  >
-                    بدون آیکون
-                  </button>
-                  {AVAILABLE_ICONS.map((iconName) => (
-                    <button
-                      key={iconName}
+                <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-xl space-y-3 shadow-sm">
+                  <div className="flex gap-2 p-1 bg-[var(--card-bg)] rounded-xl border border-[var(--border-color)]">
+                    <button 
                       type="button"
-                      onClick={() => { setGroupIcon(iconName); setShowGroupIcons(false); }}
-                      className={`p-2 rounded-lg flex items-center justify-center transition-all ${groupIcon === iconName ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
-                      title={iconName}
+                      onClick={() => setGroupIconMode("emoji")} 
+                      className={`flex-1 text-[11px] font-bold py-1.5 rounded-lg transition-colors ${groupIconMode === "emoji" ? "bg-[var(--accent3)] text-white shadow-sm" : "bg-[var(--bg-primary)] hover:text-[var(--accent3)] text-[var(--text-secondary)]"}`}
                     >
-                      {React.createElement(ICON_MAP[iconName], { className: "w-4 h-4" })}
+                      ایموجی
                     </button>
-                  ))}
+                    <button 
+                      type="button"
+                      onClick={() => setGroupIconMode("lucide")} 
+                      className={`flex-1 text-[11px] font-bold py-1.5 rounded-lg transition-colors ${groupIconMode === "lucide" ? "bg-[var(--accent3)] text-white shadow-sm" : "bg-[var(--bg-primary)] hover:text-[var(--accent3)] text-[var(--text-secondary)]"}`}
+                    >
+                      آیکون ساده
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-6 gap-2 max-h-32 overflow-y-auto custom-scrollbar pr-1">
+                    <button
+                      type="button"
+                      onClick={() => { setGroupIcon(""); setShowGroupIcons(false); }}
+                      className={`p-2 rounded-lg flex items-center justify-center transition-all text-[9px] col-span-2 ${!groupIcon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+                    >
+                      بدون آیکون
+                    </button>
+                    {groupIconMode === "emoji" ? (
+                      SUGGESTED_EMOJIS.map((icon) => (
+                        <button
+                          key={icon}
+                          type="button"
+                          onClick={() => { setGroupIcon(icon); setShowGroupIcons(false); }}
+                          className={`p-2 rounded-lg flex items-center justify-center text-lg leading-none transition-all ${groupIcon === icon ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+                        >
+                          {icon}
+                        </button>
+                      ))
+                    ) : (
+                      AVAILABLE_ICONS.map((iconName) => (
+                        <button
+                          key={iconName}
+                          type="button"
+                          onClick={() => { setGroupIcon(iconName); setShowGroupIcons(false); }}
+                          className={`p-2 rounded-lg flex items-center justify-center transition-all ${groupIcon === iconName ? "bg-[var(--accent3)] text-black" : "hover:bg-white/10 text-[var(--text-secondary)]"}`}
+                          title={iconName}
+                        >
+                          {React.createElement(ICON_MAP[iconName], { className: "w-4 h-4" })}
+                        </button>
+                      ))
+                    )}
+                  </div>
                 </div>
               )}
             </div>

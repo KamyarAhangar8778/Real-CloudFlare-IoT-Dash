@@ -7,6 +7,7 @@ interface CardBodyProps {
   isPinOn: boolean;
   isCompact: boolean;
   isUltraCompact: boolean;
+  isMobileTwoCol?: boolean;
   densityFactor?: number;
   mode: "switch" | "push";
   buttonProps: any;
@@ -18,6 +19,7 @@ export default function CardBody({
   isPinOn,
   isCompact,
   isUltraCompact,
+  isMobileTwoCol,
   densityFactor = 0,
   mode,
   buttonProps,
@@ -53,6 +55,18 @@ export default function CardBody({
             buttonProps={buttonProps}
             animationsEnabled={animationsEnabled}
             isUltraCompact={true}
+          />
+        </div>
+      ) : isMobileTwoCol ? (
+        <div className="flex flex-col items-center justify-center w-full bg-[var(--card-bg-solid)] p-2 border border-[var(--border-color)] rounded-xl overflow-hidden h-full gap-2">
+          <span className="text-[10px] font-sans font-bold theme-text-secondary line-clamp-2 leading-tight text-center w-full" title={segment.title}>
+            {segment.title}
+          </span>
+          <PinToggle
+            isPinOn={isPinOn}
+            buttonProps={buttonProps}
+            animationsEnabled={animationsEnabled}
+            isVertical={false}
           />
         </div>
       ) : isCompact ? (

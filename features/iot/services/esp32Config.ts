@@ -13,12 +13,26 @@ export interface EspConfig {
     accent_color_4: string; // Secondary status/emerald color
     font_family: string; // e.g. "vazir", "lalezar", "cairo", "mono"
     animations_enabled: boolean;
+    animations_fps?: number;
     header_animation: "fade" | "chase";
     header_title: string;
-    cuneiform_opacity: number;
-    cuneiform_color: "accent3" | "accent4" | "white" | "muted";
+    matrix_density: number;
+    matrix_size: number;
+    matrix_hover_size: number;
+    matrix_color: string;
+    matrix_moving: boolean;
+    matrix_mouse_effect: boolean;
+    matrix_twinkle_effect?: boolean;
+    matrix_twinkle_speed?: number;
+    cuneiform_opacity?: number; // legacy
+    cuneiform_color?: "accent3" | "accent4" | "white" | "muted"; // legacy
     header_position?: "top" | "left";
     manual_save_mode?: boolean;
+    dashboard_width?: 1 | 2 | 3 | 4 | 5;
+    dashboard_bg_color?: string;
+    dashboard_bg_opacity?: number;
+    groups_compact_layout?: boolean;
+    segments_compact_layout?: boolean;
   };
   layout: {
     groups_order: string[];
@@ -72,6 +86,11 @@ export interface EspConfig {
     time: string; // "HH:MM" in 24h format
     days: number[]; // 0=Sun, 1=Mon, etc.
     enabled: boolean;
+    repeatCount?: number;
+    conditionType?: 'time' | 'weather';
+    city?: string;
+    temperatureThreshold?: number;
+    temperatureCondition?: 'greater' | 'less';
     actions: Array<{
       targetPin?: string;
       targetMacro?: string;
@@ -103,6 +122,13 @@ export interface EspConfig {
     base_topic: string;
     qos: 0 | 1 | 2;
   };
+  wifi?: {
+    networks: Array<{
+      id: string;
+      ssid: string;
+      password?: string;
+    }>;
+  };
   /** آدرس ورکر Cloudflare - ذخیره در KV تا بعد از refresh باقی بماند */
   worker_url?: string;
 }
@@ -122,43 +148,28 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     accent_color_4: "#10B981",
     font_family: "vazir",
     animations_enabled: true,
+    animations_fps: 60,
     header_animation: "fade",
     header_title: "سامانه هوشمند پادشاهی هخامنش",
-    cuneiform_opacity: 0.08,
-    cuneiform_color: "accent3",
+    matrix_density: 40,
+    matrix_size: 4,
+    matrix_hover_size: 3,
+    matrix_color: "#D4AF37",
+    matrix_moving: true,
+    matrix_mouse_effect: true,
+    matrix_twinkle_effect: false,
+    matrix_twinkle_speed: 50,
     header_position: "top",
     manual_save_mode: false,
+    groups_compact_layout: false,
+    segments_compact_layout: false,
   },
   layout: {
-    groups_order: ["بخش فرماندهی"],
+    groups_order: [],
     groups_cols: 1,
-    group_configs: {
-      "بخش فرماندهی": { maxCols: 3 },
-    },
+    group_configs: {},
   },
-  segments: [
-    {
-      id: "control_lamp",
-      type: "روشنایی تالار آپادانا",
-      pin: "2",
-      title: "روشنایی تالار آپادانا",
-      group: "بخش فرماندهی",
-    },
-    {
-      id: "main_gate",
-      type: "دروازه ملل کلاچ",
-      pin: "4",
-      title: "دروازه ملل کلاچ",
-      group: "بخش فرماندهی",
-    },
-    {
-      id: "water_pump",
-      type: "پمپ آب پردیس شاهنشاهی",
-      pin: "12",
-      title: "پمپ حوض‌های پردیس",
-      group: "بخش فرماندهی",
-    },
-  ],
+  segments: [],
   automations: [],
   macros: [],
   voiceCommands: [],
@@ -168,6 +179,9 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     broker_port: 1883,
     base_topic: "KamyarIoT/Achaemenid",
     qos: 1,
+  },
+  wifi: {
+    networks: [],
   },
 };
 
