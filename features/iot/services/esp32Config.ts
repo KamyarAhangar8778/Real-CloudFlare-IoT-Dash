@@ -87,6 +87,7 @@ export interface EspConfig {
     days: number[]; // 0=Sun, 1=Mon, etc.
     enabled: boolean;
     repeatCount?: number;
+    intervalMinutes?: number;
     conditionType?: 'time' | 'weather';
     city?: string;
     temperatureThreshold?: number;

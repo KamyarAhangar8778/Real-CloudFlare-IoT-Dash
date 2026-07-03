@@ -39,6 +39,9 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
   const [city, setCity] = useState("");
   const [temperatureThreshold, setTemperatureThreshold] = useState<number | "">("");
   const [temperatureCondition, setTemperatureCondition] = useState<"greater" | "less">("greater");
+  
+  const [intervalMinutes, setIntervalMinutes] = useState<number | "">("");
+  const [hasWeatherCondition, setHasWeatherCondition] = useState<boolean>(false);
 
   // Actions state
   const [actions, setActions] = useState<Array<{
@@ -58,6 +61,8 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     setCity("");
     setTemperatureThreshold("");
     setTemperatureCondition("greater");
+    setIntervalMinutes("");
+    setHasWeatherCondition(false);
     setActions([]);
     setEditingId(null);
   };
@@ -68,14 +73,27 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     setTime(auto.time || "");
     setDays(auto.days ? [...auto.days] : []);
     setRepeatCount(auto.repeatCount || "");
-    if (auto.conditionType === "weather") {
-      setAutoType("weather");
-      setCity(auto.city || "");
-      setTemperatureThreshold(auto.temperatureThreshold || "");
+    setIntervalMinutes(auto.intervalMinutes || "");
+    
+    if (auto.city && auto.temperatureThreshold !== undefined) {
+      setHasWeatherCondition(true);
+      setCity(auto.city);
+      setTemperatureThreshold(auto.temperatureThreshold);
       setTemperatureCondition(auto.temperatureCondition || "greater");
+    } else {
+      setHasWeatherCondition(false);
+      setCity("");
+      setTemperatureThreshold("");
+    }
+
+    if (auto.intervalMinutes) {
+      setAutoType("weather");
+    } else if (auto.repeatCount) {
+      setAutoType("timer");
     } else {
       setAutoType("schedule");
     }
+    
     setActions(auto.actions ? [...auto.actions] : []);
   };
 
@@ -87,6 +105,8 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
     let finalCity = city;
     let finalTempThresh = typeof temperatureThreshold === 'number' ? temperatureThreshold : undefined;
     let finalTempCond = temperatureCondition;
+
+    let finalIntervalMinutes = typeof intervalMinutes === 'number' && intervalMinutes > 0 ? intervalMinutes : undefined;
 
     if (autoType === "timer") {
       const dHours = Number(delayHours) || 0;
@@ -105,8 +125,8 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
       finalDays = [now.getDay()]; // 0=Sun, 1=Mon, etc. Matches DAYS_MAP
       finalRepeatCount = 1;
     } else if (autoType === "weather") {
-      if (!city || finalTempThresh === undefined) {
-        showToast("لطفاً شهر و دمای مورد نظر را مشخص کنید.", "error");
+      if (!city || finalTempThresh === undefined || !finalIntervalMinutes) {
+        showToast("لطفاً شهر، شرط دما و دوره بررسی را مشخص کنید.", "error");
         return;
       }
       finalConditionType = "weather";
@@ -117,6 +137,16 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
         showToast("لطفاً زمان و روزهای هفته را مشخص کنید.", "error");
         return;
       }
+    }
+
+    if ((autoType === "timer" || autoType === "schedule") && hasWeatherCondition) {
+      if (!city || finalTempThresh === undefined) {
+        showToast("لطفاً شهر و شرط دما را مشخص کنید.", "error");
+        return;
+      }
+      finalConditionType = "weather";
+    } else if (autoType !== "weather") {
+      finalConditionType = "time";
     }
 
     if (!title) {
@@ -135,6 +165,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
       time: finalTime,
       days: finalDays,
       repeatCount: finalRepeatCount,
+      intervalMinutes: finalIntervalMinutes,
       conditionType: finalConditionType,
       city: finalCity,
       temperatureThreshold: finalTempThresh,
@@ -272,7 +303,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                     </button>
                   </div>
 
-                  {autoType === "schedule" ? (
+                  {autoType === "schedule" && (
                     <>
                       <div className="col-span-2 md:col-span-1">
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">زمان (ساعت):</label>
@@ -313,7 +344,65 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                         </div>
                       </div>
                     </>
-                  ) : autoType === "weather" ? (
+                  )}
+
+                  {autoType === "timer" && (
+                    <>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (ساعت):</label>
+                        <input 
+                          type="number" 
+                          min="0"
+                          value={delayHours}
+                          onChange={(e) => setDelayHours(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="مثال: 10"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                        />
+                      </div>
+                      <div className="col-span-2 md:col-span-1">
+                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (دقیقه):</label>
+                        <input 
+                          type="number" 
+                          min="0"
+                          max="59"
+                          value={delayMinutes}
+                          onChange={(e) => setDelayMinutes(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="مثال: 30"
+                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {autoType === "weather" && (
+                    <div className="col-span-2">
+                      <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">دوره بررسی (دقیقه):</label>
+                      <input 
+                        type="number" 
+                        min="1"
+                        value={intervalMinutes}
+                        onChange={(e) => setIntervalMinutes(e.target.value === "" ? "" : Number(e.target.value))}
+                        placeholder="مثال: 60"
+                        className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
+                      />
+                    </div>
+                  )}
+
+                  {(autoType === "timer" || autoType === "schedule") && (
+                    <div className="col-span-2 pt-2 border-t border-[var(--border-color)] mt-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={hasWeatherCondition}
+                          onChange={(e) => setHasWeatherCondition(e.target.checked)}
+                          className="w-4 h-4 text-[var(--accent3)] rounded focus:ring-[var(--accent3)]"
+                        />
+                        <span className="text-sm font-medium text-[var(--text-primary)]">اضافه کردن شرط آب‌وهوایی (اختیاری)</span>
+                      </label>
+                    </div>
+                  )}
+
+                  {(autoType === "weather" || hasWeatherCondition) && (
                     <>
                       <div className="col-span-2">
                         <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">نام شهر (انگلیسی):</label>
@@ -349,32 +438,6 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                             dir="ltr"
                           />
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="col-span-2 md:col-span-1">
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (ساعت):</label>
-                        <input 
-                          type="number" 
-                          min="0"
-                          value={delayHours}
-                          onChange={(e) => setDelayHours(e.target.value === "" ? "" : Number(e.target.value))}
-                          placeholder="مثال: 10"
-                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                        />
-                      </div>
-                      <div className="col-span-2 md:col-span-1">
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">تاخیر (دقیقه):</label>
-                        <input 
-                          type="number" 
-                          min="0"
-                          max="59"
-                          value={delayMinutes}
-                          onChange={(e) => setDelayMinutes(e.target.value === "" ? "" : Number(e.target.value))}
-                          placeholder="مثال: 30"
-                          className="w-full bg-[var(--card-bg)] border border-[var(--border-color)] p-2.5 rounded-xl focus:outline-none focus:border-[var(--accent3)] text-sm transition-colors text-[var(--text-primary)]"
-                        />
                       </div>
                     </>
                   )}
@@ -517,24 +580,31 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
 
                           {/* Card Body - Time & Details */}
                           <div className="flex items-center justify-between mb-4 bg-[var(--card-hover-bg)] p-3 rounded-xl">
-                            {auto.conditionType === "weather" ? (
+                            {auto.intervalMinutes ? (
                               <div className="flex items-center gap-2">
                                 <Thermometer className="w-5 h-5 text-[var(--accent3)]" />
                                 <span className="text-sm font-bold text-[var(--text-primary)]">
                                   {auto.city}: دما {auto.temperatureCondition === "greater" ? "بیشتر از" : "کمتر از"} <span className="font-mono text-lg" dir="ltr">{auto.temperatureThreshold}°C</span>
+                                  <span className="text-xs text-[var(--text-secondary)] block mt-1">هر {auto.intervalMinutes} دقیقه</span>
                                 </span>
                               </div>
                             ) : (
                               <div className="flex items-center gap-2">
                                 <Clock className="w-5 h-5 text-[var(--accent3)]" />
                                 <span className="text-xl font-bold font-mono text-[var(--text-primary)] tracking-wider" dir="ltr">{auto.time}</span>
+                                {auto.conditionType === "weather" && auto.city && (
+                                  <div className="flex flex-col mr-2 text-[10px] text-[var(--text-secondary)]">
+                                    <span>شرط: {auto.city}</span>
+                                    <span>دما {auto.temperatureCondition === "greater" ? ">" : "<"} {auto.temperatureThreshold}°C</span>
+                                  </div>
+                                )}
                               </div>
                             )}
                             
                             <div className="flex flex-col items-end gap-1.5">
-                              {auto.conditionType === "weather" ? (
+                              {auto.intervalMinutes ? (
                                 <span className="text-[10px] bg-blue-500/15 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md font-bold">
-                                  دما محور
+                                  دما محور (دوره‌ای)
                                 </span>
                               ) : auto.repeatCount ? (
                                 <span className="text-[10px] font-bold bg-rose-500/15 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded-md flex items-center gap-1">
@@ -547,7 +617,7 @@ export default function AutomationsDrawer({ isOpen, onClose, isDark, animationsE
                                 </span>
                               )}
                               
-                              {auto.conditionType !== "weather" && (
+                              {!auto.intervalMinutes && auto.days && auto.days.length > 0 && (
                                 <div className="flex flex-wrap justify-end gap-1 max-w-[150px]">
                                   {auto.days.map(d => (
                                     <span key={d} className="text-[9px] bg-[var(--card-bg)] text-[var(--text-secondary)] border border-[var(--border-color)] px-1.5 py-0.5 rounded">
