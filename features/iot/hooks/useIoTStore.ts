@@ -291,6 +291,32 @@ export const useIoTStore = create<IoTStoreState>((set, get) => ({
       wifiNetworks: config.wifi?.networks || [],
     });
 
+    if (config.mqtt && typeof window !== "undefined") {
+      const { broker_ws_url, base_topic, qos } = config.mqtt;
+      let changed = false;
+      
+      if (broker_ws_url && broker_ws_url !== localStorage.getItem("mqtt_broker_url")) {
+        localStorage.setItem("mqtt_broker_url", broker_ws_url);
+        changed = true;
+      }
+      if (base_topic && base_topic !== localStorage.getItem("mqtt_base_topic")) {
+        localStorage.setItem("mqtt_base_topic", base_topic);
+        changed = true;
+      }
+      if (qos !== undefined && qos.toString() !== localStorage.getItem("mqtt_qos")) {
+        localStorage.setItem("mqtt_qos", qos.toString());
+        changed = true;
+      }
+      
+      if (changed) {
+        import("@/features/iot/services/mqttService")
+          .then((m) => {
+            if (m.reconnectMqtt) m.reconnectMqtt();
+          })
+          .catch((e) => console.error("Failed to load mqttService for reconnect:", e));
+      }
+    }
+
     const importedPins: Record<string, boolean> = {};
     config.segments.forEach((s) => {
       if (s.pin && s.state !== undefined) {
