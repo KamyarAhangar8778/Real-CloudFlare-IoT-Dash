@@ -4,7 +4,7 @@ import DrawerHeader from "./DrawerHeader";
 import AddSegmentForm from "./AddSegmentForm";
 import SegmentList from "./SegmentList";
 import ConnectionNote from "./ConnectionNote";
-import { ModulesDrawerProps } from "./types";
+import { ModulesDrawerProps } from "../core/types";
 
 const ModulesDrawerInner = forwardRef<HTMLDivElement, Omit<ModulesDrawerProps, "isOpen" | "isDark">>(({
   onClose,

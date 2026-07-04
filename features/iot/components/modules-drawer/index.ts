@@ -1,3 +1,3 @@
 export { default } from "./ModulesDrawer";
-export * from "./types";
-export * from "./constants";
+export * from "./core/types";
+export * from "./core/constants";

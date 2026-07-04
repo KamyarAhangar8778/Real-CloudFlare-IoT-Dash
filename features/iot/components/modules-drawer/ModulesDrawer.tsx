@@ -2,8 +2,8 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ModulesDrawerProps } from "./types";
-import ModulesDrawerInner from "./ModulesDrawerInner";
+import { ModulesDrawerProps } from "./core/types";
+import ModulesDrawerInner from "./components/ModulesDrawerInner";
 
 export default function ModulesDrawer({
   isOpen,

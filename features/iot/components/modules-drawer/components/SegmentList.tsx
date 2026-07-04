@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sliders, Trash2 } from "lucide-react";
-import { Segment } from "./types";
+import { Segment } from "../core/types";
 
 interface SegmentListProps {
   segments: Segment[];
