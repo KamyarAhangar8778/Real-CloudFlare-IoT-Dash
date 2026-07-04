@@ -3,7 +3,7 @@
 import React from "react";
 import WelcomePortal from "@/features/iot/components/WelcomePortal";
 import IoTWorkspace from "@/features/iot/components/IoTWorkspace";
-import WorkspaceSkeleton from "@/features/iot/components/workspace/WorkspaceSkeleton";
+import { WorkspaceSkeleton } from "@/features/iot/components/workspace";
 import MacroSidebar from "../widgets/MacroSidebar";
 import GroupFilterSelector from "@/components/MasterHeader/GroupFilterSelector";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
