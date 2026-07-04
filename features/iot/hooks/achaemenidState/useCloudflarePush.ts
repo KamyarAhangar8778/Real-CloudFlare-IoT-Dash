@@ -5,40 +5,14 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { isCloudflareEnabled, saveConfigToCloudflare } from "@/features/iot/services/cloudflareService";
 import { buildEspConfig } from "./core/buildEspConfig";
 
-interface UseCloudflarePushProps {
-  isFullyReady: boolean;
-  isDark: boolean;
-  accent3: string;
-  accent4: string;
-  selectedFont: string;
-  animationsEnabled: boolean;
-  animationsFps: number;
-  headerAnimationType: "fade" | "chase";
-  headerTitle: string;
-  matrixDensity: number;
-  matrixSize: number;
-  matrixHoverSize: number;
-  matrixColor: string;
-  matrixMoving: boolean;
-  matrixMouseEffect: boolean;
-  matrixTwinkleEffect: boolean;
-  matrixTwinkleSpeed: number;
-  headerPosition: "top" | "left";
-  dashboardWidth: 1 | 2 | 3 | 4 | 5;
-  dashboardBgColor: string;
-  dashboardBgOpacity: number;
-  isGroupsCompactLayout: boolean;
-  isSegmentsCompactLayout: boolean;
-}
-
-export function useCloudflarePush(props: UseCloudflarePushProps) {
+export function useCloudflarePush(isFullyReady: boolean) {
   const store = useIoTStore();
   const isFirstRender = useRef(true);
 
   const triggerCloudflarePush = useCallback(async () => {
-    if (!isCloudflareEnabled() || !props.isFullyReady) return;
+    if (!isCloudflareEnabled() || !isFullyReady) return;
 
-    const currentConfig = buildEspConfig({ ...props, ...store });
+    const currentConfig = buildEspConfig(store);
 
     const result = await saveConfigToCloudflare(currentConfig);
     if (result.success) {
@@ -49,29 +23,29 @@ export function useCloudflarePush(props: UseCloudflarePushProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    props.isFullyReady,
-    props.isDark,
-    props.accent3,
-    props.accent4,
-    props.selectedFont,
-    props.animationsEnabled,
-    props.animationsFps,
-    props.headerAnimationType,
-    props.headerTitle,
-    props.matrixDensity,
-    props.matrixSize,
-    props.matrixHoverSize,
-    props.matrixColor,
-    props.matrixMoving,
-    props.matrixMouseEffect,
-    props.matrixTwinkleEffect,
-    props.matrixTwinkleSpeed,
-    props.headerPosition,
-    props.dashboardWidth,
-    props.dashboardBgColor,
-    props.dashboardBgOpacity,
-    props.isGroupsCompactLayout,
-    props.isSegmentsCompactLayout,
+    isFullyReady,
+    store.isDark,
+    store.accent3,
+    store.accent4,
+    store.selectedFont,
+    store.animationsEnabled,
+    store.animationsFps,
+    store.headerAnimationType,
+    store.headerTitle,
+    store.matrixDensity,
+    store.matrixSize,
+    store.matrixHoverSize,
+    store.matrixColor,
+    store.matrixMoving,
+    store.matrixMouseEffect,
+    store.matrixTwinkleEffect,
+    store.matrixTwinkleSpeed,
+    store.headerPosition,
+    store.dashboardWidth,
+    store.dashboardBgColor,
+    store.dashboardBgOpacity,
+    store.isGroupsCompactLayout,
+    store.isSegmentsCompactLayout,
     store.manualSaveMode,
     store.segments,
     store.groupsOrder,
@@ -87,7 +61,7 @@ export function useCloudflarePush(props: UseCloudflarePushProps) {
   ]);
 
   useEffect(() => {
-    if (!props.isFullyReady) return;
+    if (!isFullyReady) return;
 
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -104,29 +78,29 @@ export function useCloudflarePush(props: UseCloudflarePushProps) {
     return () => clearTimeout(handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    props.isFullyReady,
-    props.isDark,
-    props.accent3,
-    props.accent4,
-    props.selectedFont,
-    props.animationsEnabled,
-    props.animationsFps,
-    props.headerAnimationType,
-    props.headerTitle,
-    props.matrixDensity,
-    props.matrixSize,
-    props.matrixHoverSize,
-    props.matrixColor,
-    props.matrixMoving,
-    props.matrixMouseEffect,
-    props.matrixTwinkleEffect,
-    props.matrixTwinkleSpeed,
-    props.headerPosition,
-    props.dashboardWidth,
-    props.dashboardBgColor,
-    props.dashboardBgOpacity,
-    props.isGroupsCompactLayout,
-    props.isSegmentsCompactLayout,
+    isFullyReady,
+    store.isDark,
+    store.accent3,
+    store.accent4,
+    store.selectedFont,
+    store.animationsEnabled,
+    store.animationsFps,
+    store.headerAnimationType,
+    store.headerTitle,
+    store.matrixDensity,
+    store.matrixSize,
+    store.matrixHoverSize,
+    store.matrixColor,
+    store.matrixMoving,
+    store.matrixMouseEffect,
+    store.matrixTwinkleEffect,
+    store.matrixTwinkleSpeed,
+    store.headerPosition,
+    store.dashboardWidth,
+    store.dashboardBgColor,
+    store.dashboardBgOpacity,
+    store.isGroupsCompactLayout,
+    store.isSegmentsCompactLayout,
     store.segments,
     store.groupsOrder,
     store.groupConfigs,

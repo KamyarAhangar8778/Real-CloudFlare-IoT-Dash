@@ -1,7 +1,5 @@
 "use client";
 
-import { useAestheticState } from "./achaemenidState/useAestheticState";
-import { useEspMenuState } from "./achaemenidState/useEspMenuState";
 import { usePinOperations } from "./achaemenidState/usePinOperations";
 import { useSegmentManagement } from "./achaemenidState/useSegmentManagement";
 import { useSegmentUpdates } from "./achaemenidState/useSegmentUpdates";
@@ -10,13 +8,13 @@ import { useCloudflareInit } from "./achaemenidState/useCloudflareInit";
 import { useCloudflarePush } from "./achaemenidState/useCloudflarePush";
 import { useAchaemenidDnd } from "./achaemenidState/useAchaemenidDnd";
 import { useApplyEspConfig } from "./achaemenidState/useApplyEspConfig";
+import { useIoTStore } from "./useIoTStore";
 
 export function useAchaemenidState() {
-  const aesthetic = useAestheticState();
-  const menu = useEspMenuState();
-
+  const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
+  
   const { mounted, refetchIot } = useCloudflareQuery();
-  const { handleApplyEspConfig } = useApplyEspConfig(aesthetic);
+  const { handleApplyEspConfig } = useApplyEspConfig();
 
   const {
     isFullyReady,
@@ -30,10 +28,7 @@ export function useAchaemenidState() {
     handleApplyEspConfig,
   });
 
-  const { triggerCloudflarePush } = useCloudflarePush({
-    isFullyReady,
-    ...aesthetic,
-  });
+  const { triggerCloudflarePush } = useCloudflarePush(isFullyReady);
 
   const { isLoadingIoT, updatePinOnServer, handleTogglePin, handleSetPinState, handleBatchPinState } = usePinOperations({
     refetchIot,
@@ -48,7 +43,7 @@ export function useAchaemenidState() {
     handleRemoveSegment,
     handleRemoveGroup,
   } = useSegmentManagement({
-    setIsModulesMenuOpen: menu.setIsModulesMenuOpen,
+    setIsModulesMenuOpen,
     updatePinOnServer,
   });
 
@@ -64,8 +59,6 @@ export function useAchaemenidState() {
   });
 
   return {
-    ...menu,
-    ...aesthetic,
     isLoadingIoT,
     mounted,
     refetchIot,

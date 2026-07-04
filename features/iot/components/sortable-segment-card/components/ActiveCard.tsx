@@ -21,7 +21,7 @@ interface ActiveCardProps
 
 function ActiveCard({
   segment,
-  isPinOn,
+  isPinOn = false,
   onRemove,
   onTogglePin,
   onSetPinState,

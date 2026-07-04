@@ -127,6 +127,8 @@ export interface UiSlice {
   isPageVisible: boolean;
   isListening: boolean;
   voiceTranscript: string;
+  activeSegmentId: string | null;
+  activeGroupId: string | null;
   setLowDataMode: (enabled: boolean) => void;
   showToast: (message: string, type: "success" | "error") => void;
   clearToast: () => void;
@@ -134,10 +136,76 @@ export interface UiSlice {
   setIsPageVisible: (visible: boolean) => void;
   setIsListening: (b: boolean) => void;
   setVoiceTranscript: (t: string) => void;
+  setActiveSegmentId: (id: string | null) => void;
+  setActiveGroupId: (id: string | null) => void;
+}
+
+export interface MenuSlice {
+  isMenuOpen: boolean;
+  isModulesMenuOpen: boolean;
+  isEspDrawerOpen: boolean;
+  isAutomationsMenuOpen: boolean;
+  activeSettingsTab: string;
+  setIsMenuOpen: (o: boolean) => void;
+  setIsModulesMenuOpen: (o: boolean) => void;
+  setIsEspDrawerOpen: (o: boolean) => void;
+  setIsAutomationsMenuOpen: (o: boolean) => void;
+  setActiveSettingsTab: (t: string) => void;
+}
+
+export interface AestheticSlice {
+  isDark: boolean;
+  setIsDark: (d: boolean) => void;
+  accent3: string;
+  setAccent3: (a: string) => void;
+  accent4: string;
+  setAccent4: (a: string) => void;
+  selectedFont: string;
+  setSelectedFont: (f: string) => void;
+  animationsEnabled: boolean;
+  setAnimationsEnabled: (e: boolean) => void;
+  animationsFps: number;
+  setAnimationsFps: (f: number) => void;
+  headerAnimationType: "fade" | "chase";
+  setHeaderAnimationType: (t: "fade" | "chase") => void;
+  headerTitle: string;
+  setHeaderTitle: (t: string) => void;
+  matrixDensity: number;
+  setMatrixDensity: (d: number) => void;
+  matrixSize: number;
+  setMatrixSize: (s: number) => void;
+  matrixHoverSize: number;
+  setMatrixHoverSize: (s: number) => void;
+  matrixOpacity: number;
+  setMatrixOpacity: (o: number) => void;
+  matrixColor: string;
+  setMatrixColor: (c: string) => void;
+  matrixMoving: boolean;
+  setMatrixMoving: (m: boolean) => void;
+  matrixMouseEffect: boolean;
+  setMatrixMouseEffect: (m: boolean) => void;
+  matrixTwinkleEffect: boolean;
+  setMatrixTwinkleEffect: (t: boolean) => void;
+  matrixTwinkleSpeed: number;
+  setMatrixTwinkleSpeed: (s: number) => void;
+  headerPosition: "top" | "left";
+  setHeaderPosition: (p: "top" | "left") => void;
+  dashboardBgColor: string;
+  setDashboardBgColor: (c: string) => void;
+  dashboardBgOpacity: number;
+  setDashboardBgOpacity: (o: number) => void;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (c: boolean) => void;
+  dashboardWidth: 1 | 2 | 3 | 4 | 5;
+  setDashboardWidth: (w: 1 | 2 | 3 | 4 | 5) => void;
+  isGroupsCompactLayout: boolean;
+  setIsGroupsCompactLayout: (c: boolean) => void;
+  isSegmentsCompactLayout: boolean;
+  setIsSegmentsCompactLayout: (c: boolean) => void;
 }
 
 export interface ConfigSlice {
   applyEspConfig: (config: EspConfig) => void;
 }
 
-export type IoTStoreState = SegmentsSlice & GroupsSlice & SyncSlice & SystemSlice & UiSlice & ConfigSlice;
+export type IoTStoreState = SegmentsSlice & GroupsSlice & SyncSlice & SystemSlice & UiSlice & MenuSlice & AestheticSlice & ConfigSlice;

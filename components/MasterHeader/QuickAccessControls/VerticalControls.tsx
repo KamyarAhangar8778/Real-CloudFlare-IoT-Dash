@@ -1,5 +1,6 @@
 import React from "react";
 import { Settings as SettingsIcon, Layers } from "lucide-react";
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import VoiceCommandButton from "../VoiceCommandButton";
 import { QuickAccessControlsProps } from "./types";
@@ -11,7 +12,7 @@ export default function VerticalControls({
   variant,
   isSidebarCollapsed,
 }: QuickAccessControlsProps) {
-  const { setIsAutomationsMenuOpen } = useDashboard();
+  const setIsAutomationsMenuOpen = useIoTStore(s => s.setIsAutomationsMenuOpen);
 
   return (
     <div className="space-y-2 mt-4">

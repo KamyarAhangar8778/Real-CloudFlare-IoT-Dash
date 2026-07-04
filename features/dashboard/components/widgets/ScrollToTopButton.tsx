@@ -5,9 +5,12 @@ import { ArrowUp } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
+
 export default function ScrollToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
-  const { activeGroupId, activeSegmentId } = useDashboard();
+  const activeGroupId = useIoTStore(s => s.activeGroupId);
+  const activeSegmentId = useIoTStore(s => s.activeSegmentId);
   const isDragging = !!activeGroupId || !!activeSegmentId;
 
   // Show button when page is scrolled down

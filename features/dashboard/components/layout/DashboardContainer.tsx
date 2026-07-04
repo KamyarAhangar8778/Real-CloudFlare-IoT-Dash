@@ -4,7 +4,7 @@ import React from "react";
 import { MotionConfig } from "motion/react";
 import DashboardStyles from "@/features/iot/components/DashboardStyles";
 import CuneiformBackground from "@/features/iot/components/cuneiform-background";
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import DashboardHeader from "./DashboardHeader";
 import DashboardMain from "./DashboardMain";
 import DashboardDrawers from "./DashboardDrawers";
@@ -16,27 +16,25 @@ import { usePageVisibility } from "@/features/iot/hooks/usePageVisibility";
 export default function DashboardContainer() {
   usePageVisibility();
   
-  const {
-    accent3,
-    accent4,
-    isDark,
-    selectedFont,
-    animationsEnabled,
-    animationsFps,
-    matrixDensity,
-    matrixSize,
-    matrixHoverSize,
-    matrixOpacity,
-    matrixColor,
-    matrixMoving,
-    matrixMouseEffect,
-    matrixTwinkleEffect,
-    matrixTwinkleSpeed,
-    headerPosition,
-    dashboardWidth,
-    dashboardBgColor,
-    dashboardBgOpacity,
-  } = useDashboard();
+  const accent3 = useIoTStore(s => s.accent3);
+  const accent4 = useIoTStore(s => s.accent4);
+  const isDark = useIoTStore(s => s.isDark);
+  const selectedFont = useIoTStore(s => s.selectedFont);
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const animationsFps = useIoTStore(s => s.animationsFps);
+  const matrixDensity = useIoTStore(s => s.matrixDensity);
+  const matrixSize = useIoTStore(s => s.matrixSize);
+  const matrixHoverSize = useIoTStore(s => s.matrixHoverSize);
+  const matrixOpacity = useIoTStore(s => s.matrixOpacity);
+  const matrixColor = useIoTStore(s => s.matrixColor);
+  const matrixMoving = useIoTStore(s => s.matrixMoving);
+  const matrixMouseEffect = useIoTStore(s => s.matrixMouseEffect);
+  const matrixTwinkleEffect = useIoTStore(s => s.matrixTwinkleEffect);
+  const matrixTwinkleSpeed = useIoTStore(s => s.matrixTwinkleSpeed);
+  const headerPosition = useIoTStore(s => s.headerPosition);
+  const dashboardWidth = useIoTStore(s => s.dashboardWidth);
+  const dashboardBgColor = useIoTStore(s => s.dashboardBgColor);
+  const dashboardBgOpacity = useIoTStore(s => s.dashboardBgOpacity);
 
   const { topHeaderContainerWidth, leftHeaderContentWidth } = useDashboardLayout(dashboardWidth);
 

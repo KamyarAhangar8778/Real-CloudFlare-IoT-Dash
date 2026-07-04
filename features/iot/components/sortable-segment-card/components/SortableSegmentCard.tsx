@@ -4,6 +4,7 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SortableSegmentCardProps } from "../core/types";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { useSegmentDensity } from "../hooks/useSegmentDensity";
 import PlaceholderCard from "./PlaceholderCard";
 import ActiveCard from "./ActiveCard";
@@ -18,6 +19,7 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
     animationsEnabled = true,
   } = props;
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const isPinOn = useIoTStore(s => !!s.pinsState[segment.pin]);
 
   const {
     attributes,

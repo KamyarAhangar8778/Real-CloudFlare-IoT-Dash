@@ -13,16 +13,8 @@ import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 
 export default function DashboardWorkspace() {
   const {
-    isDark,
-    accent3,
-    accent4,
-    setIsMenuOpen,
-    setIsModulesMenuOpen,
-    animationsEnabled,
     sensors,
     isLoadingIoT,
-    activeSegmentId,
-    activeGroupId,
     handleDragStart,
     handleDragOver,
     handleDragEnd,
@@ -36,12 +28,21 @@ export default function DashboardWorkspace() {
     handleUpdateSegmentAutoOff,
     handleUpdateSegmentRule,
     handleSetupPlaceholder,
-    headerPosition,
-    dashboardWidth,
     isFullyReady,
-    isGroupsCompactLayout,
-    isSegmentsCompactLayout,
   } = useDashboard();
+
+  const isDark = useIoTStore(s => s.isDark);
+  const accent3 = useIoTStore(s => s.accent3);
+  const accent4 = useIoTStore(s => s.accent4);
+  const setIsMenuOpen = useIoTStore(s => s.setIsMenuOpen);
+  const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const headerPosition = useIoTStore(s => s.headerPosition);
+  const dashboardWidth = useIoTStore(s => s.dashboardWidth);
+  const isGroupsCompactLayout = useIoTStore(s => s.isGroupsCompactLayout);
+  const isSegmentsCompactLayout = useIoTStore(s => s.isSegmentsCompactLayout);
+  const activeSegmentId = useIoTStore(s => s.activeSegmentId);
+  const activeGroupId = useIoTStore(s => s.activeGroupId);
 
   const segments = useIoTStore(s => s.segments);
   const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);

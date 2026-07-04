@@ -23,8 +23,10 @@ export function useAchaemenidDnd({
   const setSegments = useIoTStore((state) => state.setSegments);
   const setGroupsOrder = useIoTStore((state) => state.setGroupsOrder);
 
-  const [activeSegmentId, setActiveSegmentId] = useState<string | null>(null);
-  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const activeSegmentId = useIoTStore((state) => state.activeSegmentId);
+  const activeGroupId = useIoTStore((state) => state.activeGroupId);
+  const setActiveSegmentId = useIoTStore((state) => state.setActiveSegmentId);
+  const setActiveGroupId = useIoTStore((state) => state.setActiveGroupId);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

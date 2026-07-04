@@ -13,7 +13,10 @@ import SegmentRuleCard from "./SegmentRuleCard";
 export default function GlobalRuleSettings({ variant = "horizontal", isSidebarCollapsed }: GlobalRuleSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const segments = useIoTStore((state) => state.segments);
-  const { isDark, accent3, accent4, animationsEnabled } = useDashboard();
+  const isDark = useIoTStore(s => s.isDark);
+  const accent3 = useIoTStore(s => s.accent3);
+  const accent4 = useIoTStore(s => s.accent4);
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
   const [localRules, setLocalRules] = useState<Record<string, SegmentRule>>({});
 
   const inputSegments = segments.filter((s) => s.type === "input");

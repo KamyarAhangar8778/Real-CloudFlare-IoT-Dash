@@ -2,7 +2,6 @@
 
 import React from "react";
 import MasterHeader from "@/components/MasterHeader";
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 interface DashboardHeaderProps {
@@ -10,19 +9,19 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ position }: DashboardHeaderProps) {
-  const {
-    isDark,
-    setIsDark,
-    setIsModulesMenuOpen,
-    setIsMenuOpen,
-    headerAnimationType,
-    headerTitle,
-    headerPosition,
-    setHeaderPosition,
-    animationsEnabled,
-    isSidebarCollapsed,
-    setIsSidebarCollapsed,
-  } = useDashboard();
+  // Removed useDashboard as we don't need functions from it in DashboardHeader (they were all state variables)
+  
+  const isDark = useIoTStore(s => s.isDark);
+  const setIsDark = useIoTStore(s => s.setIsDark);
+  const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
+  const setIsMenuOpen = useIoTStore(s => s.setIsMenuOpen);
+  const headerAnimationType = useIoTStore(s => s.headerAnimationType);
+  const headerTitle = useIoTStore(s => s.headerTitle);
+  const headerPosition = useIoTStore(s => s.headerPosition);
+  const setHeaderPosition = useIoTStore(s => s.setHeaderPosition);
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const isSidebarCollapsed = useIoTStore(s => s.isSidebarCollapsed);
+  const setIsSidebarCollapsed = useIoTStore(s => s.setIsSidebarCollapsed);
   
   const groupsCols = useIoTStore(s => s.groupsCols);
   const setGroupsCols = useIoTStore(s => s.setGroupsCols);

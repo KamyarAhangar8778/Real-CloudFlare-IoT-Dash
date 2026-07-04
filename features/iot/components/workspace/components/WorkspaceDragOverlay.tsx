@@ -12,7 +12,7 @@ type WorkspaceDragOverlayProps = Pick<
   | "activeGroupId"
   | "segments"
   | "groupConfigs"
-  | "pinsState"
+  
   | "isLoadingIoT"
   | "groupsCols"
   | "animationsEnabled"
@@ -30,7 +30,6 @@ export default function WorkspaceDragOverlay({
   activeGroupId,
   segments,
   groupConfigs,
-  pinsState,
   isLoadingIoT,
   groupsCols,
   animationsEnabled,
@@ -67,7 +66,7 @@ export default function WorkspaceDragOverlay({
             <div style={{ opacity: 0.8, cursor: "grabbing" }}>
               <SortableSegmentCard
                 segment={seg}
-                isPinOn={!!pinsState[seg.pin]}
+                
                 onRemove={handleRemoveSegment}
                 onTogglePin={handleTogglePin}
                 onSetPinState={handleSetPinState}
@@ -120,7 +119,7 @@ export default function WorkspaceDragOverlay({
                   <SortableSegmentCard
                     key={seg.id}
                     segment={seg}
-                    isPinOn={!!pinsState[seg.pin]}
+                    
                     onRemove={handleRemoveSegment}
                     onTogglePin={handleTogglePin}
                     onSetPinState={handleSetPinState}

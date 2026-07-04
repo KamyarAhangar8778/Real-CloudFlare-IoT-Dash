@@ -13,7 +13,9 @@ interface MacroSidebarProps {
 }
 
 export default function MacroSidebar({ forceHorizontal = false, className = "" }: MacroSidebarProps) {
-  const { handleBatchPinState, animationsEnabled, headerPosition } = useDashboard();
+  const { handleBatchPinState } = useDashboard();
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const headerPosition = useIoTStore(s => s.headerPosition);
   const macros = useIoTStore(s => s.macros);
   const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
   const [activeIndex, setActiveIndex] = useState(0);

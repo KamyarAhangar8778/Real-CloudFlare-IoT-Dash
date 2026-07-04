@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Moon, Sun, Settings, Bot, Columns, MoreVertical, Layers } from "lucide-react";
 import LayoutColumnsSwitcher from "../LayoutColumnsSwitcher";
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import { AnimatePresence, motion } from "motion/react";
 import { BrandBoxProps } from "./types";
@@ -18,7 +19,7 @@ export default function MobileDropdownMenu({
 }: MobileMenuProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { setIsAutomationsMenuOpen } = useDashboard();
+  const setIsAutomationsMenuOpen = useIoTStore(s => s.setIsAutomationsMenuOpen);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

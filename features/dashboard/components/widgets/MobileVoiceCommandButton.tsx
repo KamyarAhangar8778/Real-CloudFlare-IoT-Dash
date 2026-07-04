@@ -2,10 +2,13 @@ import React from 'react';
 import { Mic } from 'lucide-react';
 import { useDashboard } from '@/features/dashboard/context/DashboardContext';
 import { motion } from 'motion/react';
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
 import { useMobileVoiceCommand } from '../../hooks/useMobileVoiceCommand';
 
 export default function MobileVoiceCommandButton() {
-  const { animationsEnabled, activeGroupId, activeSegmentId } = useDashboard();
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const activeGroupId = useIoTStore(s => s.activeGroupId);
+  const activeSegmentId = useIoTStore(s => s.activeSegmentId);
   const { isListening, handlePointerDown, handlePointerUp, handlePointerCancel } = useMobileVoiceCommand();
 
   const isDragging = !!activeGroupId || !!activeSegmentId;

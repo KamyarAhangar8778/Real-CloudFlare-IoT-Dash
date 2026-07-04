@@ -10,15 +10,12 @@ import DashboardWorkspace from "./DashboardWorkspace";
 import MobileVoiceCommandButton from "../widgets/MobileVoiceCommandButton";
 
 export default function DashboardMain() {
-  const {
-    animationsEnabled,
-    refetchIot,
-    headerPosition,
-    triggerCloudflarePush,
-    dashboardWidth,
-    activeGroupId,
-    activeSegmentId,
-  } = useDashboard();
+  const { refetchIot, triggerCloudflarePush } = useDashboard();
+  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
+  const headerPosition = useIoTStore(s => s.headerPosition);
+  const dashboardWidth = useIoTStore(s => s.dashboardWidth);
+  const activeGroupId = useIoTStore(s => s.activeGroupId);
+  const activeSegmentId = useIoTStore(s => s.activeSegmentId);
 
   const segments = useIoTStore(s => s.segments);
   const lowDataMode = useIoTStore(s => s.lowDataMode);

@@ -28,7 +28,7 @@ export interface SegmentData {
 
 export interface SortableSegmentCardProps {
   segment: SegmentData;
-  isPinOn: boolean;
+  isPinOn?: boolean;
   onRemove: (id: string) => void;
   onTogglePin: (pin: string) => void;
   onSetPinState?: (pin: string, state: boolean, preventMqtt?: boolean) => void;

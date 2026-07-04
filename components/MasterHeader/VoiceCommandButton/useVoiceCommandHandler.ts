@@ -5,7 +5,9 @@ import { normalizePhonetics, getSimilarity } from './utils';
 
 export function useVoiceCommandHandler() {
   const { isListening, transcript, startListening, stopListening } = useVoiceCommand();
-  const { handleSetPinState, handleBatchPinState, setIsMenuOpen, setActiveSettingsTab } = useDashboard();
+  const { handleSetPinState, handleBatchPinState } = useDashboard();
+  const setIsMenuOpen = useIoTStore(s => s.setIsMenuOpen);
+  const setActiveSettingsTab = useIoTStore(s => s.setActiveSettingsTab);
   const showToast = useIoTStore(s => s.showToast);
   const segments = useIoTStore(s => s.segments);
   const macros = useIoTStore(s => s.macros);
