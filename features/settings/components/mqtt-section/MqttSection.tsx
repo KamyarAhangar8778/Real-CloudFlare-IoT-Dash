@@ -5,6 +5,8 @@ import { Radio, RefreshCw, Save } from "lucide-react";
 import { fetchConfigFromCloudflare, saveConfigToCloudflare } from "@/features/iot/services/cloudflare/api";
 import { DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Config";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { MqttFormFields } from "./MqttFormFields";
+import { MqttQosSelector } from "./MqttQosSelector";
 
 export default function MqttSection() {
   const [brokerWsUrl, setBrokerWsUrl] = useState("");
@@ -83,95 +85,13 @@ export default function MqttSection() {
       </div>
 
       <div className="space-y-4">
-        {/* Broker WebSocket URL (Dashboard) */}
-        <div className="space-y-2 text-right">
-          <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-            آدرس سرور داشبورد (WebSocket URL)
-          </label>
-          <input
-            type="text"
-            dir="ltr"
-            value={brokerWsUrl}
-            onChange={(e) => setBrokerWsUrl(e.target.value)}
-            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
-            placeholder="wss://broker.emqx.io:8084/mqtt"
-          />
-        </div>
-
-        {/* Broker TCP Host & Port (ESP32) */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="col-span-2 space-y-2 text-right">
-            <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-              آدرس سرور سخت‌افزار (TCP Host)
-            </label>
-            <input
-              type="text"
-              dir="ltr"
-              value={brokerHost}
-              onChange={(e) => setBrokerHost(e.target.value)}
-              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
-              placeholder="broker.emqx.io"
-            />
-          </div>
-          <div className="col-span-1 space-y-2 text-right">
-            <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-              پورت (Port)
-            </label>
-            <input
-              type="number"
-              dir="ltr"
-              value={brokerPort}
-              onChange={(e) => setBrokerPort(parseInt(e.target.value) || 1883)}
-              className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
-              placeholder="1883"
-            />
-          </div>
-        </div>
-
-        {/* Base Topic */}
-        <div className="space-y-2 text-right">
-          <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-            موضوع پایه (Base Topic)
-          </label>
-          <input
-            type="text"
-            dir="ltr"
-            value={baseTopic}
-            onChange={(e) => setBaseTopic(e.target.value)}
-            className="w-full bg-[var(--card-bg-solid)] border border-[var(--border-color)] text-[var(--text-secondary)] text-xs rounded-xl px-4 py-3 focus:outline-none focus:border-[var(--accent3)] focus:ring-1 focus:ring-[var(--accent3)] transition-all"
-            placeholder="KamyarIoT/Achaemenid"
-          />
-        </div>
-
-        {/* QoS */}
-        <div className="space-y-2 text-right pt-2">
-          <label className="text-xs font-bold text-[var(--text-primary)] px-1">
-            کیفیت سرویس (QoS)
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {[0, 1, 2].map((q) => (
-              <button
-                key={q}
-                onClick={() => {
-                  soundManager.playClick();
-                  setQos(q as 0 | 1 | 2);
-                }}
-                className={`py-2 px-3 rounded-xl border text-xs font-mono transition-all duration-300 ${
-                  qos === q
-                    ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)]"
-                    : "bg-[var(--card-bg-solid)] border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent4)]"
-                }`}
-              >
-                QoS {q}
-              </button>
-            ))}
-          </div>
-          <p className="text-[9px] text-[var(--text-muted)] pt-1 px-1">
-            {qos === 0 && "ارسال حداکثر یکبار. بدون تضمین تحویل."}
-            {qos === 1 && "ارسال حداقل یکبار. تضمین تحویل با احتمال تکرار."}
-            {qos === 2 && "ارسال دقیقا یکبار. امن‌ترین و کندترین حالت."}
-          </p>
-        </div>
+        <MqttFormFields 
+          brokerWsUrl={brokerWsUrl} setBrokerWsUrl={setBrokerWsUrl}
+          brokerHost={brokerHost} setBrokerHost={setBrokerHost}
+          brokerPort={brokerPort} setBrokerPort={setBrokerPort}
+          baseTopic={baseTopic} setBaseTopic={setBaseTopic}
+        />
+        <MqttQosSelector qos={qos} setQos={setQos} />
       </div>
 
       <button
