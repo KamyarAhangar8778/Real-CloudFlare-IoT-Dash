@@ -3,8 +3,8 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { SortableSegmentCardProps } from "./types";
+import { SortableSegmentCardProps } from "../core/types";
+import { useSegmentDensity } from "../hooks/useSegmentDensity";
 import PlaceholderCard from "./PlaceholderCard";
 import ActiveCard from "./ActiveCard";
 
@@ -45,37 +45,13 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
     scale: isDragging ? 0.96 : 1,
   };
 
-  const effectiveGroupCols = Math.min(groupMaxCols, groupItemsCount);
-
-  let rowOccupiedCols = effectiveGroupCols;
-  if (effectiveGroupCols > 1 && groupItemsCount > 0) {
-    const totalRows = Math.ceil(groupItemsCount / effectiveGroupCols);
-    const currentRow = Math.floor(index / effectiveGroupCols);
-    const isLastRow = currentRow === totalRows - 1;
-
-    if (isLastRow) {
-      const itemsInLastRow =
-        groupItemsCount % effectiveGroupCols || effectiveGroupCols;
-      rowOccupiedCols = itemsInLastRow;
-    }
-  }
-
-  const isMobilePortrait = useMediaQuery(
-    "(max-width: 767px) and (orientation: portrait)",
-  );
-  
-  const currentDashboardWidth = props.dashboardWidth || 1;
-  const effectiveParentCols = isMobilePortrait ? 1 : parentGroupsCols;
-  const rawDensityFactor = rowOccupiedCols * effectiveParentCols;
-  
-  // Adjust density factor based on dashboard width to allow more elements on wider screens
-  // dashboardWidth: 1 (normal) to 5 (widest)
-  const widthReductionFactor = isMobilePortrait ? 0 : (currentDashboardWidth - 1) * 1.5;
-  const densityFactor = Math.max(1, rawDensityFactor - widthReductionFactor);
-  
-  const isMobileTwoCol = isMobilePortrait && rowOccupiedCols >= 2;
-  const isUltraCompact = densityFactor >= 6;
-  const isCompact = densityFactor >= 3 && densityFactor < 6 || isMobileTwoCol;
+  const { densityFactor, isUltraCompact, isCompact, isMobileTwoCol } = useSegmentDensity({
+    groupMaxCols,
+    groupItemsCount,
+    index,
+    parentGroupsCols,
+    dashboardWidth: props.dashboardWidth,
+  });
 
   if (props.isOverlayItem) {
     return (

@@ -1,5 +1,5 @@
 import React from "react";
-import { SegmentData } from "./types";
+import { SegmentData } from "../core/types";
 import PinToggle from "./PinToggle";
 
 interface CardBodyProps {

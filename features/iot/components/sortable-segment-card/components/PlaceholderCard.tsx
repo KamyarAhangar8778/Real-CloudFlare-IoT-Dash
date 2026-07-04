@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { X, Plus, GripVertical } from "lucide-react";
-import { SegmentData } from "./types";
+import { SegmentData } from "../core/types";
 
 interface PlaceholderCardProps {
   segment: SegmentData;

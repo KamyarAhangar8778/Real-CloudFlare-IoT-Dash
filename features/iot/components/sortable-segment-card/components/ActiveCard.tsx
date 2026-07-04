@@ -1,10 +1,11 @@
 import React from "react";
 import { motion } from "motion/react";
-import { SortableSegmentCardProps } from "./types";
+import { SortableSegmentCardProps } from "../core/types";
 import CardHeader from "./CardHeader";
 import CardBody from "./CardBody";
 import CardFooter from "./CardFooter";
-import useSegmentButtonProps from "./useSegmentButtonProps";
+import useSegmentButtonProps from "../hooks/useSegmentButtonProps";
+import { useAutoOffTimer } from "../hooks/useAutoOffTimer";
 
 interface ActiveCardProps
   extends Omit<SortableSegmentCardProps, "onSetupPlaceholder" | "isLoadingIoT"> {
@@ -47,30 +48,13 @@ function ActiveCard({
     onSetPinState,
   });
 
-  const [countdown, setCountdown] = React.useState<number | null>(null);
-
-  React.useEffect(() => {
-    if (isPinOn && segment.auto_off && segment.auto_off > 0) {
-      setCountdown(segment.auto_off);
-    } else {
-      setCountdown(null);
-    }
-  }, [isPinOn, segment.auto_off]);
-
-  React.useEffect(() => {
-    if (countdown === null) return;
-    if (countdown <= 0) {
-      if (mode === "switch" || mode === "push") {
-        onSetPinState?.(segment.pin, false, true);
-      }
-      setCountdown(null);
-      return;
-    }
-    const timerId = setTimeout(() => {
-      setCountdown((prev) => (prev !== null ? prev - 1 : null));
-    }, 1000);
-    return () => clearTimeout(timerId);
-  }, [countdown, segment.pin, onSetPinState]);
+  const { countdown } = useAutoOffTimer({
+    isPinOn,
+    autoOff: segment.auto_off,
+    mode,
+    pin: segment.pin,
+    onSetPinState,
+  });
 
   return (
     <motion.div
@@ -103,7 +87,6 @@ function ActiveCard({
           listeners={listeners}
           countdown={countdown}
           onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
-          onUpdateSegmentRule={onUpdateSegmentRule}
           isSettingsOpen={isSettingsOpen}
           setIsSettingsOpen={setIsSettingsOpen}
           groupMaxCols={groupMaxCols}
