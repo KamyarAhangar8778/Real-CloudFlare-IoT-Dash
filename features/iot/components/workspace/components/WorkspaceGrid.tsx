@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   SortableContext,
   rectSortingStrategy,
@@ -57,10 +57,20 @@ export default function WorkspaceGrid({
     selectedGroupFilter,
   });
 
+  const segmentsByGroup = useMemo(() => {
+    const map = new Map<string, typeof segments>();
+    segments.forEach(seg => {
+      const groupName = seg.group || "Test";
+      if (!map.has(groupName)) {
+        map.set(groupName, []);
+      }
+      map.get(groupName)!.push(seg);
+    });
+    return map;
+  }, [segments]);
+
   const renderGroup = (groupName: string, groupIndex: number) => {
-    const groupSegments = segments.filter(
-      (s) => (s.group || "Test") === groupName,
-    );
+    const groupSegments = segmentsByGroup.get(groupName) || [];
 
     const effectiveGroupsCols = getEffectiveGroupsCols(
       groupIndex,
@@ -68,8 +78,17 @@ export default function WorkspaceGrid({
       groupsCols
     );
 
+    const flexBasis = isMobilePortrait || groupsCols === 1
+      ? "100%"
+      : groupsCols === 2
+        ? "calc(50% - 1rem - 0.1px)"
+        : "calc(33.3333% - 1.3333rem - 0.1px)";
+
+    const baseClasses = isGroupsCompactLayout ? "space-y-3" : "flex-grow flex-shrink-0 min-w-0 max-w-full";
+    const style = !isGroupsCompactLayout ? { flexBasis } : undefined;
+
     return (
-      <div key={groupName} className={isGroupsCompactLayout ? "space-y-3" : ""}>
+      <div key={groupName} className={baseClasses} style={style}>
         <SortableGroup
           id={groupName}
           items={groupSegments.map((s) => s.id)}
@@ -137,31 +156,7 @@ export default function WorkspaceGrid({
           )}
         </div>
       ) : (
-        <div className="flex flex-wrap gap-8 w-full items-start workspace-grid-layout">
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-                .workspace-grid-layout > * {
-                  flex-grow: 1;
-                  flex-shrink: 0;
-                  min-width: 0;
-                  flex-basis: ${
-                    groupsCols === 1
-                      ? "100%"
-                      : groupsCols === 2
-                        ? "calc(50% - 1rem - 0.1px)"
-                        : "calc(33.3333% - 1.3333rem - 0.1px)"
-                  };
-                  max-width: 100%;
-                }
-                @media (max-width: 767px) and (orientation: portrait) {
-                  .workspace-grid-layout > * {
-                    flex-basis: 100%;
-                  }
-                }
-              `,
-            }}
-          />
+        <div className="flex flex-wrap gap-8 w-full items-start">
           {filteredGroupsOrder.map((groupName, groupIndex) => renderGroup(groupName, groupIndex))}
         </div>
       )}
