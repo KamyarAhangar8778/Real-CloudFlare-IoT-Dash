@@ -1,6 +1,6 @@
 # CLAUDE.md — Development Guidelines
 
-This file contains build, test, lint, and code style guidelines for the Achaemenid IoT Dashboard project.
+This file contains build, test, lint, code style, and structural guidelines for the Achaemenid IoT Dashboard project.
 
 ## Development Commands
 
@@ -33,7 +33,9 @@ This file contains build, test, lint, and code style guidelines for the Achaemen
 - **Files/Folders**: Use feature-based folders in lower kebab-case/camelCase.
 
 ### 2. Code Structure & Architecture Constraints
+- **Micro-Component Rule (< 100 lines)**: Files must be kept extremely small, ideally under 100 lines. If a component, hook, or service class grows too large, extract its responsibilities into separate sibling files. Use wrappers/index files to compose them back together.
+- **Single Responsibility Principle**: A file should do exactly one thing. For example, rendering a list item (`Card.tsx`) and editing a list item (`Editor.tsx`) must reside in different files.
 - **Static Export Limitations**: Next.js is configured for static site generation (`output: "export"`). You cannot create backend endpoints in `app/api/`. Any network requests to third parties (like the Internet Archive API) must happen directly on the client side.
 - **Client Components**: Rely heavily on `"use client"` for interactivity, particularly since many modules integrate with the Web Audio API, Web Storage API, and external websockets (MQTT).
 - **Modularity**: Prefer functional components with TypeScript interfaces. Separate features into the `features/` directory. Keep shared/global UI components in the `components/` directory.
-- **Styling constraints**: Avoid using legacy UI libraries. Rely on Tailwind CSS v4 and modern CSS features.
+- **Styling Constraints**: Avoid using legacy UI libraries. Rely on Tailwind CSS v4 and modern CSS features. Make heavy use of CSS variables for theming.
