@@ -62,4 +62,5 @@ export interface SortableSegmentCardProps {
   animationsEnabled?: boolean;
   isOverlayItem?: boolean;
   dashboardWidth?: number;
+  isMobilePortrait?: boolean;
 }

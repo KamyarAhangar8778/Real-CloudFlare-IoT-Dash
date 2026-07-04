@@ -51,6 +51,7 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
     index,
     parentGroupsCols,
     dashboardWidth: props.dashboardWidth,
+    isMobilePortrait: props.isMobilePortrait || false,
   });
 
   if (props.isOverlayItem) {
@@ -137,6 +138,7 @@ export default React.memo(SortableSegmentCard, (prevProps, nextProps) => {
     prevProps.groupItemsCount === nextProps.groupItemsCount &&
     prevProps.index === nextProps.index &&
     prevProps.animationsEnabled === nextProps.animationsEnabled &&
-    prevProps.isOverlayItem === nextProps.isOverlayItem
+    prevProps.isOverlayItem === nextProps.isOverlayItem &&
+    prevProps.isMobilePortrait === nextProps.isMobilePortrait
   );
 });

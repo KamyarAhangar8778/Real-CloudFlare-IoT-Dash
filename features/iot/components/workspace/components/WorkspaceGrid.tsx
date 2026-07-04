@@ -121,6 +121,7 @@ export default function WorkspaceGrid({
               index={index}
               animationsEnabled={animationsEnabled}
               dashboardWidth={dashboardWidth}
+              isMobilePortrait={isMobilePortrait}
             />
           ))}
         </SortableGroup>

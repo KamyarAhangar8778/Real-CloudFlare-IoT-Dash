@@ -1,11 +1,10 @@
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
-
 interface UseSegmentDensityProps {
   groupMaxCols: number;
   groupItemsCount: number;
   index: number;
   parentGroupsCols: number;
   dashboardWidth?: number;
+  isMobilePortrait: boolean;
 }
 
 export function useSegmentDensity({
@@ -14,6 +13,7 @@ export function useSegmentDensity({
   index,
   parentGroupsCols,
   dashboardWidth = 1,
+  isMobilePortrait,
 }: UseSegmentDensityProps) {
   const effectiveGroupCols = Math.min(groupMaxCols, groupItemsCount);
 
@@ -29,8 +29,6 @@ export function useSegmentDensity({
     }
   }
 
-  const isMobilePortrait = useMediaQuery("(max-width: 767px) and (orientation: portrait)");
-  
   const effectiveParentCols = isMobilePortrait ? 1 : parentGroupsCols;
   const rawDensityFactor = rowOccupiedCols * effectiveParentCols;
   
