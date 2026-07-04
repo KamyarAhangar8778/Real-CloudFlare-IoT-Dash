@@ -24,6 +24,7 @@ let config: any = {
   isDark: true,
   animationsEnabled: true,
   animationsFps: 60,
+  isMobile: false,
 };
 
 let targetPointer = { x: -1000, y: -1000 };
@@ -65,7 +66,8 @@ const render = (currentTime: number) => {
     matrixTwinkleEffect: config.matrixTwinkleEffect, 
     matrixTwinkleSpeed: config.matrixTwinkleSpeed, 
     isDark: config.isDark, 
-    animationsEnabled: config.animationsEnabled
+    animationsEnabled: config.animationsEnabled,
+    isMobile: config.isMobile
   });
 };
 
@@ -88,6 +90,9 @@ self.onmessage = (e: MessageEvent) => {
     case 'RESIZE':
       width = payload.width;
       height = payload.height;
+      if (payload.isMobile !== undefined) {
+        config.isMobile = payload.isMobile;
+      }
       if (canvas) {
         canvas.width = width * payload.devicePixelRatio;
         canvas.height = height * payload.devicePixelRatio;

@@ -14,18 +14,18 @@ interface RenderGridConfig {
   matrixTwinkleSpeed: number;
   isDark: boolean;
   animationsEnabled: boolean;
+  isMobile: boolean;
 }
 
 export function renderGrid({
   ctx, width, height, time, pointer, matrixDensity, matrixSize, matrixHoverSize,
   matrixOpacity, matrixColor, matrixMouseEffect, matrixTwinkleEffect,
-  matrixTwinkleSpeed, isDark, animationsEnabled
+  matrixTwinkleSpeed, isDark, animationsEnabled, isMobile
 }: RenderGridConfig) {
   const SPACING = matrixDensity;
   const CROSS_SIZE = matrixSize; 
   const GLOW_RADIUS = 300;
 
-  const isMobile = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
   const effectiveMouseEffect = matrixMouseEffect && !isMobile;
 
   const speedX = 0.3;

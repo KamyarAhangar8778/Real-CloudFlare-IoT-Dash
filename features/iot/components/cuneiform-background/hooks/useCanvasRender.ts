@@ -24,6 +24,8 @@ export function useCanvasRender({
     const worker = new Worker(new URL('../core/cuneiform.worker.ts', import.meta.url), { type: 'module' });
     workerRef.current = worker;
     
+    const checkIsMobile = () => window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
     try {
       const offscreen = canvas.transferControlToOffscreen();
       worker.postMessage({
@@ -46,7 +48,8 @@ export function useCanvasRender({
             matrixTwinkleSpeed,
             isDark,
             animationsEnabled,
-            animationsFps
+            animationsFps,
+            isMobile: checkIsMobile()
           }
         }
       }, [offscreen]);
@@ -62,6 +65,7 @@ export function useCanvasRender({
             width: window.innerWidth,
             height: window.innerHeight,
             devicePixelRatio: window.devicePixelRatio || 1,
+            isMobile: checkIsMobile()
           }
         });
       }
