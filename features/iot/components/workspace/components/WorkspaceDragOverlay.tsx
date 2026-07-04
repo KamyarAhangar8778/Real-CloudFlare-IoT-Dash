@@ -1,8 +1,9 @@
 import React from "react";
 import { DragOverlay } from "@dnd-kit/core";
-import SortableGroup from "../SortableGroup";
-import SortableSegmentCard from "../SortableSegmentCard";
-import { IoTWorkspaceProps } from "./types";
+import SortableGroup from "../../SortableGroup";
+import SortableSegmentCard from "../../SortableSegmentCard";
+import { IoTWorkspaceProps } from "../core/types";
+import { getEffectiveGroupsCols } from "../core/gridUtils";
 
 type WorkspaceDragOverlayProps = Pick<
   IoTWorkspaceProps,
@@ -51,23 +52,13 @@ export default function WorkspaceDragOverlay({
           const originalGroupCols = groupConfigs[seg.group || "Test"]?.maxCols || 3;
           
           const groupsOrder = Array.from(new Set(segments.map(s => s.group || "Test")));
-          let actualParentGroupsCols = groupsCols;
-
-          if (groupsCols > 1 && groupsOrder.length > 0) {
-            const groupIndex = groupsOrder.indexOf(seg.group || "Test");
-            if (groupIndex !== -1) {
-              const totalRows = Math.ceil(groupsOrder.length / groupsCols);
-              const currentRow = Math.floor(groupIndex / groupsCols);
-              const isLastRow = currentRow === totalRows - 1;
-              
-              if (isLastRow) {
-                const itemsInLastRow = groupsOrder.length % groupsCols || groupsCols;
-                actualParentGroupsCols = itemsInLastRow;
-              }
-            }
-          }
-
-          const effectiveGroupsCols = Math.min(groupsOrder.length, actualParentGroupsCols);
+          const groupIndex = groupsOrder.indexOf(seg.group || "Test");
+          
+          const effectiveGroupsCols = getEffectiveGroupsCols(
+            groupIndex !== -1 ? groupIndex : 0, 
+            groupsOrder.length, 
+            groupsCols
+          );
 
           return (
             <div style={{ opacity: 0.8, cursor: "grabbing" }}>
@@ -98,23 +89,13 @@ export default function WorkspaceDragOverlay({
           const groupSegments = segments.filter(s => (s.group || "Test") === groupId);
           
           const groupsOrder = Array.from(new Set(segments.map(s => s.group || "Test")));
-          let actualParentGroupsCols = groupsCols;
-
-          if (groupsCols > 1 && groupsOrder.length > 0) {
-            const groupIndex = groupsOrder.indexOf(groupId);
-            if (groupIndex !== -1) {
-              const totalRows = Math.ceil(groupsOrder.length / groupsCols);
-              const currentRow = Math.floor(groupIndex / groupsCols);
-              const isLastRow = currentRow === totalRows - 1;
-              
-              if (isLastRow) {
-                const itemsInLastRow = groupsOrder.length % groupsCols || groupsCols;
-                actualParentGroupsCols = itemsInLastRow;
-              }
-            }
-          }
-
-          const effectiveGroupsCols = Math.min(groupsOrder.length, actualParentGroupsCols);
+          const groupIndex = groupsOrder.indexOf(groupId);
+          
+          const effectiveGroupsCols = getEffectiveGroupsCols(
+            groupIndex !== -1 ? groupIndex : 0, 
+            groupsOrder.length, 
+            groupsCols
+          );
 
           return (
             <div style={{ opacity: 0.8, cursor: "grabbing" }}>

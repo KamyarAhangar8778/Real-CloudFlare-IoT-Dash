@@ -1,13 +1,13 @@
 import React from "react";
 import {
   SortableContext,
-  verticalListSortingStrategy,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import SortableGroup from "../SortableGroup";
-import SortableSegmentCard from "../SortableSegmentCard";
-import { IoTWorkspaceProps } from "./types";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import SortableGroup from "../../SortableGroup";
+import SortableSegmentCard from "../../SortableSegmentCard";
+import { IoTWorkspaceProps } from "../core/types";
+import { useWorkspaceGrid } from "../hooks/useWorkspaceGrid";
+import { getEffectiveGroupsCols } from "../core/gridUtils";
 
 type WorkspaceGridProps = Omit<
   IoTWorkspaceProps,
@@ -44,52 +44,28 @@ export default function WorkspaceGrid({
   isSegmentsCompactLayout,
   dashboardWidth = 1,
 }: WorkspaceGridProps) {
-  const isMobilePortrait = useMediaQuery("(max-width: 767px) and (orientation: portrait)");
-  
-  const filteredGroupsOrder = selectedGroupFilter
-    ? groupsOrder.filter((g) => g === selectedGroupFilter)
-    : groupsOrder;
-
-  const groupsCols = isMobilePortrait ? 1 : (selectedGroupFilter ? 1 : initialGroupsCols);
-
-  const itemsInLastRow = filteredGroupsOrder.length % groupsCols;
-  const hasSingleItemInLastRow = itemsInLastRow === 1;
-
-  const masonryGroups = hasSingleItemInLastRow
-    ? filteredGroupsOrder.slice(0, -1)
-    : filteredGroupsOrder;
-
-  const lastRowGroup = hasSingleItemInLastRow
-    ? filteredGroupsOrder[filteredGroupsOrder.length - 1]
-    : null;
-
-  // Distribute items into columns to create a masonry effect while maintaining left-to-right order
-  const columns: string[][] = Array.from({ length: groupsCols }, () => []);
-  masonryGroups.forEach((groupName, index) => {
-    columns[index % groupsCols].push(groupName);
+  const {
+    isMobilePortrait,
+    filteredGroupsOrder,
+    groupsCols,
+    masonryGroups,
+    lastRowGroup,
+    columns,
+  } = useWorkspaceGrid({
+    groupsOrder,
+    initialGroupsCols,
+    selectedGroupFilter,
   });
 
   const renderGroup = (groupName: string, groupIndex: number) => {
     const groupSegments = segments.filter(
       (s) => (s.group || "Test") === groupName,
     );
-    let actualParentGroupsCols = groupsCols;
 
-    if (groupsCols > 1 && filteredGroupsOrder.length > 0) {
-      const totalRows = Math.ceil(filteredGroupsOrder.length / groupsCols);
-      const currentRow = Math.floor(groupIndex / groupsCols);
-      const isLastRow = currentRow === totalRows - 1;
-
-      if (isLastRow) {
-        const itemsInLastRow =
-          filteredGroupsOrder.length % groupsCols || groupsCols;
-        actualParentGroupsCols = itemsInLastRow;
-      }
-    }
-
-    const effectiveGroupsCols = Math.min(
+    const effectiveGroupsCols = getEffectiveGroupsCols(
+      groupIndex,
       filteredGroupsOrder.length,
-      actualParentGroupsCols,
+      groupsCols
     );
 
     return (

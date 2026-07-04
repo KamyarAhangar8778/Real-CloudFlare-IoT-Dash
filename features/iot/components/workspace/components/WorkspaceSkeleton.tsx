@@ -1,4 +1,5 @@
 import React from "react";
+import { IoTWorkspaceProps } from "../core/types";
 
 interface WorkspaceSkeletonProps {
   groupsCols: number;
