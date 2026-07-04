@@ -85,29 +85,15 @@ export default function SortableGroup({
 
     return (
       <div
-        className={`flex flex-wrap gap-4 w-full text-right p-4 relative z-10 group-layout-${id.replace(
-          /\s+/g,
-          "-"
-        )}`}
+        className="flex flex-wrap gap-4 w-full text-right p-4 relative z-10 [&>*]:grow [&>*]:shrink-0 [&>*]:min-w-0 [&>*]:basis-[var(--group-item-basis)]"
+        style={{
+          "--group-item-basis": effectiveCols === 1
+            ? "100%"
+            : effectiveCols === 2
+              ? "calc(50% - 0.5rem - 0.1px)"
+              : "calc(33.3333% - 0.6667rem - 0.1px)"
+        } as React.CSSProperties}
       >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-          .group-layout-${id.replace(/\s+/g, "-")} > * {
-            flex-grow: 1;
-            flex-shrink: 0;
-            min-width: 0;
-            flex-basis: ${
-              effectiveCols === 1
-                ? "100%"
-                : effectiveCols === 2
-                  ? "calc(50% - 0.5rem - 0.1px)"
-                  : "calc(33.3333% - 0.6667rem - 0.1px)"
-            };
-          }
-        `,
-          }}
-        />
         <AnimatePresence mode="popLayout">{children}</AnimatePresence>
       </div>
     );
