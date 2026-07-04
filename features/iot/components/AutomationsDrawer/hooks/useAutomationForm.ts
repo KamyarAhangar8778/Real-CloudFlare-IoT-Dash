@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export function useAutomationForm() {
-  const { automations, setAutomations, showToast } = useAchaemenidState();
+  const automations = useIoTStore((state) => state.automations);
+  const setAutomations = useIoTStore((state) => state.setAutomations);
+  const showToast = useIoTStore((state) => state.showToast);
   
   const [editingId, setEditingId] = useState<string | null>(null);
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { AnimatePresence } from "motion/react";
 import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import MacroSidebarButton from "./MacroSidebarButton";
@@ -12,7 +13,9 @@ interface MacroSidebarProps {
 }
 
 export default function MacroSidebar({ forceHorizontal = false, className = "" }: MacroSidebarProps) {
-  const { macros, handleBatchPinState, selectedGroupFilter, animationsEnabled, headerPosition } = useDashboard();
+  const { handleBatchPinState, animationsEnabled, headerPosition } = useDashboard();
+  const macros = useIoTStore(s => s.macros);
+  const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [offset, setOffset] = useState(0);

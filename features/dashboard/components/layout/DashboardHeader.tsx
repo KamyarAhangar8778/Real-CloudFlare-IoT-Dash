@@ -3,6 +3,7 @@
 import React from "react";
 import MasterHeader from "@/components/MasterHeader";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 interface DashboardHeaderProps {
   position: "left" | "topOrMobile";
@@ -16,17 +17,18 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
     setIsMenuOpen,
     headerAnimationType,
     headerTitle,
-    groupsCols,
-    setGroupsCols,
     headerPosition,
     setHeaderPosition,
     animationsEnabled,
     isSidebarCollapsed,
     setIsSidebarCollapsed,
-    groupsOrder,
-    selectedGroupFilter,
-    setSelectedGroupFilter,
   } = useDashboard();
+  
+  const groupsCols = useIoTStore(s => s.groupsCols);
+  const setGroupsCols = useIoTStore(s => s.setGroupsCols);
+  const groupsOrder = useIoTStore(s => s.groupsOrder);
+  const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
+  const setSelectedGroupFilter = useIoTStore(s => s.setSelectedGroupFilter);
 
   if (position === "left") {
     return (

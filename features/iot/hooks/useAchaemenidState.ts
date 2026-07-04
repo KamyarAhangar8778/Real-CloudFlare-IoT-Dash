@@ -1,6 +1,5 @@
 "use client";
 
-import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { useAestheticState } from "./achaemenidState/useAestheticState";
 import { useEspMenuState } from "./achaemenidState/useEspMenuState";
 import { usePinOperations } from "./achaemenidState/usePinOperations";
@@ -13,7 +12,6 @@ import { useAchaemenidDnd } from "./achaemenidState/useAchaemenidDnd";
 import { useApplyEspConfig } from "./achaemenidState/useApplyEspConfig";
 
 export function useAchaemenidState() {
-  const store = useIoTStore();
   const aesthetic = useAestheticState();
   const menu = useEspMenuState();
 
@@ -42,6 +40,7 @@ export function useAchaemenidState() {
   });
 
   const {
+    targetPlaceholderId,
     handleAddSegment,
     handleAddPlaceholder,
     handleSetupPlaceholder,
@@ -60,10 +59,6 @@ export function useAchaemenidState() {
   } = useSegmentUpdates();
 
   const dnd = useAchaemenidDnd({
-    segments: store.segments,
-    setSegments: store.setSegments,
-    groupsOrder: store.groupsOrder,
-    setGroupsOrder: store.setGroupsOrder,
     handleRemoveGroup,
     handleRemoveSegment,
   });
@@ -71,13 +66,13 @@ export function useAchaemenidState() {
   return {
     ...menu,
     ...aesthetic,
-    ...store,
     isLoadingIoT,
     mounted,
     refetchIot,
     isFullyReady,
     setIsFullyReady,
     ...dnd,
+    targetPlaceholderId,
     handleApplyEspConfig,
     handleAddSegment,
     handleAddPlaceholder,
@@ -96,9 +91,5 @@ export function useAchaemenidState() {
     setWorkerUrl,
     handleRetrySync,
     triggerCloudflarePush,
-    automations: store.automations,
-    setAutomations: store.setAutomations,
-    macros: store.macros,
-    setMacros: store.setMacros,
   };
 }

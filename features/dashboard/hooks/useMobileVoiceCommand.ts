@@ -1,6 +1,7 @@
 import React from 'react';
 import { useVoiceCommand } from '@/features/iot/hooks/useVoiceCommand';
 import { useDashboard } from '@/features/dashboard/context/DashboardContext';
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
 
 function normalizePhonetics(text: string): string {
   if (!text) return "";
@@ -46,7 +47,12 @@ function getSimilarity(a: string, b: string): number {
 
 export function useMobileVoiceCommand() {
   const { isListening, startListening, stopListening } = useVoiceCommand();
-  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState } = useDashboard();
+  const { handleSetPinState, handleBatchPinState } = useDashboard();
+  
+  const showToast = useIoTStore(s => s.showToast);
+  const segments = useIoTStore(s => s.segments);
+  const macros = useIoTStore(s => s.macros);
+  const voiceCommands = useIoTStore(s => s.voiceCommands);
 
   const executeCommand = (finalTranscript: string) => {
     const cleanTranscript = finalTranscript.trim().replace(/[.،!؟]+$/, '').trim();

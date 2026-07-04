@@ -1,10 +1,15 @@
 import { useVoiceCommand } from '@/features/iot/hooks/useVoiceCommand';
 import { useDashboard } from '@/features/dashboard/context/DashboardContext';
+import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
 import { normalizePhonetics, getSimilarity } from './utils';
 
 export function useVoiceCommandHandler() {
   const { isListening, transcript, startListening, stopListening } = useVoiceCommand();
-  const { showToast, segments, macros, voiceCommands, handleSetPinState, handleBatchPinState, setIsMenuOpen, setActiveSettingsTab } = useDashboard();
+  const { handleSetPinState, handleBatchPinState, setIsMenuOpen, setActiveSettingsTab } = useDashboard();
+  const showToast = useIoTStore(s => s.showToast);
+  const segments = useIoTStore(s => s.segments);
+  const macros = useIoTStore(s => s.macros);
+  const voiceCommands = useIoTStore(s => s.voiceCommands);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();

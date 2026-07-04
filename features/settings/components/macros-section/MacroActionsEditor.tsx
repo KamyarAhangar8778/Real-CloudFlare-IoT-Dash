@@ -1,6 +1,6 @@
 import React from "react";
 import { Trash2 } from "lucide-react";
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 interface Props {
   tempActions: Array<{targetPin: string, actionOn: boolean}>;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function MacroActionsEditor({ tempActions, setTempActions }: Props) {
-  const { segments } = useDashboard();
+  const segments = useIoTStore(s => s.segments);
 
   const handleAddAction = () => {
     if (segments.length === 0) return;

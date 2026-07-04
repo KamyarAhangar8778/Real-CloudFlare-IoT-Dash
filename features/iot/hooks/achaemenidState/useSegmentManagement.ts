@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import {
   publishAddSegmentCommand,
@@ -16,10 +16,12 @@ export function useSegmentManagement({
   setIsModulesMenuOpen,
   updatePinOnServer,
 }: UseSegmentManagementProps) {
-  const { segments, setSegments, setGroupsOrder, setGroupConfigs, pinsState } = useIoTStore();
+  const setSegments = useIoTStore((state) => state.setSegments);
+  const setGroupsOrder = useIoTStore((state) => state.setGroupsOrder);
+  const setGroupConfigs = useIoTStore((state) => state.setGroupConfigs);
   const [targetPlaceholderId, setTargetPlaceholderId] = useState<string | null>(null);
 
-  const handleAddSegment = (
+  const handleAddSegment = useCallback((
     type: string,
     pin: string,
     title?: string,
@@ -55,6 +57,7 @@ export function useSegmentManagement({
 
     setGroupsOrder((prev) => (prev.includes(finalGroup) ? prev : [...prev, finalGroup]));
 
+    const segments = useIoTStore.getState().segments;
     let updated = [...segments];
     if (targetPlaceholderId) {
       const index = updated.findIndex((s) => s.id === targetPlaceholderId);
@@ -70,15 +73,17 @@ export function useSegmentManagement({
     }
     setSegments(updated);
 
+    const pinsState = useIoTStore.getState().pinsState;
     if (pinsState[pin] === undefined) {
       updatePinOnServer(pin, false);
     }
 
     publishAddSegmentCommand(newSeg.id, newSeg.type, parseInt(newSeg.pin), false);
-  };
+  }, [targetPlaceholderId, setGroupConfigs, setGroupsOrder, setSegments, updatePinOnServer]);
 
-  const handleAddPlaceholder = (groupId: string) => {
+  const handleAddPlaceholder = useCallback((groupId: string) => {
     const randomId = Math.random().toString(36).substring(2, 9);
+    const segments = useIoTStore.getState().segments;
     setSegments([
       ...segments,
       {
@@ -89,26 +94,27 @@ export function useSegmentManagement({
         group: groupId,
       },
     ]);
-  };
+  }, [setSegments]);
 
-  const handleSetupPlaceholder = (id: string) => {
+  const handleSetupPlaceholder = useCallback((id: string) => {
     setTargetPlaceholderId(id);
     setIsModulesMenuOpen(true);
-  };
+  }, [setIsModulesMenuOpen]);
 
-  const handleGroupColsChange = (group: string, maxCols: number) => {
+  const handleGroupColsChange = useCallback((group: string, maxCols: number) => {
     setGroupConfigs((prev) => ({ ...prev, [group]: { ...prev[group], maxCols } }));
-  };
+  }, [setGroupConfigs]);
 
-  const handleRemoveSegment = (id: string) => {
+  const handleRemoveSegment = useCallback((id: string) => {
+    const segments = useIoTStore.getState().segments;
     setSegments(segments.filter((s) => s.id !== id));
     publishDeleteSegmentCommand(id);
-  };
+  }, [setSegments]);
 
-  const handleRemoveGroup = (groupId: string) => {
+  const handleRemoveGroup = useCallback((groupId: string) => {
     setGroupsOrder((prev) => prev.filter((g) => g !== groupId));
     setSegments((prev) => prev.filter((s) => (s.group || "Test") !== groupId));
-  };
+  }, [setGroupsOrder, setSegments]);
 
   return {
     targetPlaceholderId,

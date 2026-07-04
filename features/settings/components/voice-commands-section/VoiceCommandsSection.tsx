@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { Plus, Mic } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { VoiceTranscriptOverlay } from "./VoiceTranscriptOverlay";
 import { VoiceCommandCard } from "./VoiceCommandCard";
 
 export default function VoiceCommandsSection() {
-  const { voiceCommands, setVoiceCommands, segments, macros, isListening, voiceTranscript } = useDashboard();
+  const voiceCommands = useIoTStore(s => s.voiceCommands);
+  const setVoiceCommands = useIoTStore(s => s.setVoiceCommands);
+  const segments = useIoTStore(s => s.segments);
+  const macros = useIoTStore(s => s.macros);
+  const isListening = useIoTStore(s => s.isListening);
+  const voiceTranscript = useIoTStore(s => s.voiceTranscript);
   const [editingCommandId, setEditingCommandId] = useState<string | null>(null);
   const [newCommandPhrase, setNewCommandPhrase] = useState("");
   const [tempActions, setTempActions] = useState<Array<{targetPin?: string, targetMacro?: string, actionOn?: boolean}>>([]);

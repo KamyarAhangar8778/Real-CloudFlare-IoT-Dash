@@ -4,24 +4,26 @@ import React from "react";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import LowDataModeBanner from "@/features/iot/components/notifications/LowDataModeBanner";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 import DashboardWorkspace from "./DashboardWorkspace";
 import MobileVoiceCommandButton from "../widgets/MobileVoiceCommandButton";
 
 export default function DashboardMain() {
   const {
-    segments,
-    lowDataMode,
     animationsEnabled,
     refetchIot,
     headerPosition,
-    manualSaveMode,
-    unsavedChangesCount,
     triggerCloudflarePush,
     dashboardWidth,
     activeGroupId,
     activeSegmentId,
   } = useDashboard();
+
+  const segments = useIoTStore(s => s.segments);
+  const lowDataMode = useIoTStore(s => s.lowDataMode);
+  const manualSaveMode = useIoTStore(s => s.manualSaveMode);
+  const unsavedChangesCount = useIoTStore(s => s.unsavedChangesCount);
 
   const isDragging = !!activeGroupId || !!activeSegmentId;
   const { innerWidthClass } = useDashboardLayout(dashboardWidth);

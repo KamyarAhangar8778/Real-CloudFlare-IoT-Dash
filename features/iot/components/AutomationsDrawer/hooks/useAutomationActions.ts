@@ -1,10 +1,11 @@
-import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export function useAutomationActions(
   actions: Array<{ targetPin?: string; targetMacro?: string; actionOn?: boolean; }>, 
   setActions: (actions: any) => void
 ) {
-  const { segments, macros } = useAchaemenidState();
+  const segments = useIoTStore((state) => state.segments);
+  const macros = useIoTStore((state) => state.macros);
 
   const addAction = (type: "pin" | "macro") => {
     if (type === "pin") {

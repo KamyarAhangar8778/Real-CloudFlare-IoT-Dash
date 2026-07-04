@@ -7,25 +7,19 @@ import { WorkspaceSkeleton } from "@/features/iot/components/workspace";
 import MacroSidebar from "../widgets/MacroSidebar";
 import GroupFilterSelector from "@/components/MasterHeader/GroupFilterSelector";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { useWorkspaceSwipe } from "../../hooks/useWorkspaceSwipe";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 
 export default function DashboardWorkspace() {
   const {
-    segments,
     isDark,
     accent3,
     accent4,
     setIsMenuOpen,
     setIsModulesMenuOpen,
     animationsEnabled,
-    selectedGroupFilter,
-    setSelectedGroupFilter,
     sensors,
-    groupsOrder,
-    groupsCols,
-    groupConfigs,
-    pinsState,
     isLoadingIoT,
     activeSegmentId,
     activeGroupId,
@@ -48,6 +42,14 @@ export default function DashboardWorkspace() {
     isGroupsCompactLayout,
     isSegmentsCompactLayout,
   } = useDashboard();
+
+  const segments = useIoTStore(s => s.segments);
+  const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
+  const setSelectedGroupFilter = useIoTStore(s => s.setSelectedGroupFilter);
+  const groupsOrder = useIoTStore(s => s.groupsOrder);
+  const groupsCols = useIoTStore(s => s.groupsCols);
+  const groupConfigs = useIoTStore(s => s.groupConfigs);
+  const pinsState = useIoTStore(s => s.pinsState);
 
   const { onTouchStart, onTouchMove, onTouchEnd } = useWorkspaceSwipe(selectedGroupFilter, setSelectedGroupFilter, groupsOrder);
   const { innerWidthClass, outerWidthClass } = useDashboardLayout(dashboardWidth);

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { Plus, Command } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { ICON_MAP } from "@/features/iot/utils/icons";
 import { MacroCard } from "./MacroCard";
 
 export default function MacrosSection() {
-  const { macros, setMacros } = useDashboard();
+  const macros = useIoTStore(s => s.macros);
+  const setMacros = useIoTStore(s => s.setMacros);
   const [editingMacroId, setEditingMacroId] = useState<string | null>(null);
   const [newMacroTitle, setNewMacroTitle] = useState("");
   const [newMacroIcon, setNewMacroIcon] = useState("");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   KeyboardSensor,
   PointerSensor,
@@ -11,22 +11,18 @@ import {
   DragOverEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export function useAchaemenidDnd({
-  segments,
-  setSegments,
-  groupsOrder,
-  setGroupsOrder,
   handleRemoveGroup,
   handleRemoveSegment,
 }: {
-  segments: any[];
-  setSegments: (segments: any[] | ((prev: any[]) => any[])) => void;
-  groupsOrder: string[];
-  setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
   handleRemoveGroup: (groupId: string) => void;
   handleRemoveSegment: (id: string) => void;
 }) {
+  const setSegments = useIoTStore((state) => state.setSegments);
+  const setGroupsOrder = useIoTStore((state) => state.setGroupsOrder);
+
   const [activeSegmentId, setActiveSegmentId] = useState<string | null>(null);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
 
@@ -35,16 +31,17 @@ export function useAchaemenidDnd({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const handleDragStart = (e: DragStartEvent) => {
+  const handleDragStart = useCallback((e: DragStartEvent) => {
     if (e.active.data.current?.type === "Group") setActiveGroupId(e.active.id as string);
     else setActiveSegmentId(e.active.id as string);
-  };
+  }, []);
 
-  const handleDragOver = (e: DragOverEvent) => {
+  const handleDragOver = useCallback((e: DragOverEvent) => {
     const { active, over } = e;
     if (!over || active.data.current?.type === "Group" || over.data.current?.type === "Group")
       return;
 
+    const segments = useIoTStore.getState().segments;
     const activeSeg = segments.find((s) => s.id === active.id);
     if (!activeSeg) return;
     const overSeg = segments.find((s) => s.id === over.id);
@@ -62,6 +59,7 @@ export function useAchaemenidDnd({
         return activeIdx !== overIdx ? arrayMove(prev, activeIdx, overIdx) : prev;
       });
     } else {
+      const groupsOrder = useIoTStore.getState().groupsOrder;
       const overIdStr = over.id.toString();
       const targetGroup = overIdStr.startsWith("group-")
         ? overIdStr.replace("group-", "")
@@ -72,9 +70,9 @@ export function useAchaemenidDnd({
         // Do nothing to prevent cross-group dragging
       }
     }
-  };
+  }, [setSegments]);
 
-  const handleDragEnd = (e: DragEndEvent) => {
+  const handleDragEnd = useCallback((e: DragEndEvent) => {
     setActiveSegmentId(null);
     setActiveGroupId(null);
     const { active, over } = e;
@@ -96,7 +94,7 @@ export function useAchaemenidDnd({
         });
       }
     }
-  };
+  }, [handleRemoveGroup, handleRemoveSegment, setGroupsOrder]);
 
   return {
     sensors,

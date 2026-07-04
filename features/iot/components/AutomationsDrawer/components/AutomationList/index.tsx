@@ -1,6 +1,6 @@
 import React from "react";
 import { Edit2, Trash2, Clock, Thermometer, Info, Layers } from "lucide-react";
-import { useAchaemenidState } from "@/features/iot/hooks/useAchaemenidState";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 const DAYS_MAP = [
   { value: 6, label: "شنبه" },
@@ -19,7 +19,7 @@ interface AutomationListProps {
 }
 
 export default function AutomationList({ handleEdit, handleDelete, handleToggle }: AutomationListProps) {
-  const { automations } = useAchaemenidState();
+  const automations = useIoTStore((state) => state.automations);
 
   return (
     <div className="space-y-4 mt-6 border-t border-[var(--border-color)] pt-6">

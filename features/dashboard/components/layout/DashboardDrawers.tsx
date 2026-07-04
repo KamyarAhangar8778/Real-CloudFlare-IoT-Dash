@@ -5,6 +5,7 @@ import SettingsDrawer from "@/features/settings/components/SettingsDrawer";
 import ModulesDrawer from "@/features/iot/components/ModulesDrawer";
 import AutomationsDrawer from "@/features/iot/components/AutomationsDrawer";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export default function DashboardDrawers() {
   const {
@@ -62,9 +63,10 @@ export default function DashboardDrawers() {
     isSegmentsCompactLayout,
     setIsSegmentsCompactLayout,
     handleAddSegment,
-    segments,
     handleRemoveSegment,
   } = useDashboard();
+  
+  const segments = useIoTStore(s => s.segments);
 
   return (
     <>
