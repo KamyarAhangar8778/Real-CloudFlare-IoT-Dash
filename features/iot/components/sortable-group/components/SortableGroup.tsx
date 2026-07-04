@@ -8,8 +8,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence } from "motion/react";
-import { SortableGroupProps } from "./types";
+import { SortableGroupProps } from "../core/types";
 import GroupHeader from "./GroupHeader";
+import { useMasonryGrid } from "../hooks/useMasonryGrid";
 
 export default function SortableGroup({
   id,
@@ -52,22 +53,11 @@ export default function SortableGroup({
   };
 
   const childrenArray = React.Children.toArray(children);
-  const itemsCount = childrenArray.length;
-  const effectiveCols = Math.min(Math.max(1, itemsCount), maxCols);
-
-  const itemsInLastRow = itemsCount % effectiveCols;
-  const hasSingleItemInLastRow = itemsInLastRow === 1;
-
-  const masonryChildren = hasSingleItemInLastRow ? childrenArray.slice(0, -1) : childrenArray;
-  const lastRowChild = hasSingleItemInLastRow ? childrenArray[itemsCount - 1] : null;
-
-  // For compact layout (masonry)
-  const columns: React.ReactNode[][] = Array.from({ length: effectiveCols }, () => []);
-  if (isSegmentsCompactLayout) {
-    masonryChildren.forEach((child, index) => {
-      columns[index % effectiveCols].push(child);
-    });
-  }
+  const { effectiveCols, masonryChildren, lastRowChild, columns } = useMasonryGrid(
+    childrenArray,
+    maxCols,
+    isSegmentsCompactLayout
+  );
 
   const renderContent = () => {
     if (isSegmentsCompactLayout) {

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Columns2, LayoutGrid } from "lucide-react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 interface LayoutSelectorProps {
   maxCols: number;
