@@ -66,7 +66,7 @@ export default function DashboardDrawers() {
   const segments = useIoTStore(s => s.segments);
 
   return (
-    <>
+    <React.Suspense fallback={null}>
       {isMenuOpen && (
         <SettingsDrawer
           isOpen={isMenuOpen}
@@ -143,6 +143,6 @@ export default function DashboardDrawers() {
           animationsEnabled={animationsEnabled}
         />
       )}
-    </>
+    </React.Suspense>
   );
 }

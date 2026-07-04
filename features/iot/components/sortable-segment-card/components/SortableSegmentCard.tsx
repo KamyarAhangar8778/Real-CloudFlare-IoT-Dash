@@ -133,7 +133,6 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
 export default React.memo(SortableSegmentCard, (prevProps, nextProps) => {
   return (
     prevProps.segment === nextProps.segment &&
-    prevProps.isPinOn === nextProps.isPinOn &&
     prevProps.isLoadingIoT === nextProps.isLoadingIoT &&
     prevProps.parentGroupsCols === nextProps.parentGroupsCols &&
     prevProps.groupMaxCols === nextProps.groupMaxCols &&

@@ -6,7 +6,6 @@ export interface IoTWorkspaceProps {
   groupsCols: number;
   segments: any[];
   groupConfigs: Record<string, { maxCols: number; icon?: string }>;
-  pinsState: Record<string, boolean>;
   isLoadingIoT: boolean;
   activeSegmentId: string | null;
   activeGroupId: string | null;

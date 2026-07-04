@@ -26,7 +26,6 @@ export default function WorkspaceGrid({
   groupsCols: initialGroupsCols,
   segments,
   groupConfigs,
-  pinsState,
   isLoadingIoT,
   animationsEnabled,
   selectedGroupFilter,
@@ -106,7 +105,6 @@ export default function WorkspaceGrid({
             <SortableSegmentCard
               key={seg.id}
               segment={seg}
-              isPinOn={!!pinsState[seg.pin]}
               onRemove={handleRemoveSegment}
               onTogglePin={handleTogglePin}
               onSetPinState={handleSetPinState}

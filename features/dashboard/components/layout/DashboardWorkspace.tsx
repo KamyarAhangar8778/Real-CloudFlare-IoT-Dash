@@ -50,7 +50,6 @@ export default function DashboardWorkspace() {
   const groupsOrder = useIoTStore(s => s.groupsOrder);
   const groupsCols = useIoTStore(s => s.groupsCols);
   const groupConfigs = useIoTStore(s => s.groupConfigs);
-  const pinsState = useIoTStore(s => s.pinsState);
 
   const { onTouchStart, onTouchMove, onTouchEnd } = useWorkspaceSwipe(selectedGroupFilter, setSelectedGroupFilter, groupsOrder);
   const { innerWidthClass, outerWidthClass } = useDashboardLayout(dashboardWidth);
@@ -65,7 +64,7 @@ export default function DashboardWorkspace() {
       onTouchEnd={onTouchEnd}
     >
       <div className="hidden lg:block pt-[115px]">
-        <MacroSidebar />
+        <React.Suspense fallback={<div className="w-20 lg:w-24 shrink-0 bg-transparent h-full" />}><MacroSidebar /></React.Suspense>
       </div>
       <main className={`flex-1 flex flex-col justify-center items-center text-center ${innerWidthClass} mx-auto space-y-8 py-4 w-full relative transition-all duration-500`}>
         {!isFullyReady ? (
@@ -76,19 +75,19 @@ export default function DashboardWorkspace() {
             <WorkspaceSkeleton groupsCols={groupsCols} />
           </div>
         ) : segments.length === 0 ? (
-          <WelcomePortal
+          <React.Suspense fallback={<div className="w-full h-96 flex items-center justify-center"><div className="w-12 h-12 rounded-full border-2 border-[var(--accent3)] border-t-transparent animate-spin" /></div>}><WelcomePortal
             setIsMenuOpen={setIsMenuOpen}
             setIsModulesMenuOpen={setIsModulesMenuOpen}
             accent3={accent3}
             accent4={accent4}
             animationsEnabled={animationsEnabled}
             isDark={isDark}
-          />
+          /></React.Suspense>
         ) : (
           <div className="w-full flex flex-col gap-4">
             <div className="-mt-6 sm:-mt-10 mb-2 w-full flex justify-center">
               <div className="block md:hidden w-full">
-                <MacroSidebar forceHorizontal={true} />
+                <React.Suspense fallback={<div className="h-16 w-full" />}><MacroSidebar forceHorizontal={true} /></React.Suspense>
               </div>
               <div className="hidden md:flex w-full justify-center">
                 <GroupFilterSelector
@@ -106,7 +105,6 @@ export default function DashboardWorkspace() {
               groupsCols={groupsCols}
               segments={segments}
               groupConfigs={groupConfigs}
-              pinsState={pinsState}
               isLoadingIoT={isLoadingIoT}
               activeSegmentId={activeSegmentId}
               activeGroupId={activeGroupId}
