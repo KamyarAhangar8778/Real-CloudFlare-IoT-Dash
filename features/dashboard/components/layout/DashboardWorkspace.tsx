@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import WelcomePortal from "@/features/iot/components/WelcomePortal";
+import WelcomePortal from "@/features/iot/components/welcome-portal";
 import IoTWorkspace from "@/features/iot/components/IoTWorkspace";
 import { WorkspaceSkeleton } from "@/features/iot/components/workspace";
 import MacroSidebar from "../widgets/MacroSidebar";

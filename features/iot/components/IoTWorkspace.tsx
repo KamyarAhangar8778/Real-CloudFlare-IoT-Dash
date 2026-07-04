@@ -2,7 +2,7 @@
 
 import React from "react";
 import { DndContext, closestCorners } from "@dnd-kit/core";
-import TrashDropZone from "./TrashDropZone";
+import TrashDropZone from "./workspace/components/TrashDropZone";
 import { WorkspaceGrid, WorkspaceDragOverlay, IoTWorkspaceProps } from "./workspace";
 
 export type { IoTWorkspaceProps };

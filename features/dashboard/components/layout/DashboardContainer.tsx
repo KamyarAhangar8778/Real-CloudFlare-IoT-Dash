@@ -3,12 +3,12 @@
 import React from "react";
 import { MotionConfig } from "motion/react";
 import DashboardStyles from "@/features/iot/components/DashboardStyles";
-import CuneiformBackground from "@/features/iot/components/CuneiformBackground";
+import CuneiformBackground from "@/features/iot/components/cuneiform-background";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import DashboardHeader from "./DashboardHeader";
 import DashboardMain from "./DashboardMain";
 import DashboardDrawers from "./DashboardDrawers";
-import ToastNotification from "@/features/iot/components/ToastNotification";
+import ToastNotification from "@/features/iot/components/notifications/ToastNotification";
 import ScrollToTopButton from "../widgets/ScrollToTopButton";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 import { usePageVisibility } from "@/features/iot/hooks/usePageVisibility";

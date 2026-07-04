@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
-import LowDataModeBanner from "@/features/iot/components/LowDataModeBanner";
+import LowDataModeBanner from "@/features/iot/components/notifications/LowDataModeBanner";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 import DashboardWorkspace from "./DashboardWorkspace";

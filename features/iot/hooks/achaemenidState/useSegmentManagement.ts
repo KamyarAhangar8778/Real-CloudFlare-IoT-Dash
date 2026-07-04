@@ -5,7 +5,6 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import {
   publishAddSegmentCommand,
   publishDeleteSegmentCommand,
-  publishUpdateRuleCommand,
 } from "@/features/iot/services/mqttService";
 
 interface UseSegmentManagementProps {
@@ -75,7 +74,6 @@ export function useSegmentManagement({
       updatePinOnServer(pin, false);
     }
 
-    // ارسال دستور ساخت سگمنت جدید به ESP
     publishAddSegmentCommand(newSeg.id, newSeg.type, parseInt(newSeg.pin), false);
   };
 
@@ -107,41 +105,6 @@ export function useSegmentManagement({
     publishDeleteSegmentCommand(id);
   };
 
-  const handleUpdateSegmentMode = (id: string, mode: "switch" | "push") => {
-    setSegments((prev) => prev.map((s) => (s.id === id ? { ...s, mode } : s)));
-  };
-
-  const handleUpdateSegmentAutoOff = (id: string, auto_off: number) => {
-    setSegments((prev) => prev.map((s) => (s.id === id ? { ...s, auto_off } : s)));
-  };
-
-  const handleUpdateSegmentRule = (
-    id: string, 
-    rule: { 
-      highActions?: Array<{
-        reqHold: number;
-        targetPin: string;
-        actionOn: boolean;
-        actionType?: number;
-        delay?: number;
-      }>;
-      lowActions?: Array<{
-        reqHold: number;
-        targetPin: string;
-        actionOn: boolean;
-        actionType?: number;
-        delay?: number;
-      }>;
-    }
-  ) => {
-    setSegments(prev => prev.map((s) => (s.id === id ? { ...s, rule } : s)));
-    publishUpdateRuleCommand(
-      id, 
-      rule.highActions || [],
-      rule.lowActions || []
-    );
-  };
-
   const handleRemoveGroup = (groupId: string) => {
     setGroupsOrder((prev) => prev.filter((g) => g !== groupId));
     setSegments((prev) => prev.filter((s) => (s.group || "Test") !== groupId));
@@ -154,10 +117,6 @@ export function useSegmentManagement({
     handleSetupPlaceholder,
     handleGroupColsChange,
     handleRemoveSegment,
-    handleUpdateSegmentMode,
-    handleUpdateSegmentRule,
-    handleUpdateSegmentAutoOff,
     handleRemoveGroup,
   };
 }
-

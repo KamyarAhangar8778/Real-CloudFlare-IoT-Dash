@@ -1,0 +1,114 @@
+interface RenderGridConfig {
+  ctx: CanvasRenderingContext2D;
+  width: number;
+  height: number;
+  time: number;
+  pointer: { x: number; y: number };
+  matrixDensity: number;
+  matrixSize: number;
+  matrixHoverSize: number;
+  matrixOpacity: number;
+  matrixColor: string;
+  matrixMouseEffect: boolean;
+  matrixTwinkleEffect: boolean;
+  matrixTwinkleSpeed: number;
+  isDark: boolean;
+  animationsEnabled: boolean;
+}
+
+export function renderGrid({
+  ctx, width, height, time, pointer, matrixDensity, matrixSize, matrixHoverSize,
+  matrixOpacity, matrixColor, matrixMouseEffect, matrixTwinkleEffect,
+  matrixTwinkleSpeed, isDark, animationsEnabled
+}: RenderGridConfig) {
+  const SPACING = matrixDensity;
+  const CROSS_SIZE = matrixSize; 
+  const GLOW_RADIUS = 300;
+
+  const isMobile = window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  const effectiveMouseEffect = matrixMouseEffect && !isMobile;
+
+  const speedX = 0.3;
+  const speedY = 0.3;
+  
+  const offsetX = (time * speedX) % SPACING;
+  const offsetY = (time * speedY) % SPACING;
+
+  ctx.clearRect(0, 0, width, height);
+
+  const baseColor = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)";
+
+  if (effectiveMouseEffect && pointer.x > -500) {
+    const gradient = ctx.createRadialGradient(
+      pointer.x, pointer.y, 0, 
+      pointer.x, pointer.y, GLOW_RADIUS
+    );
+    gradient.addColorStop(0, `${matrixColor}33`);
+    gradient.addColorStop(1, "transparent");
+    
+    ctx.globalAlpha = 1.0;
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  ctx.lineWidth = 1.2;
+
+  for (let x = -SPACING; x < width + SPACING; x += SPACING) {
+    for (let y = -SPACING; y < height + SPACING; y += SPACING) {
+      const posX = x + offsetX;
+      const posY = y + offsetY;
+
+      const baseAlpha = matrixOpacity / 100;
+      let currentAlpha = baseAlpha; 
+      let currentSize = CROSS_SIZE;
+      let color = baseColor;
+      
+      let twinkleFactor = 0;
+      if (matrixTwinkleEffect && animationsEnabled) {
+        const gridX = Math.round(x / SPACING);
+        const gridY = Math.round(y / SPACING);
+        const speed = matrixTwinkleSpeed * 0.0003;
+        
+        const wave1 = Math.sin(gridX * 0.137 + gridY * 0.271 + time * speed);
+        const wave2 = Math.cos(gridX * 0.223 - gridY * 0.151 + time * speed * 1.3);
+        const wave3 = Math.sin(gridX * 0.359 + gridY * 0.093 - time * speed * 0.8);
+        
+        const combined = (wave1 + wave2 + wave3) / 3; 
+        
+        if (combined > 0.7) {
+           twinkleFactor = (combined - 0.7) * 3.33; 
+           twinkleFactor = Math.pow(twinkleFactor, 1.5); 
+        }
+      }
+
+      if (effectiveMouseEffect) {
+        const dx = pointer.x - posX;
+        const dy = pointer.y - posY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < GLOW_RADIUS) {
+          const intensity = 1 - Math.pow(distance / GLOW_RADIUS, 1.5); 
+          currentAlpha = baseAlpha + intensity * (1 - baseAlpha);
+          currentSize = CROSS_SIZE + intensity * matrixHoverSize;
+          color = matrixColor;
+        }
+      }
+      
+      if (twinkleFactor > 0) {
+         currentAlpha = Math.max(currentAlpha, baseAlpha + twinkleFactor * (1 - baseAlpha));
+         currentSize = Math.max(currentSize, CROSS_SIZE + twinkleFactor * matrixHoverSize);
+         color = matrixColor;
+      }
+
+      ctx.globalAlpha = currentAlpha;
+      ctx.strokeStyle = color;
+      
+      ctx.beginPath();
+      ctx.moveTo(posX - currentSize, posY);
+      ctx.lineTo(posX + currentSize, posY);
+      ctx.moveTo(posX, posY - currentSize);
+      ctx.lineTo(posX, posY + currentSize);
+      ctx.stroke();
+    }
+  }
+}

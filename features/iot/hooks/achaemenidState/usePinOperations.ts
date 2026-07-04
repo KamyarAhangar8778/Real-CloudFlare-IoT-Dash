@@ -2,20 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import {
-  isCloudflareEnabled,
-  updatePinOnCloudflare,
-  updateBatchPinsOnCloudflare,
-} from "@/features/iot/services/cloudflareService";
-import { publishPinCommand, publishBatchPinCommand, initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
+import { isCloudflareEnabled } from "@/features/iot/services/cloudflareService";
+import { initMqtt, onMqttStateChange } from "@/features/iot/services/mqttService";
 import { soundManager } from "@/lib/audio";
+import { syncSinglePin, syncBatchPins } from "./core/pinSyncUtils";
 
 interface UsePinOperationsProps {
   refetchIot: () => void;
 }
 
 export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
-  const { pinsState, setPinsState, showToast } = useIoTStore();
+  const { pinsState, setPinsState, showToast, segments } = useIoTStore();
   const [isLoadingIoT, setIsLoadingIoT] = useState(false);
 
   useEffect(() => {
@@ -26,37 +23,13 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
     return () => unsubscribe();
   }, [setPinsState]);
 
-  const updatePinOnServer = async (
-    pin: string,
-    pinState: boolean,
-    preventMqtt: boolean = false,
-    timer?: number,
-  ) => {
+  const updatePinOnServer = async (pin: string, pinState: boolean, preventMqtt: boolean = false, timer?: number) => {
     setIsLoadingIoT(true);
     try {
       setPinsState((prev) => ({ ...prev, [pin]: pinState }));
-
-      if (!preventMqtt) {
-        // انتشار فرمان سریعاً در MQTT (سرعت بالا بدون منتظر ماندن برای سرور)
-        publishPinCommand(pin, pinState, timer);
-      }
-
-      const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
-      const isPushMode = segment?.mode === "push";
-
-      if (isCloudflareEnabled() && !isPushMode) {
-        try {
-          const result = await updatePinOnCloudflare(pin, pinState);
-          if (result.success) {
-            showToast(result.message, "success");
-          } else {
-            showToast(result.message, "error");
-          }
-        } catch (e) {
-          console.error(`Failed to sync pin ${pin} value to Cloudflare:`, e);
-          showToast(`تغییرات پین ${pin} بنا به دلایل فنی ذخیره نشد.`, "error");
-        }
-      }
+      const segment = segments.find((s) => s.pin === pin);
+      
+      await syncSinglePin(pin, pinState, preventMqtt, timer, segment?.mode === "push", showToast);
 
       await new Promise((resolve) => setTimeout(resolve, 300));
       await refetchIot();
@@ -71,8 +44,9 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
     const nextState = !pinsState[pin];
     if (nextState) soundManager.playToggleOn();
     else soundManager.playToggleOff();
+    
     setPinsState((prev) => ({ ...prev, [pin]: nextState }));
-    const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
+    const segment = segments.find((s) => s.pin === pin);
     await updatePinOnServer(pin, nextState, false, segment?.auto_off);
   };
 
@@ -82,7 +56,7 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
       else soundManager.playToggleOff();
     }
     setPinsState((prev) => ({ ...prev, [pin]: state }));
-    const segment = useIoTStore.getState().segments.find((s) => s.pin === pin);
+    const segment = segments.find((s) => s.pin === pin);
     await updatePinOnServer(pin, state, preventMqtt, segment?.auto_off);
   };
 
@@ -91,47 +65,19 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
     try {
       let soundPlayed = false;
       const stateUpdates: Record<string, boolean> = {};
-      const mqttActions: Array<{ pin: string; state: boolean; timer?: number }> = [];
-      const cfActions: Array<{ pin: string; state: boolean }> = [];
 
       for (const action of actions) {
         if (action.actionOn !== pinsState[action.targetPin]) {
           soundPlayed = true;
         }
         stateUpdates[action.targetPin] = action.actionOn;
-        
-        const segment = useIoTStore.getState().segments.find((s) => s.pin === action.targetPin);
-        
-        mqttActions.push({
-          pin: action.targetPin,
-          state: action.actionOn,
-          timer: segment?.auto_off
-        });
-
-        if (isCloudflareEnabled() && segment?.mode !== "push") {
-          cfActions.push({ pin: action.targetPin, state: action.actionOn });
-        }
       }
 
       if (soundPlayed) soundManager.playToggleOn();
       
       setPinsState((prev) => ({ ...prev, ...stateUpdates }));
       
-      publishBatchPinCommand(mqttActions);
-
-      if (cfActions.length > 0) {
-        try {
-          const result = await updateBatchPinsOnCloudflare(cfActions);
-          if (result.success) {
-            showToast(result.message, "success");
-          } else {
-            showToast(result.message, "error");
-          }
-        } catch (e) {
-          console.error(`Failed to batch sync pins to Cloudflare:`, e);
-          showToast(`تغییرات گروهی بنا به دلایل فنی ذخیره نشد.`, "error");
-        }
-      }
+      await syncBatchPins(actions, segments, isCloudflareEnabled(), showToast);
 
       await new Promise((resolve) => setTimeout(resolve, 300));
       await refetchIot();
