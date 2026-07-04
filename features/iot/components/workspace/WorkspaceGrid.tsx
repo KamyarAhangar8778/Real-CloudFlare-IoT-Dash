@@ -100,7 +100,7 @@ export default function WorkspaceGrid({
           segmentCount={groupSegments.length}
           maxCols={groupConfigs[groupName]?.maxCols || 3}
           icon={groupConfigs[groupName]?.icon}
-          onColsChange={(cols) => handleGroupColsChange(groupName, cols)}
+          onColsChange={(cols: number) => handleGroupColsChange(groupName, cols)}
           onAddPlaceholder={handleAddPlaceholder}
           onDeleteGroup={handleRemoveGroup}
           parentGroupsCols={effectiveGroupsCols}

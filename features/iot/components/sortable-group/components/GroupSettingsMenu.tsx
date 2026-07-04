@@ -12,7 +12,7 @@ interface GroupSettingsMenuProps {
   onColsChange: (cols: number) => void;
   onAddPlaceholder: (groupId: string) => void;
   setIsSettingsOpen: (open: boolean) => void;
-  menuRef: React.RefObject<HTMLDivElement>;
+  menuRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function GroupSettingsMenu({
