@@ -53,6 +53,9 @@ export function renderGrid({
 
   ctx.lineWidth = 1.2;
 
+  ctx.beginPath();
+  const activePoints = [];
+
   for (let x = -SPACING; x < width + SPACING; x += SPACING) {
     for (let y = -SPACING; y < height + SPACING; y += SPACING) {
       const posX = x + offsetX;
@@ -62,6 +65,7 @@ export function renderGrid({
       let currentAlpha = baseAlpha; 
       let currentSize = CROSS_SIZE;
       let color = baseColor;
+      let isDefault = true;
       
       let twinkleFactor = 0;
       if (matrixTwinkleEffect && animationsEnabled) {
@@ -78,19 +82,22 @@ export function renderGrid({
         if (combined > 0.7) {
            twinkleFactor = (combined - 0.7) * 3.33; 
            twinkleFactor = Math.pow(twinkleFactor, 1.5); 
+           isDefault = false;
         }
       }
 
       if (effectiveMouseEffect) {
         const dx = pointer.x - posX;
         const dy = pointer.y - posY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const distSq = dx * dx + dy * dy;
 
-        if (distance < GLOW_RADIUS) {
+        if (distSq < GLOW_RADIUS * GLOW_RADIUS) {
+          const distance = Math.sqrt(distSq);
           const intensity = 1 - Math.pow(distance / GLOW_RADIUS, 1.5); 
           currentAlpha = baseAlpha + intensity * (1 - baseAlpha);
           currentSize = CROSS_SIZE + intensity * matrixHoverSize;
           color = matrixColor;
+          isDefault = false;
         }
       }
       
@@ -100,15 +107,30 @@ export function renderGrid({
          color = matrixColor;
       }
 
-      ctx.globalAlpha = currentAlpha;
-      ctx.strokeStyle = color;
-      
-      ctx.beginPath();
-      ctx.moveTo(posX - currentSize, posY);
-      ctx.lineTo(posX + currentSize, posY);
-      ctx.moveTo(posX, posY - currentSize);
-      ctx.lineTo(posX, posY + currentSize);
-      ctx.stroke();
+      if (isDefault) {
+        ctx.moveTo(posX - currentSize, posY);
+        ctx.lineTo(posX + currentSize, posY);
+        ctx.moveTo(posX, posY - currentSize);
+        ctx.lineTo(posX, posY + currentSize);
+      } else {
+        activePoints.push({ posX, posY, currentSize, currentAlpha, color });
+      }
     }
+  }
+
+  ctx.globalAlpha = matrixOpacity / 100;
+  ctx.strokeStyle = baseColor;
+  ctx.stroke();
+
+  for (let i = 0; i < activePoints.length; i++) {
+    const p = activePoints[i];
+    ctx.globalAlpha = p.currentAlpha;
+    ctx.strokeStyle = p.color;
+    ctx.beginPath();
+    ctx.moveTo(p.posX - p.currentSize, p.posY);
+    ctx.lineTo(p.posX + p.currentSize, p.posY);
+    ctx.moveTo(p.posX, p.posY - p.currentSize);
+    ctx.lineTo(p.posX, p.posY + p.currentSize);
+    ctx.stroke();
   }
 }

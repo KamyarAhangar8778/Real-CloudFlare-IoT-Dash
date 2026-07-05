@@ -20,9 +20,11 @@ export const initMqtt = () => {
       console.log(`[MQTT] Connected to ${settings.brokerUrl}!`);
       client?.subscribe(stateTopic);
       
-      const isPageVisible = useIoTStore.getState().isPageVisible;
-      const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
-      client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+      queueMicrotask(() => {
+        const isPageVisible = useIoTStore.getState().isPageVisible;
+        const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
+        client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+      });
     });
 
     client.on("message", (topic, payload) => {
@@ -32,23 +34,31 @@ export const initMqtt = () => {
             const cmdType = payload[0];
             
             if (cmdType === 0x07) {
-              const isPageVisible = useIoTStore.getState().isPageVisible;
-              const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
-              client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+              queueMicrotask(() => {
+                const isPageVisible = useIoTStore.getState().isPageVisible;
+                const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
+                client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+              });
             } 
             else if (cmdType === 0x06 && payload.length >= 3) {
               const pinNum = payload[1];
               const state = payload[2] === 0x01;
-              stateCallbacks.forEach((cb) => cb(pinNum.toString(), state));
+              queueMicrotask(() => {
+                stateCallbacks.forEach((cb) => cb(pinNum.toString(), state));
+              });
             }
             else if (payload[0] === 123) {
               const data = JSON.parse(payload.toString());
               if (data.command === "ping") {
-                const isPageVisible = useIoTStore.getState().isPageVisible;
-                const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
-                client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+                queueMicrotask(() => {
+                  const isPageVisible = useIoTStore.getState().isPageVisible;
+                  const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
+                  client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+                });
               } else if (data.id !== undefined && data.value !== undefined) {
-                stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
+                queueMicrotask(() => {
+                  stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
+                });
               }
             }
           }
