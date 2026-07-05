@@ -119,7 +119,8 @@ export default function SortableGroup({
       />
 
       {/* Body Island */}
-      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl transition-[colors,box-shadow] duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl">
+      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl">
+        <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
         {isOverlayItem ? (
           renderContent()
         ) : (
@@ -131,8 +132,9 @@ export default function SortableGroup({
 
       {/* Footer Island */}
       <div className="flex justify-center mt-2 w-full">
-        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-[colors,box-shadow] duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl flex justify-center items-center relative z-10 rounded-2xl w-fit">
-          <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100">
+        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm flex justify-center items-center relative z-10 rounded-2xl w-fit">
+          <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
+          <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100 relative z-10">
             {Array.from({ length: maxCols }).map((_, idx) => (
               <div key={idx} className="w-2.5 h-1.5 bg-[var(--accent3)] rounded-full" />
             ))}

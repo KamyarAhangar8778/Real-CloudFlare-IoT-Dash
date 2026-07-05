@@ -49,9 +49,10 @@ export default function GroupHeader({
     <div className="flex items-stretch justify-between w-full gap-2 sm:gap-4 relative z-10 pointer-events-none">
       {/* Right Part: Title and Layout Selector */}
       <div
-        className={`flex items-center justify-between flex-1 min-w-0 pointer-events-auto bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl rounded-2xl ${parentGroupsCols === 3 ? "p-1.5 pr-3 gap-2" : "p-2 pr-4 gap-3 sm:p-2.5 sm:pr-5 sm:gap-4"}`}
+        className={`flex items-center justify-between flex-1 min-w-0 pointer-events-auto bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl relative ${parentGroupsCols === 3 ? "p-1.5 pr-3 gap-2" : "p-2 pr-4 gap-3 sm:p-2.5 sm:pr-5 sm:gap-4"}`}
       >
-        <div ref={titleContainerRef} className="flex items-center gap-2 min-w-0 flex-1">
+        <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
+        <div ref={titleContainerRef} className="flex items-center gap-2 min-w-0 flex-1 relative z-10">
           <div className="relative flex justify-center items-center">
             <div
               ref={buttonRef}
