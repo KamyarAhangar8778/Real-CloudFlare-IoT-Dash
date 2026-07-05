@@ -17,6 +17,30 @@ interface RenderGridConfig {
   isMobile: boolean;
 }
 
+const LUT_SIZE = 3600;
+const SIN_LUT = new Float32Array(LUT_SIZE);
+const COS_LUT = new Float32Array(LUT_SIZE);
+
+for (let i = 0; i < LUT_SIZE; i++) {
+  const rad = (i / LUT_SIZE) * Math.PI * 2;
+  SIN_LUT[i] = Math.sin(rad);
+  COS_LUT[i] = Math.cos(rad);
+}
+
+const FAST_RAD_CONVERSION = LUT_SIZE / (Math.PI * 2);
+
+function fastSin(rad: number): number {
+  let idx = (rad * FAST_RAD_CONVERSION) % LUT_SIZE;
+  if (idx < 0) idx += LUT_SIZE;
+  return SIN_LUT[idx | 0];
+}
+
+function fastCos(rad: number): number {
+  let idx = (rad * FAST_RAD_CONVERSION) % LUT_SIZE;
+  if (idx < 0) idx += LUT_SIZE;
+  return COS_LUT[idx | 0];
+}
+
 export function renderGrid({
   ctx, width, height, time, pointer, matrixDensity, matrixSize, matrixHoverSize,
   matrixOpacity, matrixColor, matrixMouseEffect, matrixTwinkleEffect,
@@ -73,9 +97,9 @@ export function renderGrid({
         const gridY = Math.round(y / SPACING);
         const speed = matrixTwinkleSpeed * 0.0003;
         
-        const wave1 = Math.sin(gridX * 0.137 + gridY * 0.271 + time * speed);
-        const wave2 = Math.cos(gridX * 0.223 - gridY * 0.151 + time * speed * 1.3);
-        const wave3 = Math.sin(gridX * 0.359 + gridY * 0.093 - time * speed * 0.8);
+        const wave1 = fastSin(gridX * 0.137 + gridY * 0.271 + time * speed);
+        const wave2 = fastCos(gridX * 0.223 - gridY * 0.151 + time * speed * 1.3);
+        const wave3 = fastSin(gridX * 0.359 + gridY * 0.093 - time * speed * 0.8);
         
         const combined = (wave1 + wave2 + wave3) / 3; 
         

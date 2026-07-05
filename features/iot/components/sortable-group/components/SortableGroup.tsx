@@ -103,7 +103,7 @@ export default function SortableGroup({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2 transition-all duration-350 md:hover:-translate-y-1.5"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2 transition-transform duration-350 will-change-transform md:hover:-translate-y-1.5"
     >
       <GroupHeader
         id={id}
@@ -119,7 +119,7 @@ export default function SortableGroup({
       />
 
       {/* Body Island */}
-      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl">
+      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl transition-[colors,box-shadow] duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl">
         {isOverlayItem ? (
           renderContent()
         ) : (
@@ -131,7 +131,7 @@ export default function SortableGroup({
 
       {/* Footer Island */}
       <div className="flex justify-center mt-2 w-full">
-        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl flex justify-center items-center relative z-10 rounded-2xl w-fit">
+        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-[colors,box-shadow] duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl flex justify-center items-center relative z-10 rounded-2xl w-fit">
           <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100">
             {Array.from({ length: maxCols }).map((_, idx) => (
               <div key={idx} className="w-2.5 h-1.5 bg-[var(--accent3)] rounded-full" />
