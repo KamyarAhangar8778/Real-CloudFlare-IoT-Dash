@@ -1,7 +1,7 @@
 import { StateCreator } from "zustand";
 import { IoTStoreState, ConfigSlice } from "../types";
 
-export const createConfigSlice: StateCreator<IoTStoreState, [], [], ConfigSlice> = (set) => ({
+export const createConfigSlice: StateCreator<IoTStoreState, [], [], ConfigSlice> = (set, get) => ({
   applyEspConfig: (config) => {
     if (!config) return;
 
@@ -17,22 +17,13 @@ export const createConfigSlice: StateCreator<IoTStoreState, [], [], ConfigSlice>
     });
 
     if (config.mqtt && typeof window !== "undefined") {
+      const currentMqtt = get().mqttConfig;
       set({ mqttConfig: config.mqtt });
-      const { broker_ws_url, base_topic, qos } = config.mqtt;
-      let changed = false;
       
-      if (broker_ws_url && broker_ws_url !== localStorage.getItem("mqtt_broker_url")) {
-        localStorage.setItem("mqtt_broker_url", broker_ws_url);
-        changed = true;
-      }
-      if (base_topic && base_topic !== localStorage.getItem("mqtt_base_topic")) {
-        localStorage.setItem("mqtt_base_topic", base_topic);
-        changed = true;
-      }
-      if (qos !== undefined && qos.toString() !== localStorage.getItem("mqtt_qos")) {
-        localStorage.setItem("mqtt_qos", qos.toString());
-        changed = true;
-      }
+      const changed = !currentMqtt || 
+        currentMqtt.broker_ws_url !== config.mqtt.broker_ws_url ||
+        currentMqtt.base_topic !== config.mqtt.base_topic ||
+        currentMqtt.qos !== config.mqtt.qos;
       
       if (changed) {
         import("@/features/iot/services/mqttService")

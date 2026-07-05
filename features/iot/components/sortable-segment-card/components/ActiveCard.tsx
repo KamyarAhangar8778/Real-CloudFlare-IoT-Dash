@@ -67,7 +67,7 @@ function ActiveCard({
           ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } }
           : undefined
       }
-      className={`flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] transition-[transform,colors,box-shadow] will-change-transform duration-350 md:hover:-translate-y-1.5 md:hover:shadow-xl md:hover:border-[var(--accent3)] relative group h-full shadow-sm rounded-2xl ${
+      className={`flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] transition-[colors,box-shadow] duration-350 md:hover:shadow-xl md:hover:border-[var(--accent3)] relative group h-full shadow-sm rounded-2xl ${
         isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
       }`}
     >

@@ -13,18 +13,14 @@ export const onMqttStateChange = (cb: StateChangeCallback) => {
   };
 };
 
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+
 export const getMqttSettings = () => {
-  if (typeof window === 'undefined') {
-    return {
-      brokerUrl: "wss://broker.emqx.io:8084/mqtt",
-      baseTopic: "KamyarIoT/Achaemenid",
-      qos: 1 as 0 | 1 | 2
-    };
-  }
+  const mqttConfig = useIoTStore.getState().mqttConfig;
   return {
-    brokerUrl: localStorage.getItem("mqtt_broker_url") || "wss://broker.emqx.io:8084/mqtt",
-    baseTopic: localStorage.getItem("mqtt_base_topic") || "KamyarIoT/Achaemenid",
-    qos: (parseInt(localStorage.getItem("mqtt_qos") || "1", 10) as 0 | 1 | 2)
+    brokerUrl: mqttConfig?.broker_ws_url || "wss://broker.emqx.io:8084/mqtt",
+    baseTopic: mqttConfig?.base_topic || "KamyarIoT/Achaemenid",
+    qos: (mqttConfig?.qos ?? 1) as 0 | 1 | 2
   };
 };
 

@@ -103,7 +103,7 @@ export default function SortableGroup({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2 transition-transform duration-350 will-change-transform md:hover:-translate-y-1.5"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2"
     >
       <GroupHeader
         id={id}

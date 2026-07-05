@@ -29,6 +29,20 @@ for (let i = 0; i < LUT_SIZE; i++) {
 
 const FAST_RAD_CONVERSION = LUT_SIZE / (Math.PI * 2);
 
+const GLOW_RADIUS = 300;
+const GLOW_RADIUS_SQ = GLOW_RADIUS * GLOW_RADIUS;
+const INTENSITY_LUT = new Float32Array(GLOW_RADIUS_SQ + 1);
+for (let dSq = 0; dSq <= GLOW_RADIUS_SQ; dSq++) {
+  const dist = Math.sqrt(dSq);
+  INTENSITY_LUT[dSq] = 1 - Math.pow(dist / GLOW_RADIUS, 1.5);
+}
+
+const TWINKLE_LUT_SIZE = 1000;
+const TWINKLE_POW_LUT = new Float32Array(TWINKLE_LUT_SIZE + 1);
+for(let i = 0; i <= TWINKLE_LUT_SIZE; i++) {
+   TWINKLE_POW_LUT[i] = Math.pow(i / TWINKLE_LUT_SIZE, 1.5);
+}
+
 function fastSin(rad: number): number {
   let idx = (rad * FAST_RAD_CONVERSION) % LUT_SIZE;
   if (idx < 0) idx += LUT_SIZE;
@@ -48,7 +62,6 @@ export function renderGrid({
 }: RenderGridConfig) {
   const SPACING = matrixDensity;
   const CROSS_SIZE = matrixSize; 
-  const GLOW_RADIUS = 300;
 
   const effectiveMouseEffect = matrixMouseEffect && !isMobile;
 
@@ -93,8 +106,8 @@ export function renderGrid({
       
       let twinkleFactor = 0;
       if (matrixTwinkleEffect && animationsEnabled) {
-        const gridX = Math.round(x / SPACING);
-        const gridY = Math.round(y / SPACING);
+        const gridX = (x / SPACING + 0.5) | 0;
+        const gridY = (y / SPACING + 0.5) | 0;
         const speed = matrixTwinkleSpeed * 0.0003;
         
         const wave1 = fastSin(gridX * 0.137 + gridY * 0.271 + time * speed);
@@ -104,8 +117,9 @@ export function renderGrid({
         const combined = (wave1 + wave2 + wave3) / 3; 
         
         if (combined > 0.7) {
-           twinkleFactor = (combined - 0.7) * 3.33; 
-           twinkleFactor = Math.pow(twinkleFactor, 1.5); 
+           let factor = (combined - 0.7) * 3.33333; 
+           if (factor > 1) factor = 1;
+           twinkleFactor = TWINKLE_POW_LUT[(factor * TWINKLE_LUT_SIZE) | 0]; 
            isDefault = false;
         }
       }
@@ -115,9 +129,8 @@ export function renderGrid({
         const dy = pointer.y - posY;
         const distSq = dx * dx + dy * dy;
 
-        if (distSq < GLOW_RADIUS * GLOW_RADIUS) {
-          const distance = Math.sqrt(distSq);
-          const intensity = 1 - Math.pow(distance / GLOW_RADIUS, 1.5); 
+        if (distSq <= GLOW_RADIUS_SQ) {
+          const intensity = INTENSITY_LUT[distSq | 0]; 
           currentAlpha = baseAlpha + intensity * (1 - baseAlpha);
           currentSize = CROSS_SIZE + intensity * matrixHoverSize;
           color = matrixColor;
