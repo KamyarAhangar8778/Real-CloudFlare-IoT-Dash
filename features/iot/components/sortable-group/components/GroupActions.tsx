@@ -17,7 +17,9 @@ export default function GroupActions({
   listeners,
 }: GroupActionsProps) {
   return (
-    <div className="flex items-stretch shrink-0 pointer-events-auto bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm transition-colors duration-350 md:group-hover/group-card:border-[var(--accent3)] md:group-hover/group-card:shadow-xl rounded-2xl overflow-hidden">
+    <div className="flex items-stretch shrink-0 pointer-events-auto relative bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl overflow-hidden">
+      {/* Hover glow overlay — opacity-only transition avoids GPU paint thrashing */}
+      <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
       {/* Delete Group Handle */}
       <button
         onClick={() => onDeleteGroup(id)}

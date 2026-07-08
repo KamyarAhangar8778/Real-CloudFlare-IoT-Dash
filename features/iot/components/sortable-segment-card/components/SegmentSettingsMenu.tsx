@@ -52,8 +52,10 @@ export default function SegmentSettingsMenu({
       exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-10%" }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
-      <div className="w-[280px] sm:w-[340px] bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-sm p-4 flex flex-col gap-4 md:hover:-translate-y-1.5 md:hover:shadow-xl md:hover:border-[var(--accent3)] transition-all cursor-default">
-        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+      <div className="relative w-[280px] sm:w-[340px] bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-sm p-4 flex flex-col gap-4 md:hover:-translate-y-1.5 transition-transform duration-300 cursor-default">
+        {/* Hover glow overlay — opacity-only, GPU composited */}
+        <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-300 md:hover:opacity-100 pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-between border-b border-[var(--border-color)] pb-3">
           <div className="flex items-center gap-3 text-right">
             {showIconInMenu && (
               <div
@@ -81,7 +83,7 @@ export default function SegmentSettingsMenu({
           </div>
           <button
             onClick={() => onRemove(segment.id)}
-            className="flex items-center gap-2 p-1.5 px-3 bg-red-500/10 text-red-600 md:hover:bg-red-500 md:hover:text-white transition-all cursor-pointer rounded-lg shadow-sm"
+            className="flex items-center gap-2 p-1.5 px-3 bg-red-500/10 text-red-600 md:hover:bg-red-500 md:hover:text-white transition-colors cursor-pointer rounded-lg shadow-sm"
             title="حذف سگمنت"
           >
             <span className="text-[10px] font-bold">برای حذف کردن سگمنت</span>
@@ -90,7 +92,7 @@ export default function SegmentSettingsMenu({
         </div>
 
         {onUpdateSegmentMode && segment.type !== "input" && (
-          <div className="flex items-center justify-between mt-1">
+          <div className="relative z-10 flex items-center justify-between mt-1">
             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
               حالت عملکرد:
             </span>

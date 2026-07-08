@@ -39,14 +39,16 @@ export default function GroupSettingsMenu({
       transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ right: 0 }}
     >
-      <div className="w-auto bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-xl p-3 sm:p-4 flex flex-col gap-3 md:hover:-translate-y-1.5 md:hover:shadow-2xl md:hover:border-[var(--accent3)] transition-all cursor-default">
-        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2 min-w-[150px] sm:min-w-[180px]">
+      <div className="relative w-auto bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-xl p-3 sm:p-4 flex flex-col gap-3 md:hover:-translate-y-1.5 transition-transform duration-300 cursor-default">
+        {/* Hover glow overlay — opacity-only, GPU composited */}
+        <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-2xl opacity-0 transition-opacity duration-300 md:hover:opacity-100 pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-between border-b border-[var(--border-color)] pb-2 min-w-[150px] sm:min-w-[180px]">
           <span className="font-sans font-extrabold theme-text-primary text-xs sm:text-sm truncate max-w-[180px] sm:max-w-[220px]">
             {id}
           </span>
         </div>
         {(isCompact || isMobile) && (
-          <div className="flex flex-col gap-2 w-full">
+          <div className="relative z-10 flex flex-col gap-2 w-full">
             <span className="text-[10px] font-bold text-slate-500">
               تعداد ستون‌های سگمنت
             </span>
@@ -63,7 +65,7 @@ export default function GroupSettingsMenu({
         )}
 
         <div
-          className={`flex flex-col gap-2 ${(isCompact || isMobile) ? "pt-2 border-t border-[var(--border-color)]" : ""}`}
+          className={`relative z-10 flex flex-col gap-2 ${(isCompact || isMobile) ? "pt-2 border-t border-[var(--border-color)]" : ""}`}
         >
           <button
             onClick={() => {

@@ -55,30 +55,36 @@ export default function PlaceholderCard({
           <GripVertical className="w-3.5 h-3.5" />
         </div>
       </div>
-      <button
-        onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
-        className={`w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 md:hover:border-[var(--accent3)] md:hover:shadow-xl bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] flex flex-col items-center justify-center gap-2 transition-all duration-350 md:hover:-translate-y-1.5 cursor-pointer text-center group rounded-2xl ${
-          isUltraCompact
-            ? "p-3 min-h-[90px]"
-            : isCompact
-              ? "p-4 min-h-[128px]"
-              : "p-6 min-h-[178px]"
-        }`}
-      >
-        <div
-          className="p-2 bg-[var(--accent3-transparent)] md:group-hover:bg-[var(--accent3)] md:group-hover:text-black text-[var(--accent3)] transition-colors"
-          style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
+      {/* Translate lives here — GPU composited, never causes paint */}
+      <div className="w-full h-full md:hover:-translate-y-1.5 transition-transform duration-350 rounded-2xl group/ph-card">
+        <button
+          onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
+          className={`relative w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 bg-[var(--card-bg)] flex flex-col items-center justify-center gap-2 cursor-pointer text-center rounded-2xl overflow-hidden ${
+            isUltraCompact
+              ? "p-3 min-h-[90px]"
+              : isCompact
+                ? "p-4 min-h-[128px]"
+                : "p-6 min-h-[178px]"
+          }`}
         >
-          <Plus className="w-4 h-4" />
-        </div>
-        {!isUltraCompact && (
-          <div>
-            <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary group-md:hover:text-[var(--accent3)] transition-colors">
-              {isCompact ? "تعیین سگمنت" : "جایگذاری سگمنت در اینجا"}
-            </span>
+          {/* Hover glow overlay — opacity-only, GPU composited */}
+          <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/ph-card:opacity-100 pointer-events-none" />
+
+          <div
+            className="relative z-10 p-2 bg-[var(--accent3-transparent)] text-[var(--accent3)]"
+            style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
+          >
+            <Plus className="w-4 h-4" />
           </div>
-        )}
-      </button>
+          {!isUltraCompact && (
+            <div className="relative z-10">
+              <span className="block font-sans font-bold text-xs md:text-sm theme-text-primary">
+                {isCompact ? "تعیین سگمنت" : "جایگذاری سگمنت در اینجا"}
+              </span>
+            </div>
+          )}
+        </button>
+      </div>
     </motion.div>
   );
 }
