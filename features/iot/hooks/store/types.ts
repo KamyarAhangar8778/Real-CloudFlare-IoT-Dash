@@ -129,6 +129,8 @@ export interface UiSlice {
   voiceTranscript: string;
   activeSegmentId: string | null;
   activeGroupId: string | null;
+  isLocal: boolean;
+  localIp: string | null;
   setLowDataMode: (enabled: boolean) => void;
   showToast: (message: string, type: "success" | "error") => void;
   clearToast: () => void;
@@ -138,6 +140,8 @@ export interface UiSlice {
   setVoiceTranscript: (t: string) => void;
   setActiveSegmentId: (id: string | null) => void;
   setActiveGroupId: (id: string | null) => void;
+  setIsLocal: (local: boolean) => void;
+  setLocalIp: (ip: string | null) => void;
 }
 
 export interface MenuSlice {

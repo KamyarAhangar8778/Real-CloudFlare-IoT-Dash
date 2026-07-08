@@ -10,6 +10,8 @@ export const createUiSlice: StateCreator<IoTStoreState, [], [], UiSlice> = (set)
   voiceTranscript: "",
   activeSegmentId: null,
   activeGroupId: null,
+  isLocal: false,
+  localIp: null,
 
   setLowDataMode: (enabled) => {
     set({ lowDataMode: enabled });
@@ -37,4 +39,6 @@ export const createUiSlice: StateCreator<IoTStoreState, [], [], UiSlice> = (set)
   
   setActiveSegmentId: (id) => set({ activeSegmentId: id }),
   setActiveGroupId: (id) => set({ activeGroupId: id }),
+  setIsLocal: (local) => set({ isLocal: local }),
+  setLocalIp: (ip) => set({ localIp: ip }),
 });

@@ -59,12 +59,18 @@ export const initMqtt = () => {
             const cmdType = payload[0];
             
             if (cmdType === 0x07) {
+              if (payload.length >= 5) {
+                const ip = `${payload[1]}.${payload[2]}.${payload[3]}.${payload[4]}`;
+                if (useIoTStore.getState().localIp !== ip) {
+                  useIoTStore.getState().setLocalIp(ip);
+                }
+              }
               queueMicrotask(() => {
                 const isPageVisible = useIoTStore.getState().isPageVisible;
                 const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
                 client?.publish(commandTopic, presenceBuf as Buffer, { qos });
               });
-            } 
+            }
             else if (cmdType === 0x06 && payload.length >= 3) {
               const pinNum = payload[1];
               const state = payload[2] === 0x01;
