@@ -4,7 +4,6 @@ export interface IoTWorkspaceProps {
   sensors: any;
   groupsOrder: string[];
   groupsCols: number;
-  segments: any[];
   groupConfigs: Record<string, { maxCols: number; icon?: string }>;
   isLoadingIoT: boolean;
   activeSegmentId: string | null;

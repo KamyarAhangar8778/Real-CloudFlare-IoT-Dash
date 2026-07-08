@@ -2,6 +2,31 @@ import mqtt from "mqtt";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { getMqttClient, setMqttClient, getMqttSettings, stateCallbacks } from "./client";
 
+// Queue for batched state updates
+const pendingStateUpdates = new Map<string, boolean>();
+let updateRafId: number | null = null;
+
+const flushStateUpdates = () => {
+  updateRafId = null;
+  if (pendingStateUpdates.size === 0) return;
+  
+  const updatesToProcess = new Map(pendingStateUpdates);
+  pendingStateUpdates.clear();
+  
+  stateCallbacks.forEach((cb) => {
+    updatesToProcess.forEach((state, pinId) => {
+      cb(pinId, state);
+    });
+  });
+};
+
+const queueStateUpdate = (pinId: string, state: boolean) => {
+  pendingStateUpdates.set(pinId, state);
+  if (!updateRafId && typeof window !== "undefined") {
+    updateRafId = requestAnimationFrame(flushStateUpdates);
+  }
+};
+
 export const initMqtt = () => {
   let client = getMqttClient();
   if (!client) {
@@ -43,9 +68,7 @@ export const initMqtt = () => {
             else if (cmdType === 0x06 && payload.length >= 3) {
               const pinNum = payload[1];
               const state = payload[2] === 0x01;
-              queueMicrotask(() => {
-                stateCallbacks.forEach((cb) => cb(pinNum.toString(), state));
-              });
+              queueStateUpdate(pinNum.toString(), state);
             }
             else if (payload[0] === 123) {
               const data = JSON.parse(payload.toString());
@@ -56,9 +79,7 @@ export const initMqtt = () => {
                   client?.publish(commandTopic, presenceBuf as Buffer, { qos });
                 });
               } else if (data.id !== undefined && data.value !== undefined) {
-                queueMicrotask(() => {
-                  stateCallbacks.forEach((cb) => cb(data.id.toString(), data.value));
-                });
+                queueStateUpdate(data.id.toString(), data.value);
               }
             }
           }

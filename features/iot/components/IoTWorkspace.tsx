@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { DndContext, closestCorners } from "@dnd-kit/core";
+import { DndContext } from "@dnd-kit/core";
 import TrashDropZone from "./workspace/components/TrashDropZone";
 import { WorkspaceGrid, WorkspaceDragOverlay, IoTWorkspaceProps } from "./workspace";
+import { optimizedCollisionDetection } from "./workspace/core/collisionStrategy";
 
 export type { IoTWorkspaceProps };
 
@@ -11,7 +12,7 @@ export default function IoTWorkspace(props: IoTWorkspaceProps) {
   return (
     <DndContext
       sensors={props.sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={optimizedCollisionDetection}
       autoScroll={{ layoutShiftCompensation: false }}
       onDragStart={props.handleDragStart}
       onDragOver={props.handleDragOver}

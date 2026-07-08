@@ -12,6 +12,12 @@ import { SortableGroupProps } from "../core/types";
 import GroupHeader from "./GroupHeader";
 import { useMasonryGrid } from "../hooks/useMasonryGrid";
 
+const GROUP_ITEM_BASIS_LUT: Record<number, string> = {
+  1: "100%",
+  2: "calc(50% - 0.5rem - 0.1px)",
+  3: "calc(33.3333% - 0.6667rem - 0.1px)"
+};
+
 export default function SortableGroup({
   id,
   items,
@@ -87,11 +93,7 @@ export default function SortableGroup({
       <div
         className="flex flex-wrap gap-4 w-full text-right p-4 relative z-10 [&>*]:grow [&>*]:shrink-0 [&>*]:min-w-0 [&>*]:basis-[var(--group-item-basis)]"
         style={{
-          "--group-item-basis": effectiveCols === 1
-            ? "100%"
-            : effectiveCols === 2
-              ? "calc(50% - 0.5rem - 0.1px)"
-              : "calc(33.3333% - 0.6667rem - 0.1px)"
+          "--group-item-basis": GROUP_ITEM_BASIS_LUT[effectiveCols] || GROUP_ITEM_BASIS_LUT[3]
         } as React.CSSProperties}
       >
         <AnimatePresence mode="popLayout">{children}</AnimatePresence>

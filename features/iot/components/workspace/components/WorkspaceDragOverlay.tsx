@@ -5,12 +5,13 @@ import SortableSegmentCard from "../../SortableSegmentCard";
 import { IoTWorkspaceProps } from "../core/types";
 import { getEffectiveGroupsCols } from "../core/gridUtils";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 type WorkspaceDragOverlayProps = Pick<
   IoTWorkspaceProps,
   | "activeSegmentId"
   | "activeGroupId"
-  | "segments"
+  | "activeGroupId"
   | "groupConfigs"
   
   | "isLoadingIoT"
@@ -28,7 +29,6 @@ type WorkspaceDragOverlayProps = Pick<
 export default function WorkspaceDragOverlay({
   activeSegmentId,
   activeGroupId,
-  segments,
   groupConfigs,
   isLoadingIoT,
   groupsCols,
@@ -42,6 +42,7 @@ export default function WorkspaceDragOverlay({
   dashboardWidth,
 }: WorkspaceDragOverlayProps) {
   const isMobilePortrait = useMediaQuery("(max-width: 767px) and (orientation: portrait)");
+  const segments = useIoTStore(s => s.segments);
 
   return (
     <DragOverlay>

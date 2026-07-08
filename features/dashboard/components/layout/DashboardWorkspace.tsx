@@ -44,7 +44,7 @@ export default function DashboardWorkspace() {
   const activeSegmentId = useIoTStore(s => s.activeSegmentId);
   const activeGroupId = useIoTStore(s => s.activeGroupId);
 
-  const segments = useIoTStore(s => s.segments);
+  const segmentsLength = useIoTStore(s => s.segments.length);
   const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
   const setSelectedGroupFilter = useIoTStore(s => s.setSelectedGroupFilter);
   const groupsOrder = useIoTStore(s => s.groupsOrder);
@@ -74,7 +74,7 @@ export default function DashboardWorkspace() {
             </div>
             <WorkspaceSkeleton groupsCols={groupsCols} />
           </div>
-        ) : segments.length === 0 ? (
+        ) : segmentsLength === 0 ? (
           <React.Suspense fallback={<div className="w-full h-96 flex items-center justify-center"><div className="w-12 h-12 rounded-full border-2 border-[var(--accent3)] border-t-transparent animate-spin" /></div>}><WelcomePortal
             setIsMenuOpen={setIsMenuOpen}
             setIsModulesMenuOpen={setIsModulesMenuOpen}
@@ -103,7 +103,6 @@ export default function DashboardWorkspace() {
               sensors={sensors}
               groupsOrder={groupsOrder}
               groupsCols={groupsCols}
-              segments={segments}
               groupConfigs={groupConfigs}
               isLoadingIoT={isLoadingIoT}
               activeSegmentId={activeSegmentId}

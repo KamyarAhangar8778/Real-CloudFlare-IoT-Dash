@@ -8,6 +8,75 @@ import SortableSegmentCard from "../../SortableSegmentCard";
 import { IoTWorkspaceProps } from "../core/types";
 import { useWorkspaceGrid } from "../hooks/useWorkspaceGrid";
 import { getEffectiveGroupsCols } from "../core/gridUtils";
+import { useShallow } from "zustand/react/shallow";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+
+const ConnectedSegmentCard = React.memo((props: any) => {
+  const segment = useIoTStore(React.useCallback((s) => s.segments.find((seg) => seg.id === props.segmentId), [props.segmentId]));
+  if (!segment) return null;
+  return <SortableSegmentCard segment={segment} {...props} />;
+});
+
+const ConnectedGroup = React.memo((props: any) => {
+  const { groupName, groupIndex, groupConfigs, handleGroupColsChange, handleAddPlaceholder, handleRemoveGroup, animationsEnabled, isSegmentsCompactLayout, filteredGroupsOrderLength, groupsCols, isMobilePortrait, isGroupsCompactLayout, segmentProps } = props;
+
+  const segmentIds = useIoTStore(
+    useShallow((state) =>
+      state.segments.filter((seg) => (seg.group || "Test") === groupName).map((seg) => seg.id)
+    )
+  );
+
+  const effectiveGroupsCols = getEffectiveGroupsCols(
+    groupIndex,
+    filteredGroupsOrderLength,
+    groupsCols
+  );
+
+  const flexBasis = (isMobilePortrait || groupsCols === 1) 
+    ? FLEX_BASIS_LUT[1] 
+    : FLEX_BASIS_LUT[groupsCols] || FLEX_BASIS_LUT[3];
+
+  const baseClasses = isGroupsCompactLayout ? "space-y-3" : "flex-grow flex-shrink-0 min-w-0 max-w-full";
+  const style = !isGroupsCompactLayout ? { flexBasis } : undefined;
+
+  return (
+    <div className={baseClasses} style={style}>
+      <SortableGroup
+        id={groupName}
+        items={segmentIds}
+        segmentCount={segmentIds.length}
+        maxCols={groupConfigs[groupName]?.maxCols || 3}
+        icon={groupConfigs[groupName]?.icon}
+        onColsChange={(cols: number) => handleGroupColsChange(groupName, cols)}
+        onAddPlaceholder={handleAddPlaceholder}
+        onDeleteGroup={handleRemoveGroup}
+        parentGroupsCols={effectiveGroupsCols}
+        animationsEnabled={animationsEnabled}
+        isSegmentsCompactLayout={isSegmentsCompactLayout}
+      >
+        {segmentIds.map((id: string, index: number) => (
+          <ConnectedSegmentCard
+            {...segmentProps}
+            key={id}
+            segmentId={id}
+            index={index}
+            groupItemsCount={segmentIds.length}
+            parentGroupsCols={effectiveGroupsCols}
+            groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
+            animationsEnabled={animationsEnabled}
+            isMobilePortrait={isMobilePortrait}
+          />
+        ))}
+      </SortableGroup>
+    </div>
+  );
+});
+
+const FLEX_BASIS_LUT: Record<number, string> = {
+  1: "100%",
+  2: "calc(50% - 1rem - 0.1px)",
+  3: "calc(33.3333% - 1.3333rem - 0.1px)"
+};
 
 type WorkspaceGridProps = Omit<
   IoTWorkspaceProps,
@@ -24,7 +93,6 @@ type WorkspaceGridProps = Omit<
 export default function WorkspaceGrid({
   groupsOrder,
   groupsCols: initialGroupsCols,
-  segments,
   groupConfigs,
   isLoadingIoT,
   animationsEnabled,
@@ -56,74 +124,34 @@ export default function WorkspaceGrid({
     selectedGroupFilter,
   });
 
-  const segmentsByGroup = useMemo(() => {
-    const map = new Map<string, typeof segments>();
-    segments.forEach(seg => {
-      const groupName = seg.group || "Test";
-      if (!map.has(groupName)) {
-        map.set(groupName, []);
-      }
-      map.get(groupName)!.push(seg);
-    });
-    return map;
-  }, [segments]);
-
   const renderGroup = (groupName: string, groupIndex: number) => {
-    const groupSegments = segmentsByGroup.get(groupName) || [];
-
-    const effectiveGroupsCols = getEffectiveGroupsCols(
-      groupIndex,
-      filteredGroupsOrder.length,
-      groupsCols
-    );
-
-    const flexBasis = isMobilePortrait || groupsCols === 1
-      ? "100%"
-      : groupsCols === 2
-        ? "calc(50% - 1rem - 0.1px)"
-        : "calc(33.3333% - 1.3333rem - 0.1px)";
-
-    const baseClasses = isGroupsCompactLayout ? "space-y-3" : "flex-grow flex-shrink-0 min-w-0 max-w-full";
-    const style = !isGroupsCompactLayout ? { flexBasis } : undefined;
-
     return (
-      <div key={groupName} className={baseClasses} style={style}>
-        <SortableGroup
-          id={groupName}
-          items={groupSegments.map((s) => s.id)}
-          segmentCount={groupSegments.length}
-          maxCols={groupConfigs[groupName]?.maxCols || 3}
-          icon={groupConfigs[groupName]?.icon}
-          onColsChange={(cols: number) => handleGroupColsChange(groupName, cols)}
-          onAddPlaceholder={handleAddPlaceholder}
-          onDeleteGroup={handleRemoveGroup}
-          parentGroupsCols={effectiveGroupsCols}
-          animationsEnabled={animationsEnabled}
-          isSegmentsCompactLayout={isSegmentsCompactLayout}
-        >
-          {groupSegments.map((seg, index) => (
-            <SortableSegmentCard
-              key={seg.id}
-              segment={seg}
-              onRemove={handleRemoveSegment}
-              onTogglePin={handleTogglePin}
-              onSetPinState={handleSetPinState}
-              onUpdateSegmentMode={handleUpdateSegmentMode}
-              onUpdateSegmentAutoOff={handleUpdateSegmentAutoOff}
-              onUpdateSegmentRule={handleUpdateSegmentRule}
-              isLoadingIoT={isLoadingIoT}
-              onSetupPlaceholder={handleSetupPlaceholder}
-              parentGroupsCols={effectiveGroupsCols}
-              groupMaxCols={groupConfigs[groupName]?.maxCols || 3}
-              groupItemsCount={groupSegments.length}
-              index={index}
-              animationsEnabled={animationsEnabled}
-              dashboardWidth={dashboardWidth}
-              isMobilePortrait={isMobilePortrait}
-            />
-          ))}
-        </SortableGroup>
-      </div>
+      <ConnectedGroup
+        key={groupName}
+        groupName={groupName}
+        groupIndex={groupIndex}
+        groupConfigs={groupConfigs}
+        handleGroupColsChange={handleGroupColsChange}
+        handleAddPlaceholder={handleAddPlaceholder}
+        handleRemoveGroup={handleRemoveGroup}
+        animationsEnabled={animationsEnabled}
+        isSegmentsCompactLayout={isSegmentsCompactLayout}
+        filteredGroupsOrderLength={filteredGroupsOrder.length}
+        groupsCols={groupsCols}
+        isMobilePortrait={isMobilePortrait}
+        isGroupsCompactLayout={isGroupsCompactLayout}
+        segmentProps={{
+          onRemove: handleRemoveSegment,
+          onTogglePin: handleTogglePin,
+          onSetPinState: handleSetPinState,
+          onUpdateSegmentMode: handleUpdateSegmentMode,
+          onUpdateSegmentAutoOff: handleUpdateSegmentAutoOff,
+          onUpdateSegmentRule: handleUpdateSegmentRule,
+          isLoadingIoT,
+          onSetupPlaceholder: handleSetupPlaceholder,
+          dashboardWidth,
+        }}
+      />
     );
   };
 
