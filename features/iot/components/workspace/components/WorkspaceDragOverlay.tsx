@@ -11,7 +11,6 @@ type WorkspaceDragOverlayProps = Pick<
   IoTWorkspaceProps,
   | "activeSegmentId"
   | "activeGroupId"
-  | "activeGroupId"
   | "groupConfigs"
   
   | "isLoadingIoT"
