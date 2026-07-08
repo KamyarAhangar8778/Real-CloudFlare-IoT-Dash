@@ -49,6 +49,10 @@ export const initMqtt = () => {
         const isPageVisible = useIoTStore.getState().isPageVisible;
         const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
         client?.publish(commandTopic, presenceBuf as Buffer, { qos });
+        
+        // Request full state from ESP32 RAM (Global SSOT)
+        const syncBuf = new Uint8Array([0x09]);
+        client?.publish(commandTopic, syncBuf as Buffer, { qos });
       });
     });
 
@@ -78,7 +82,10 @@ export const initMqtt = () => {
             }
             else if (payload[0] === 123) {
               const data = JSON.parse(payload.toString());
-              if (data.command === "ping") {
+              if (data.type === "state_sync" && data.states) {
+                // Full state sync from ESP32
+                useIoTStore.getState().setPinsState(data.states);
+              } else if (data.command === "ping") {
                 queueMicrotask(() => {
                   const isPageVisible = useIoTStore.getState().isPageVisible;
                   const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
