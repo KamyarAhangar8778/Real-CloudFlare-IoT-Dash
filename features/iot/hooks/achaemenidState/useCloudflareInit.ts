@@ -28,6 +28,24 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
 
   const handleBypassSync = useCallback(() => {
     bypassedRef.current = true;
+    
+    // 1. Try loading from cache first
+    try {
+      const cachedConfigStr = localStorage.getItem("cached_esp_config");
+      if (cachedConfigStr) {
+        const cachedConfig = JSON.parse(cachedConfigStr) as EspConfig;
+        if (cachedConfig && cachedConfig.segments) {
+          handleApplyEspConfig(cachedConfig);
+          setSyncStatus(false, 100, "اتصال به اینترنت برقرار نیست. تنظیمات از حافظه محلی بارگذاری شد.");
+          setIsFullyReady(true);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to load cached config, falling back to default.", e);
+    }
+
+    // 2. Fallback to default if no cache
     handleApplyEspConfig(DEFAULT_ESP_CONFIG);
     setSyncStatus(false, 100, "تایید هویت مستقل. تنظیمات پیش‌فرض بارگذاری شد.");
     setIsFullyReady(true);
@@ -42,18 +60,27 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
       setSyncStatus(
         true,
         Math.min(10 + attemptCount * 15, 95),
-        `در حال دریافت تنظیمات از کلودفلر (تلاش ${attemptCount} از ${maxAttempts})...`,
+        `در حال دریافت تنظیمات از سرور ابری (تلاش ${attemptCount} از ${maxAttempts})...`,
       );
 
       try {
+
         const cfConfig = await fetchConfigFromCloudflare();
         if (cfConfig && cfConfig.segments && cfConfig.segments.length > 0) {
           if (bypassedRef.current) return;
           if (cfConfig.worker_url) {
             handleWorkerUrlChange(cfConfig.worker_url);
           }
+          
+          // Save valid config to local cache for offline use
+          try {
+            localStorage.setItem("cached_esp_config", JSON.stringify(cfConfig));
+          } catch (e) {
+            console.error("Failed to cache config", e);
+          }
+
           handleApplyEspConfig(cfConfig);
-          setSyncStatus(false, 100, "همگام‌سازی تنظیمات از کلودفلر انجام شد.");
+          setSyncStatus(false, 100, "همگام‌سازی تنظیمات انجام شد.");
           setIsFullyReady(true);
           return;
         }
@@ -69,12 +96,13 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
           Math.min(10 + attemptCount * 15, 95),
           `دریافت تنظیمات ناموفق بود. در حال تلاش مجدد...`,
         );
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
+
     }
 
     if (!bypassedRef.current) {
-      console.warn("Failed to fetch Cloudflare config after 5 attempts, loading default empty config.");
+      console.warn("Failed to fetch Cloudflare config, falling back to cache/default.");
       handleBypassSync();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

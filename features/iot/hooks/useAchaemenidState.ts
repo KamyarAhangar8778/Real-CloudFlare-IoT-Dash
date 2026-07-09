@@ -9,10 +9,13 @@ import { useCloudflarePush } from "./achaemenidState/useCloudflarePush";
 import { useAchaemenidDnd } from "./achaemenidState/useAchaemenidDnd";
 import { useApplyEspConfig } from "./achaemenidState/useApplyEspConfig";
 import { useIoTStore } from "./useIoTStore";
+import { useConnectionStrategy } from "./achaemenidState/useConnectionStrategy";
 
 export function useAchaemenidState() {
   const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
   
+  useConnectionStrategy();
+
   const { mounted, refetchIot } = useCloudflareQuery();
   const { handleApplyEspConfig } = useApplyEspConfig();
 

@@ -1,12 +1,17 @@
 import { isCloudflareEnabled, updatePinOnCloudflare, updateBatchPinsOnCloudflare } from "@/features/iot/services/cloudflareService";
 import { publishPinCommand, publishBatchPinCommand } from "@/features/iot/services/mqttService";
+import { getLocalWs } from "@/features/iot/services/localWs/client";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 export async function syncSinglePin(pin: string, state: boolean, preventMqtt: boolean, autoOff: number | undefined, isPushMode: boolean, showToast: any) {
-  // داشبورد web فقط از MQTT استفاده می‌کند (Local WS مخصوص اپ موبایل است)
-  if (!preventMqtt) {
+  const isLocal = useIoTStore.getState().isLocal;
+  const ws = getLocalWs();
+
+  if (isLocal && ws?.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: "set_state", pin: parseInt(pin), state: state ? 1 : 0, timer: autoOff }));
+  } else if (!preventMqtt) {
     publishPinCommand(pin, state, autoOff);
   }
-
   if (isCloudflareEnabled() && !isPushMode) {
     try {
       const result = await updatePinOnCloudflare(pin, state);
@@ -34,8 +39,14 @@ export async function syncBatchPins(actions: any[], segments: any[], isCfEnabled
     }
   }
 
-  // داشبورد web فقط از MQTT استفاده می‌کند
-  publishBatchPinCommand(mqttActions);
+  const isLocal = useIoTStore.getState().isLocal;
+  const ws = getLocalWs();
+
+  if (isLocal && ws?.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ command: "batch_state", actions: mqttActions }));
+  } else {
+    publishBatchPinCommand(mqttActions);
+  }
 
   if (cfActions.length > 0) {
     try {
@@ -50,3 +61,4 @@ export async function syncBatchPins(actions: any[], segments: any[], isCfEnabled
     }
   }
 }
+

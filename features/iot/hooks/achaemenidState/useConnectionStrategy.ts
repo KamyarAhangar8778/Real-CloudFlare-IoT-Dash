@@ -17,7 +17,17 @@ export function useConnectionStrategy() {
     let isMounted = true;
 
     const connect = () => {
+      // فقط در محیط Capacitor (موبایل) اجازه اتصال WebSocket محلی می‌دهیم
+      // در مرورگر وب به دلیل خطای Mixed Content فقط از MQTT استفاده می‌شود
+      // @ts-ignore
+      const isNative = typeof window !== "undefined" && window.Capacitor?.isNative;
+      if (!isNative) {
+        console.log("[LocalWS] Skipped: Not running in Native Capacitor App.");
+        return;
+      }
+
       if (ws?.readyState === WebSocket.OPEN || ws?.readyState === WebSocket.CONNECTING) return;
+
       
       console.log(`[LocalWS] Attempting connection to ws://${localIp}:81`);
       ws = new WebSocket(`ws://${localIp}:81`);
