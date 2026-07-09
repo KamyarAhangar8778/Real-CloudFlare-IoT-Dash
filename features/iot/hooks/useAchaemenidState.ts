@@ -8,14 +8,11 @@ import { useCloudflareInit } from "./achaemenidState/useCloudflareInit";
 import { useCloudflarePush } from "./achaemenidState/useCloudflarePush";
 import { useAchaemenidDnd } from "./achaemenidState/useAchaemenidDnd";
 import { useApplyEspConfig } from "./achaemenidState/useApplyEspConfig";
-import { useConnectionStrategy } from "./achaemenidState/useConnectionStrategy";
 import { useIoTStore } from "./useIoTStore";
 
 export function useAchaemenidState() {
   const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
   
-  useConnectionStrategy();
-
   const { mounted, refetchIot } = useCloudflareQuery();
   const { handleApplyEspConfig } = useApplyEspConfig();
 

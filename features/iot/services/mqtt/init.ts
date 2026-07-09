@@ -6,6 +6,19 @@ import { getMqttClient, setMqttClient, getMqttSettings, stateCallbacks } from ".
 const pendingStateUpdates = new Map<string, boolean>();
 let updateRafId: number | null = null;
 
+// ESP32 online/offline detection از طریق Ping 0x07
+let espOfflineTimer: ReturnType<typeof setTimeout> | null = null;
+const ESP_OFFLINE_TIMEOUT_MS = 70000; // 70 ثانیه (ESP32 هر 60 ثانیه ping می‌فرستد)
+
+const markEspOnline = () => {
+  useIoTStore.getState().setIsLocal(true);
+  if (espOfflineTimer) clearTimeout(espOfflineTimer);
+  espOfflineTimer = setTimeout(() => {
+    useIoTStore.getState().setIsLocal(false);
+    console.warn("[MQTT] ESP32 ping timeout. Marked as OFFLINE.");
+  }, ESP_OFFLINE_TIMEOUT_MS);
+};
+
 const flushStateUpdates = () => {
   updateRafId = null;
   if (pendingStateUpdates.size === 0) return;
@@ -13,6 +26,15 @@ const flushStateUpdates = () => {
   const updatesToProcess = new Map(pendingStateUpdates);
   pendingStateUpdates.clear();
   
+  // Batch update zustand store
+  useIoTStore.getState().setPinsState((prev) => {
+    const next = { ...prev };
+    updatesToProcess.forEach((state, pinId) => {
+      next[pinId] = state;
+    });
+    return next;
+  });
+
   stateCallbacks.forEach((cb) => {
     updatesToProcess.forEach((state, pinId) => {
       cb(pinId, state);
@@ -69,6 +91,8 @@ export const initMqtt = () => {
                   useIoTStore.getState().setLocalIp(ip);
                 }
               }
+              // ESP32 آنلاین است — شمارنده را ریست کن
+              markEspOnline();
               queueMicrotask(() => {
                 const isPageVisible = useIoTStore.getState().isPageVisible;
                 const presenceBuf = new Uint8Array([0x04, isPageVisible ? 0x01 : 0x00]);
@@ -78,12 +102,14 @@ export const initMqtt = () => {
             else if (cmdType === 0x06 && payload.length >= 3) {
               const pinNum = payload[1];
               const state = payload[2] === 0x01;
+              console.log(`[MQTT] Received state update from ESP32: pin=${pinNum} state=${state}`);
               queueStateUpdate(pinNum.toString(), state);
             }
             else if (payload[0] === 123) {
               const data = JSON.parse(payload.toString());
               if (data.type === "state_sync" && data.states) {
                 // Full state sync from ESP32
+                console.log(`[MQTT] Received full state sync from ESP32:`, data.states);
                 useIoTStore.getState().setPinsState(data.states);
               } else if (data.command === "ping") {
                 queueMicrotask(() => {
@@ -92,6 +118,7 @@ export const initMqtt = () => {
                   client?.publish(commandTopic, presenceBuf as Buffer, { qos });
                 });
               } else if (data.id !== undefined && data.value !== undefined) {
+                console.log(`[MQTT] Received JSON state update from ESP32: pin=${data.id} state=${data.value}`);
                 queueStateUpdate(data.id.toString(), data.value);
               }
             }
