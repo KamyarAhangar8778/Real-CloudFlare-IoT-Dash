@@ -18,7 +18,7 @@ export default function VerticalBrandBox({
 
   if (isSidebarCollapsed) {
     return (
-      <div className="relative z-10 w-full flex flex-col items-center justify-center gap-2">
+      <div className="relative z-10 w-full flex flex-col items-center justify-center gap-2.5 py-1">
         {setIsSidebarCollapsed && (
           <button
             type="button"
@@ -26,7 +26,7 @@ export default function VerticalBrandBox({
             className="relative z-10 p-1.5 text-[var(--text-secondary)] md:hover:text-[var(--accent3)] rounded-lg border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:border-[var(--accent3)]/50 transition-all duration-300 cursor-pointer"
             title="باز کردن منوی کناری"
           >
-            <PanelLeftClose className="w-3.5 h-3.5 rotate-180" />
+            <PanelLeftClose className="w-4 h-4 rotate-180" />
           </button>
         )}
         <div className="w-8 h-8 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-full shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
@@ -44,15 +44,15 @@ export default function VerticalBrandBox({
   }
 
   return (
-    <div className="relative z-10 w-full flex items-center justify-between gap-2.5 px-1 py-1">
+    <div className="relative z-10 w-full flex items-center justify-between gap-3 py-1 px-1">
       {setIsSidebarCollapsed && (
         <button
           type="button"
           onClick={() => setIsSidebarCollapsed(true)}
-          className="relative z-10 p-1.5 text-[var(--text-secondary)] md:hover:text-[var(--accent3)] rounded-lg border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:border-[var(--accent3)]/50 transition-all duration-300 cursor-pointer shrink-0"
+          className="relative z-10 p-1.5 text-[var(--text-secondary)] md:hover:text-[var(--accent3)] rounded-lg border border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:border-[var(--accent3)]/50 transition-all duration-300 cursor-pointer"
           title="بستن منوی کناری"
         >
-          <PanelRightClose className="w-3.5 h-3.5" />
+          <PanelRightClose className="w-4 h-4" />
         </button>
       )}
 
