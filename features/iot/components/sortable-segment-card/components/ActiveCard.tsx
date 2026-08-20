@@ -125,7 +125,7 @@ function ActiveCard({
           animationsEnabled={animationsEnabled}
         />
 
-        {!isUltraCompact && !isCompact && <CardFooter segment={segment} isPinOn={isPinOn} />}
+        {!isUltraCompact && !isCompact && <CardFooter segment={segment} isPinOn={isPinOn} mode={mode} countdown={countdown} />}
       </div>
     </motion.div>
   );

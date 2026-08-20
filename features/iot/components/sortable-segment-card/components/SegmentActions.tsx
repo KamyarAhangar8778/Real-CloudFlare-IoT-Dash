@@ -36,27 +36,29 @@ export default function SegmentActions({
 
   return (
     <>
-      <button
-        onClick={() => onRemove(segment.id)}
-        className="group/del p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-600 dark:text-gray-400 md:hover:border-rose-500/60 md:hover:bg-rose-500/10 md:hover:text-rose-400 transition-all duration-200 cursor-pointer rounded-lg shadow-xs active:scale-95 flex items-center justify-center"
-        title="حذف این سگمنت"
-        onPointerDown={(e) => e.stopPropagation()}
-      >
-        <SegmentDeleteIcon
-          size={14}
-          animationsEnabled={animationsEnabled}
-        />
-      </button>
-      <div
-        {...attributes}
-        {...listeners}
-        className="group/grip p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-600 dark:text-gray-400 md:hover:border-[var(--accent4)] md:hover:bg-[var(--accent4-transparent)] md:hover:text-[var(--accent4)] cursor-grab active:cursor-grabbing transition-all duration-200 rounded-lg shadow-xs active:scale-95 flex items-center justify-center"
-        title="کشیدن برای جابه‌جایی"
-      >
-        <SegmentGripIcon
-          size={14}
-          animationsEnabled={animationsEnabled}
-        />
+      <div className="flex items-center gap-1 bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-[3px] rounded-full shadow-sm transition-colors mr-1.5">
+        <button
+          onClick={() => onRemove(segment.id)}
+          className="group/del p-1.5 text-[var(--text-secondary)] md:hover:bg-rose-500/10 md:hover:text-rose-500 transition-all duration-200 cursor-pointer rounded-full active:scale-95 flex items-center justify-center"
+          title="حذف این سگمنت"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <SegmentDeleteIcon
+            size={14}
+            animationsEnabled={animationsEnabled}
+          />
+        </button>
+        <div
+          {...attributes}
+          {...listeners}
+          className="group/grip p-1.5 text-[var(--text-secondary)] md:hover:bg-[var(--accent4-transparent)] md:hover:text-[var(--accent4)] cursor-grab active:cursor-grabbing transition-all duration-200 rounded-full active:scale-95 flex items-center justify-center"
+          title="کشیدن برای جابه‌جایی"
+        >
+          <SegmentGripIcon
+            size={14}
+            animationsEnabled={animationsEnabled}
+          />
+        </div>
       </div>
       {onUpdateSegmentMode && segment.type !== "input" && (
         <div className="mr-1.5">

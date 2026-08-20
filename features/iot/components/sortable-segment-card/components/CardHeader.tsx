@@ -59,7 +59,8 @@ export default function CardHeader({
     return () => observer.disconnect();
   }, []);
 
-  const isSmall = isUltraCompact || isCompact || (isMobile && groupMaxCols > 1) || isNarrow;
+  const forceFullHeader = isMobile && groupMaxCols === 1;
+  const isSmall = !forceFullHeader && (isUltraCompact || isCompact || (isMobile && groupMaxCols > 1) || isNarrow);
   const showIconInMenu = isSmall;
 
   const {
