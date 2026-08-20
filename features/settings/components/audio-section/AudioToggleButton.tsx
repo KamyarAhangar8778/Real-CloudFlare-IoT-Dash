@@ -1,5 +1,6 @@
 import React from "react";
-import { Activity, VolumeX } from "lucide-react";
+import { VolumeX } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 
 interface Props {
   isMusicOn: boolean;
@@ -56,7 +57,7 @@ export function AudioToggleButton({ isMusicOn, isLoading, onToggle }: Props) {
               : "bg-[var(--card-hover-bg)] text-[var(--text-muted)]"
           }`}
         >
-          {isMusicOn ? <Activity className="w-5 h-5 animate-pulse" /> : <VolumeX className="w-5 h-5" />}
+          {isMusicOn ? <WidgetIcon icon="Activity" className="w-5 h-5 text-[var(--accent3)]" /> : <VolumeX className="w-5 h-5" />}
         </div>
       </button>
     </div>

@@ -8,6 +8,7 @@ import { createUiSlice } from "./store/slices/createUiSlice";
 import { createConfigSlice } from "./store/slices/createConfigSlice";
 import { createMenuSlice } from "./store/slices/createMenuSlice";
 import { createAestheticSlice } from "./store/slices/createAestheticSlice";
+import { createElementEngineSlice } from "./store/slices/createElementEngineSlice";
 
 export const useIoTStore = create<IoTStoreState>((...a) => ({
   ...createSegmentsSlice(...a),
@@ -18,4 +19,5 @@ export const useIoTStore = create<IoTStoreState>((...a) => ({
   ...createConfigSlice(...a),
   ...createMenuSlice(...a),
   ...createAestheticSlice(...a),
+  ...createElementEngineSlice(...a),
 }));

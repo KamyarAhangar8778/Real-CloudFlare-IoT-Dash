@@ -10,6 +10,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence } from "motion/react";
 import { SortableGroupProps } from "../core/types";
 import GroupHeader from "./GroupHeader";
+import GroupPattern from "./GroupPattern";
 import { useMasonryGrid } from "../hooks/useMasonryGrid";
 
 const GROUP_ITEM_BASIS_LUT: Record<number, string> = {
@@ -54,7 +55,7 @@ export default function SortableGroup({
     transition: animationsEnabled
       ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
       : "none",
-    zIndex: isDragging ? 0 : "auto",
+    zIndex: isDragging ? 0 : undefined,
     opacity: isDragging ? 0.3 : 1,
   };
 
@@ -105,7 +106,7 @@ export default function SortableGroup({
     <div
       ref={setNodeRef}
       style={style}
-      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2"
+      className="relative group/group-card w-full mb-6 touch-none flex flex-col gap-2 has-[[data-segment-menu-open='true']]:z-[100] has-[[data-group-menu-open='true']]:z-[100] transition-all duration-300 md:hover:-translate-y-1.5"
     >
       <GroupHeader
         id={id}
@@ -121,7 +122,8 @@ export default function SortableGroup({
       />
 
       {/* Body Island */}
-      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl">
+      <div className="w-full relative group/body flex-grow bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl has-[[data-segment-menu-open='true']]:z-50 overflow-hidden transition-all duration-300">
+        <GroupPattern variant="body" />
         <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
         {isOverlayItem ? (
           renderContent()
@@ -134,7 +136,8 @@ export default function SortableGroup({
 
       {/* Footer Island */}
       <div className="flex justify-center mt-2 w-full">
-        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm flex justify-center items-center relative z-10 rounded-2xl w-fit">
+        <div className="p-2 px-4 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm flex justify-center items-center relative z-10 rounded-2xl w-fit overflow-hidden transition-all duration-300">
+          <GroupPattern variant="footer" />
           <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
           <div className="flex gap-1.5 opacity-50 px-2 transition-opacity md:group-hover/group-card:opacity-100 relative z-10">
             {Array.from({ length: maxCols }).map((_, idx) => (

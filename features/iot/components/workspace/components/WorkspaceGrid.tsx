@@ -36,7 +36,9 @@ const ConnectedGroup = React.memo((props: any) => {
     ? FLEX_BASIS_LUT[1] 
     : FLEX_BASIS_LUT[groupsCols] || FLEX_BASIS_LUT[3];
 
-  const baseClasses = isGroupsCompactLayout ? "space-y-3" : "flex-grow flex-shrink-0 min-w-0 max-w-full";
+  const baseClasses = isGroupsCompactLayout 
+    ? "space-y-3 has-[[data-segment-menu-open='true']]:z-50 has-[[data-segment-menu-open='true']]:relative" 
+    : "flex-grow flex-shrink-0 min-w-0 max-w-full has-[[data-segment-menu-open='true']]:z-50 has-[[data-segment-menu-open='true']]:relative";
   const style = !isGroupsCompactLayout ? { flexBasis } : undefined;
 
   return (

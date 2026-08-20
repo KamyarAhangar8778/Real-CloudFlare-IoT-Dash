@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { ICON_MAP } from "@/features/iot/utils/icons";
+import { WidgetIcon } from "@/components/icons";
 import { useMediaQuery } from "@/features/iot/hooks/useMediaQuery";
 import LayoutSelector from "./LayoutSelector";
 import GroupSettingsMenu from "./GroupSettingsMenu";
 import GroupActions from "./GroupActions";
+import GroupPattern from "./GroupPattern";
 import { useGroupHeaderLayout } from "../hooks/useGroupHeaderLayout";
 import { AnimatePresence } from "motion/react";
 
@@ -46,11 +47,13 @@ export default function GroupHeader({
   } = useGroupHeaderLayout();
 
   return (
-    <div className="flex items-stretch justify-between w-full gap-2 sm:gap-4 relative z-10 pointer-events-none">
+    <div className={`flex items-stretch justify-between w-full gap-2 sm:gap-4 relative pointer-events-none ${isSettingsOpen ? "z-[100]" : "z-10"}`}>
       {/* Right Part: Title and Layout Selector */}
       <div
-        className={`flex items-center justify-between flex-1 min-w-0 pointer-events-auto bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl relative ${parentGroupsCols === 3 ? "p-1.5 pr-3 gap-2" : "p-2 pr-4 gap-3 sm:p-2.5 sm:pr-5 sm:gap-4"}`}
+        data-group-menu-open={isSettingsOpen ? "true" : undefined}
+        className={`flex items-center justify-between flex-1 min-w-0 pointer-events-auto bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] shadow-sm rounded-2xl relative transition-all duration-300 ${isSettingsOpen ? "z-[100]" : ""} ${parentGroupsCols === 3 ? "p-1.5 pr-3 gap-2" : "p-2 pr-4 gap-3 sm:p-2.5 sm:pr-5 sm:gap-4"}`}
       >
+        <GroupPattern variant="header" />
         <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/group-card:opacity-100 pointer-events-none" />
         <div ref={titleContainerRef} className="flex items-center gap-2 min-w-0 flex-1 relative z-10">
           <div className="relative flex justify-center items-center">
@@ -66,24 +69,13 @@ export default function GroupHeader({
               }}
               title="تنظیمات گروه"
             >
-              {icon ? (
-                ICON_MAP[icon] ? (
-                  React.createElement(ICON_MAP[icon], {
-                    className: parentGroupsCols === 3 ? "w-3.5 h-3.5" : "w-4 h-4 sm:w-5 sm:h-5",
-                  })
-                ) : (
-                  <span
-                    className={`leading-none flex items-center justify-center ${parentGroupsCols === 3 ? "text-sm w-3.5 h-3.5" : "text-base sm:text-xl w-4 h-4 sm:w-5 sm:h-5"}`}
-                  >
-                    {icon}
-                  </span>
-                )
-              ) : (
-                React.createElement(ICON_MAP["Layers"], {
-                  className: parentGroupsCols === 3 ? "w-3.5 h-3.5" : "w-4 h-4 sm:w-5 sm:h-5",
-                })
-              )}
+              <WidgetIcon
+                icon={icon}
+                defaultIcon="Layers"
+                className={parentGroupsCols === 3 ? "w-3.5 h-3.5" : "w-4 h-4 sm:w-5 sm:h-5"}
+              />
             </div>
+
 
             <AnimatePresence>
               <GroupSettingsMenu

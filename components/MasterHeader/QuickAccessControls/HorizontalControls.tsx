@@ -1,8 +1,7 @@
 import React from "react";
-import { Settings as SettingsIcon, Layers } from "lucide-react";
+import { Settings as SettingsIcon } from "lucide-react";
+import { ModulesIcon } from "@/components/icons";
 import { useIoTStore } from '@/features/iot/hooks/useIoTStore';
-import { useDashboard } from "@/features/dashboard/context/DashboardContext";
-import VoiceCommandButton from "../VoiceCommandButton";
 import { QuickAccessControlsProps } from "./types";
 
 export default function HorizontalControls({
@@ -13,28 +12,25 @@ export default function HorizontalControls({
   isSidebarCollapsed,
 }: QuickAccessControlsProps) {
   const setIsAutomationsMenuOpen = useIoTStore(s => s.setIsAutomationsMenuOpen);
+  const isMenuOpen = useIoTStore(s => s.isMenuOpen);
 
   return (
     <div className="flex items-center gap-1">
-      <VoiceCommandButton 
-        animationsEnabled={animationsEnabled} 
-        variant={variant} 
-        isSidebarCollapsed={isSidebarCollapsed} 
-      />
-
       <button
         onClick={() => setIsModulesMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center"
+        className="p-2 md:p-2.5 bg-transparent md:hover:bg-[var(--accent4-transparent)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent4)] active:scale-[0.97] group flex justify-center items-center cursor-pointer"
         title="مدیریت ماژول‌ها و ابزارها"
       >
-        <Layers
-          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "md:group-hover:scale-110" : ""}`}
+        <ModulesIcon
+          size={16}
+          animationsEnabled={animationsEnabled}
+          className="transition-transform duration-300 md:group-hover:scale-110"
         />
       </button>
 
       <button
         onClick={() => setIsAutomationsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
+        className="p-2 md:p-2.5 bg-transparent md:hover:bg-[var(--accent3-transparent)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center cursor-pointer"
         title="اتوماسیون‌های زمانی"
       >
         <svg xmlns="http://www.w3.org/00/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "md:group-hover:scale-110" : ""}`}>
@@ -45,12 +41,16 @@ export default function HorizontalControls({
       </button>
 
       <button
-        onClick={() => setIsMenuOpen(true)}
-        className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all md:hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center"
-        title="پیکربندی سیستم"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className={`p-2 md:p-2.5 border rounded-xl transition-all active:scale-[0.97] group flex justify-center items-center cursor-pointer ${
+          isMenuOpen
+            ? "bg-[var(--accent3-transparent)] border-[var(--accent3)] text-[var(--accent3)] shadow-md scale-105"
+            : "bg-transparent md:hover:bg-[var(--accent3-transparent)] border-[var(--border-color)] text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] md:hover:border-[var(--accent3)]"
+        }`}
+        title={isMenuOpen ? "بازگشت به خانه" : "تنظیمات داشبورد"}
       >
         <SettingsIcon
-          className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+          className={`w-4 h-4 transition-transform duration-300 ${isMenuOpen ? "rotate-90 text-[var(--accent3)]" : animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
         />
       </button>
     </div>

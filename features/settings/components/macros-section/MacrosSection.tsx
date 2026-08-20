@@ -3,29 +3,32 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { Plus, Command } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { ICON_MAP } from "@/features/iot/utils/icons";
+import { isMonoGif, isGifIcon } from "@/features/iot/utils/animatedGifs";
 import { MacroCard } from "./MacroCard";
 
+type TabMode = "gif-color" | "gif-mono" | "emoji" | "lucide";
+
 export default function MacrosSection() {
-  const macros = useIoTStore(s => s.macros);
-  const setMacros = useIoTStore(s => s.setMacros);
+  const macros = useIoTStore((s) => s.macros);
+  const setMacros = useIoTStore((s) => s.setMacros);
   const [editingMacroId, setEditingMacroId] = useState<string | null>(null);
   const [newMacroTitle, setNewMacroTitle] = useState("");
   const [newMacroIcon, setNewMacroIcon] = useState("");
-  const [tempActions, setTempActions] = useState<Array<{targetPin: string, actionOn: boolean}>>([]);
-  const [iconMode, setIconMode] = useState<"emoji" | "lucide">("emoji");
+  const [tempActions, setTempActions] = useState<Array<{ targetPin: string; actionOn: boolean }>>([]);
+  const [iconMode, setIconMode] = useState<TabMode>("gif-color");
 
   const handleAddMacro = () => {
     const newMacro = {
       id: `macro_${Date.now()}`,
       title: "ماکروی جدید",
-      icon: "⚡",
+      icon: "gif:voltage",
       actions: [],
     };
     setMacros([...macros, newMacro]);
     setEditingMacroId(newMacro.id);
     setNewMacroTitle(newMacro.title);
     setNewMacroIcon(newMacro.icon);
-    setIconMode("emoji");
+    setIconMode("gif-color");
     setTempActions([]);
   };
 
@@ -35,7 +38,11 @@ export default function MacrosSection() {
   };
 
   const handleSaveMacro = (id: string) => {
-    setMacros(macros.map(m => m.id === id ? { ...m, title: newMacroTitle, icon: newMacroIcon, actions: tempActions } : m));
+    setMacros(
+      macros.map((m) =>
+        m.id === id ? { ...m, title: newMacroTitle, icon: newMacroIcon, actions: tempActions } : m
+      )
+    );
     setEditingMacroId(null);
   };
 
@@ -43,7 +50,15 @@ export default function MacrosSection() {
     setEditingMacroId(macro.id);
     setNewMacroTitle(macro.title);
     setNewMacroIcon(macro.icon || "");
-    setIconMode(ICON_MAP[macro.icon || ""] ? "lucide" : "emoji");
+    if (isMonoGif(macro.icon)) {
+      setIconMode("gif-mono");
+    } else if (isGifIcon(macro.icon)) {
+      setIconMode("gif-color");
+    } else if (ICON_MAP[macro.icon || ""]) {
+      setIconMode("lucide");
+    } else {
+      setIconMode("emoji");
+    }
     setTempActions(macro.actions);
   };
 
@@ -71,7 +86,9 @@ export default function MacrosSection() {
         <AnimatePresence>
           {macros.length === 0 && (
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="text-center py-6 bg-[var(--card-bg-solid)] border border-dashed border-[var(--border-color)] rounded-2xl text-[var(--text-tertiary)] text-sm"
             >
               هنوز ماکرویی تعریف نشده است.
@@ -85,10 +102,14 @@ export default function MacrosSection() {
               isEditing={editingMacroId === macro.id}
               onEditStart={() => handleEditStart(macro)}
               onDelete={() => handleDeleteMacro(macro.id)}
-              newMacroTitle={newMacroTitle} setNewMacroTitle={setNewMacroTitle}
-              newMacroIcon={newMacroIcon} setNewMacroIcon={setNewMacroIcon}
-              iconMode={iconMode} setIconMode={setIconMode}
-              tempActions={tempActions} setTempActions={setTempActions}
+              newMacroTitle={newMacroTitle}
+              setNewMacroTitle={setNewMacroTitle}
+              newMacroIcon={newMacroIcon}
+              setNewMacroIcon={setNewMacroIcon}
+              iconMode={iconMode}
+              setIconMode={setIconMode}
+              tempActions={tempActions}
+              setTempActions={setTempActions}
               onSave={() => handleSaveMacro(macro.id)}
               onCancel={() => setEditingMacroId(null)}
             />

@@ -63,7 +63,7 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
   if (!showHeader) return null;
 
   return (
-    <div className={headerPosition === "left" ? "md:hidden w-full" : "w-full"}>
+    <header className={headerPosition === "left" ? "md:hidden w-full" : "w-full"}>
       <MasterHeader
         isDark={isDark}
         setIsDark={setIsDark}
@@ -82,6 +82,6 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
         selectedGroupFilter={selectedGroupFilter}
         setSelectedGroupFilter={setSelectedGroupFilter}
       />
-    </div>
+    </header>
   );
 }

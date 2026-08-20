@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { Plus, Mic } from "lucide-react";
+import { Plus } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 import { motion, AnimatePresence } from "motion/react";
 import { VoiceTranscriptOverlay } from "./VoiceTranscriptOverlay";
 import { VoiceCommandCard } from "./VoiceCommandCard";
@@ -42,7 +43,7 @@ export default function VoiceCommandsSection() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 text-right">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold flex items-center gap-2 text-[var(--text-primary)]">
-          <Mic className="w-5 h-5 text-[var(--accent3)]" />
+          <WidgetIcon icon="Mic" className="w-5 h-5 text-[var(--accent3)]" />
           مدیریت دستورات صوتی
         </h3>
         <button

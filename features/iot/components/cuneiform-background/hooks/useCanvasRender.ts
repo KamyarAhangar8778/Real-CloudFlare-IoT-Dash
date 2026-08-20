@@ -1,6 +1,9 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { CuneiformBackgroundProps } from "../core/types";
+import { renderGrid } from "../core/renderGrid";
 
 interface UseCanvasRenderParams extends Omit<CuneiformBackgroundProps, "accent3"> {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -8,122 +11,110 @@ interface UseCanvasRenderParams extends Omit<CuneiformBackgroundProps, "accent3"
   targetPointerRef: React.MutableRefObject<{ x: number; y: number }>;
 }
 
-export function useCanvasRender({
-  canvasRef, targetPointerRef, isDark, matrixDensity, matrixSize, 
-  matrixHoverSize, matrixOpacity, matrixColor, matrixMoving, matrixMouseEffect,
-  matrixTwinkleEffect, matrixTwinkleSpeed, animationsEnabled = true, animationsFps = 60
-}: UseCanvasRenderParams) {
+/**
+ * Custom hook to manage 2D canvas animation for the cuneiform matrix background.
+ * Uses a persistent RAF loop with monotonic time delta for rock-solid, constant animation speed.
+ *
+ * @param params Configuration parameters including canvas ref, colors, and animation controls.
+ */
+export function useCanvasRender(params: UseCanvasRenderParams) {
   const isPageVisible = useIoTStore((state) => state.isPageVisible);
-  const workerRef = useRef<Worker | null>(null);
-  
-  // Initialize worker
+  const timeRef = useRef(0);
+  const lastTimeRef = useRef<number | null>(null);
+  const animFrameIdRef = useRef<number | null>(null);
+
+  // Store latest params in a ref to avoid tearing down the RAF loop on every state change
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
+
+  const isVisibleRef = useRef(isPageVisible);
+  isVisibleRef.current = isPageVisible;
+
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = params.canvasRef.current;
     if (!canvas) return;
 
-    const worker = new Worker(new URL('../core/cuneiform.worker.ts', import.meta.url), { type: 'module' });
-    workerRef.current = worker;
-    
-    const checkIsMobile = () => window.innerWidth <= 768 || window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    try {
-      const offscreen = canvas.transferControlToOffscreen();
-      worker.postMessage({
-        type: 'INIT',
-        payload: {
-          canvas: offscreen,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio || 1,
-          config: {
-            isPageVisible,
-            matrixDensity,
-            matrixSize,
-            matrixHoverSize,
-            matrixOpacity,
-            matrixColor,
-            matrixMoving,
-            matrixMouseEffect,
-            matrixTwinkleEffect,
-            matrixTwinkleSpeed,
-            isDark,
-            animationsEnabled,
-            animationsFps,
-            isMobile: checkIsMobile()
-          }
-        }
-      }, [offscreen]);
-    } catch (e) {
-      console.warn("OffscreenCanvas transfer failed, possibly already transferred.", e);
-    }
+    const checkIsMobile = () =>
+      typeof window !== "undefined" &&
+      (window.innerWidth <= 768 ||
+        window.matchMedia("(pointer: coarse)").matches ||
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0);
 
-    const setCanvasSize = () => {
-      if (workerRef.current) {
-        workerRef.current.postMessage({
-          type: 'RESIZE',
-          payload: {
-            width: window.innerWidth,
-            height: window.innerHeight,
-            devicePixelRatio: window.devicePixelRatio || 1,
-            isMobile: checkIsMobile()
-          }
-        });
-      }
+    const updateCanvasDimensions = () => {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    window.addEventListener("resize", setCanvasSize);
+    updateCanvasDimensions();
+    window.addEventListener("resize", updateCanvasDimensions);
+
+    const render = (currentTime: number) => {
+      animFrameIdRef.current = requestAnimationFrame(render);
+
+      if (!isVisibleRef.current) {
+        lastTimeRef.current = null;
+        return;
+      }
+
+      if (lastTimeRef.current === null) {
+        lastTimeRef.current = currentTime;
+      }
+
+      // Clamp delta to prevent speed jumps after tab switches or frame drops
+      const deltaMs = Math.min(currentTime - lastTimeRef.current, 64);
+      lastTimeRef.current = currentTime;
+
+      const p = paramsRef.current;
+      const animationsEnabled = p.animationsEnabled ?? true;
+
+      // Constant, uniform speed progression
+      if (animationsEnabled && p.matrixMoving) {
+        timeRef.current += deltaMs / 16.66667;
+      }
+
+      // Smooth pointer easing
+      p.pointerRef.current.x += (p.targetPointerRef.current.x - p.pointerRef.current.x) * 0.12;
+      p.pointerRef.current.y += (p.targetPointerRef.current.y - p.pointerRef.current.y) * 0.12;
+
+      renderGrid({
+        ctx,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        time: timeRef.current,
+        pointer: p.pointerRef.current,
+        matrixDensity: p.matrixDensity,
+        matrixSize: p.matrixSize,
+        matrixHoverSize: p.matrixHoverSize,
+        matrixOpacity: p.matrixOpacity,
+        matrixColor: p.matrixColor,
+        matrixMouseEffect: p.matrixMouseEffect,
+        matrixTwinkleEffect: p.matrixTwinkleEffect,
+        matrixTwinkleSpeed: p.matrixTwinkleSpeed,
+        isDark: p.isDark,
+        animationsEnabled,
+        isMobile: checkIsMobile(),
+      });
+    };
+
+    animFrameIdRef.current = requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener("resize", setCanvasSize);
-      worker.postMessage({ type: 'CLEANUP' });
-      worker.terminate();
-      workerRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Update pointer
-  useEffect(() => {
-    if (!matrixMouseEffect) return;
-
-    // Send pointer updates to the worker periodically instead of every frame to reduce message passing overhead
-    const interval = setInterval(() => {
-      if (workerRef.current) {
-        workerRef.current.postMessage({
-          type: 'POINTER_UPDATE',
-          payload: { x: targetPointerRef.current.x, y: targetPointerRef.current.y }
-        });
+      window.removeEventListener("resize", updateCanvasDimensions);
+      if (animFrameIdRef.current !== null) {
+        cancelAnimationFrame(animFrameIdRef.current);
       }
-    }, 16);
-
-    return () => clearInterval(interval);
-  }, [targetPointerRef, matrixMouseEffect]);
-
-  // Update config
-  useEffect(() => {
-    if (workerRef.current) {
-      workerRef.current.postMessage({
-        type: 'CONFIG_UPDATE',
-        payload: {
-          isPageVisible,
-          matrixDensity,
-          matrixSize,
-          matrixHoverSize,
-          matrixOpacity,
-          matrixColor,
-          matrixMoving,
-          matrixMouseEffect,
-          matrixTwinkleEffect,
-          matrixTwinkleSpeed,
-          isDark,
-          animationsEnabled,
-          animationsFps
-        }
-      });
-    }
-  }, [
-    isPageVisible, isDark, matrixDensity, matrixSize, 
-    matrixHoverSize, matrixOpacity, matrixColor, matrixMoving, matrixMouseEffect,
-    matrixTwinkleEffect, matrixTwinkleSpeed, animationsEnabled, animationsFps
-  ]);
+      lastTimeRef.current = null;
+    };
+  }, [params.canvasRef]);
 }

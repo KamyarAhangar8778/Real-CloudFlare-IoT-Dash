@@ -1,5 +1,5 @@
 import React from "react";
-import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic, Wifi, Settings2 } from "lucide-react";
+import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic, Wifi, Settings2, Cpu } from "lucide-react";
 
 export interface SettingsDrawerProps {
   isOpen: boolean;
@@ -54,6 +54,12 @@ export interface SettingsDrawerProps {
 }
 
 export const SETTINGS_TABS = [
+  {
+    id: "element-engine",
+    title: "موتور المنت و فایل استایل (Element Engine)",
+    compactTitle: "موتور المنت & Registry",
+    Icon: Cpu,
+  },
   {
     id: "layout",
     title: "تنظیمات عرض و نمای داشبورد",

@@ -1,32 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { AnimatePresence } from "motion/react";
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import MacroSidebarButton from "./MacroSidebarButton";
+import { Play } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 
 interface MacroSidebarProps {
   forceHorizontal?: boolean;
   className?: string;
 }
 
-export default function MacroSidebar({ forceHorizontal = false, className = "" }: MacroSidebarProps) {
+/**
+ * Custom button selector widget for macros and quick execution scenarios.
+ * Displays marquee scrolling animation in a single row only when buttons overflow the container width.
+ */
+export default function MacroSidebar({ className = "" }: MacroSidebarProps) {
   const { handleBatchPinState } = useDashboard();
-  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
-  const headerPosition = useIoTStore(s => s.headerPosition);
-  const macros = useIoTStore(s => s.macros);
-  const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [offset, setOffset] = useState(0);
+  const animationsEnabled = useIoTStore((s) => s.animationsEnabled);
+  const macros = useIoTStore((s) => s.macros);
+  const selectedGroupFilter = useIoTStore((s) => s.selectedGroupFilter);
 
-  React.useEffect(() => {
-    if (macros && activeIndex >= macros.length) {
-      setActiveIndex(Math.max(0, macros.length - 1));
+  const containerRef = useRef<HTMLDivElement>(null);
+  const singleSetRef = useRef<HTMLDivElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  // Measure single-row content vs container width to determine if scrolling is necessary
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current && singleSetRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const contentWidth = singleSetRef.current.scrollWidth;
+        // Overflow if single row width exceeds available container width (accounting for padding)
+        setIsOverflowing(contentWidth > containerWidth - 20);
+      }
+    };
+
+    checkOverflow();
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkOverflow();
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
     }
-  }, [macros, activeIndex]);
+    if (singleSetRef.current) {
+      resizeObserver.observe(singleSetRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [macros]);
 
   if (selectedGroupFilter || !macros || macros.length === 0) {
     return null;
@@ -35,77 +61,108 @@ export default function MacroSidebar({ forceHorizontal = false, className = "" }
   const handleExecuteMacro = (macroId: string) => {
     const macro = macros.find((m) => m.id === macroId);
     if (!macro) return;
-    
     handleBatchPinState(macro.actions);
   };
 
-  const isHorizontal = forceHorizontal || headerPosition === "left";
-
-  const goNext = () => {
-    setDirection(-1);
-    setOffset(prev => prev + 1);
-    setActiveIndex((prev) => (prev + 1) % macros.length);
-  };
-  const goPrev = () => {
-    setDirection(1);
-    setOffset(prev => prev - 1);
-    setActiveIndex((prev) => (prev - 1 + macros.length) % macros.length);
-  };
+  const shouldScroll = isOverflowing && animationsEnabled;
 
   return (
-    <div className={`${className} w-full max-w-full ${isHorizontal ? "flex flex-row justify-center items-center gap-2 pt-4 pb-2" : "hidden lg:flex flex-col gap-3 shrink-0 pt-4 sticky top-6 z-10 w-[72px] items-center"}`} dir={isHorizontal ? "rtl" : undefined}>
-      {macros.length >= 3 ? (
-        <>
-          <button onClick={goPrev} className="p-1 rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0" title="قبلی">
-            {isHorizontal ? <ChevronRight className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
-          </button>
-          
-          <div 
-            className={`flex ${isHorizontal ? "flex-row items-center gap-1 max-w-[320px]" : "flex-col items-center gap-2"} relative overflow-hidden p-1`}
-            style={isHorizontal ? { WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)", maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" } : undefined}
+    <div
+      className={`w-full flex justify-center items-center ${className}`}
+      dir="rtl"
+    >
+      <div
+        ref={containerRef}
+        className="relative group w-full max-w-2xl bg-[var(--card-bg-solid)]/90 backdrop-blur-md border border-[var(--border-color)] px-4 py-2.5 rounded-2xl shadow-sm overflow-hidden hover:border-[var(--accent3)]/50 transition-all duration-300"
+      >
+        {shouldScroll ? (
+          <div
+            dir="ltr"
+            className="flex flex-row items-center w-max animate-marquee-rtl group-hover:[animation-play-state:paused]"
           >
-            <AnimatePresence mode="popLayout" custom={direction}>
-              {[
-                { macro: macros[(activeIndex - 1 + macros.length) % macros.length], key: offset - 1 },
-                { macro: macros[activeIndex], key: offset },
-                { macro: macros[(activeIndex + 1) % macros.length], key: offset + 1 }
-              ].map(({ macro, key }, index) => {
-                const isCenter = index === 1;
-                const onClick = index === 0 ? goPrev : index === 2 ? goNext : () => handleExecuteMacro(macro.id);
-                return (
-                  <MacroSidebarButton
-                    key={String(key)}
-                    macro={macro}
-                    isCenter={isCenter}
-                    onClick={onClick}
-                    isHorizontal={isHorizontal}
-                    animationsEnabled={animationsEnabled}
-                    direction={direction}
-                  />
-                );
-              })}
-            </AnimatePresence>
-          </div>
+            {/* Copy 1 */}
+            <div
+              ref={singleSetRef}
+              className="flex flex-row items-center gap-3 shrink-0 pr-3"
+            >
+              {macros.map((macro) => (
+                <MacroButtonItem
+                  key={`set0-${macro.id}`}
+                  macro={macro}
+                  onClick={() => handleExecuteMacro(macro.id)}
+                />
+              ))}
+            </div>
 
-          <button onClick={goNext} className="p-1 rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0" title="بعدی">
-            {isHorizontal ? <ChevronLeft className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-          </button>
-        </>
-      ) : (
-        <AnimatePresence>
-          {macros.map((macro, index) => (
-            <MacroSidebarButton
-              key={macro.id}
-              macro={macro}
-              onClick={() => handleExecuteMacro(macro.id)}
-              isHorizontal={isHorizontal}
-              animationsEnabled={animationsEnabled}
-              isSimpleList={true}
-              index={index}
-            />
-          ))}
-        </AnimatePresence>
-      )}
+            {/* Copy 2 (Exact duplicate twin for seamless infinite looping) */}
+            <div
+              className="flex flex-row items-center gap-3 shrink-0 pr-3"
+              aria-hidden="true"
+            >
+              {macros.map((macro) => (
+                <MacroButtonItem
+                  key={`set1-${macro.id}`}
+                  macro={macro}
+                  onClick={() => handleExecuteMacro(macro.id)}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="w-full flex justify-center items-center">
+            <div
+              ref={singleSetRef}
+              className="flex flex-row items-center justify-center flex-nowrap gap-3 w-max shrink-0 mx-auto"
+            >
+              {macros.map((macro) => (
+                <MacroButtonItem
+                  key={macro.id}
+                  macro={macro}
+                  onClick={() => handleExecuteMacro(macro.id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
+/**
+ * Individual Macro Button Item
+ */
+function MacroButtonItem({
+  macro,
+  onClick,
+}: {
+  macro: any;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      dir="rtl"
+      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--text-primary)] hover:border-[var(--accent3)] hover:text-[var(--accent3)] hover:bg-[var(--accent3-transparent)] hover:scale-105 active:scale-95 transition-all duration-300 shrink-0 cursor-pointer shadow-sm group/btn select-none"
+      title={macro.title}
+    >
+      {macro.icon ? (
+        <span className="w-4 h-4 flex items-center justify-center shrink-0">
+          <WidgetIcon
+            icon={macro.icon}
+            className="w-4 h-4 object-contain group-hover/btn:scale-110 transition-transform"
+          />
+        </span>
+      ) : (
+        <Play className="w-3.5 h-3.5 text-[var(--accent3)] shrink-0 group-hover/btn:scale-110 transition-transform" />
+      )}
+      <span className="text-xs font-bold whitespace-nowrap leading-none">
+        {macro.title}
+      </span>
+    </button>
+  );
+}
+
+
+

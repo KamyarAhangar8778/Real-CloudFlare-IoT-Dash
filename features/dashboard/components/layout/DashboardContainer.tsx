@@ -3,10 +3,12 @@
 import React from "react";
 import { MotionConfig } from "motion/react";
 import DashboardStyles from "@/features/iot/components/DashboardStyles";
+import { ElementEngineStyleProvider } from "@/features/iot/components/styles/ElementEngineStyleProvider";
 import CuneiformBackground from "@/features/iot/components/cuneiform-background";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import DashboardHeader from "./DashboardHeader";
 import DashboardMain from "./DashboardMain";
+import DashboardFooter from "./DashboardFooter";
 import DashboardDrawers from "./DashboardDrawers";
 import ToastNotification from "@/features/iot/components/notifications/ToastNotification";
 import ScrollToTopButton from "../widgets/ScrollToTopButton";
@@ -40,8 +42,8 @@ export default function DashboardContainer() {
 
   return (
     <MotionConfig reducedMotion={animationsEnabled ? "user" : "always"}>
-      <div className="theme-bg-main theme-text-secondary min-h-screen relative font-sans leading-relaxed selection:bg-[var(--accent3-transparent)] selection:text-[var(--accent3)] transition-colors duration-500 overflow-x-clip">
-        <div className="animate-fade-in">
+      <div className="theme-bg-main theme-text-secondary min-h-screen relative font-sans leading-relaxed selection:bg-[var(--accent3-transparent)] selection:text-[var(--accent3)] transition-colors duration-500 overflow-x-clip flex flex-col justify-between">
+        <div className="animate-fade-in flex flex-col flex-1 min-h-screen justify-between">
           <DashboardStyles
             accent3={accent3}
             accent4={accent4}
@@ -51,6 +53,7 @@ export default function DashboardContainer() {
             dashboardBgColor={dashboardBgColor}
             dashboardBgOpacity={dashboardBgOpacity}
           />
+          <ElementEngineStyleProvider />
 
           <CuneiformBackground
             isDark={isDark}
@@ -69,16 +72,16 @@ export default function DashboardContainer() {
           />
 
           <div
-            className={`relative z-10 w-full min-h-screen transition-all duration-500 ${
+            className={`relative z-10 w-full flex-1 transition-all duration-500 ${
               headerPosition === "left"
                 ? "flex flex-col md:flex-row-reverse items-stretch"
-                : `flex flex-col ${topHeaderContainerWidth} mx-auto px-6 py-6 md:py-8 justify-between gap-12`
+                : `flex flex-col ${topHeaderContainerWidth} mx-auto px-6 py-6 md:py-8 justify-start gap-12`
             }`}
           >
             {headerPosition === "left" && <DashboardHeader position="left" />}
 
             <div
-              className={`flex-1 flex flex-col justify-between gap-12 ${
+              className={`flex-1 flex flex-col justify-start gap-12 ${
                 headerPosition === "left"
                   ? `p-6 md:pt-1 md:pb-8 md:px-8 ${leftHeaderContentWidth} w-full mx-auto`
                   : "w-full"
@@ -88,6 +91,8 @@ export default function DashboardContainer() {
               <DashboardMain />
             </div>
           </div>
+
+          <DashboardFooter />
 
           <DashboardDrawers />
           <ToastNotification />

@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sliders, Trash2 } from "lucide-react";
 import { Segment } from "../core/types";
+import { WidgetIcon } from "@/components/icons";
 
 interface SegmentListProps {
   segments: Segment[];
@@ -41,13 +42,18 @@ export default function SegmentList({ segments, onRemoveSegment }: SegmentListPr
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
 
-                <div className="flex-1 min-w-0">
-                  <span className="block text-xs font-bold theme-text-primary truncate">
-                    {seg.title}
-                  </span>
-                  <span className="block text-[9px] theme-text-muted font-mono" dir="ltr">
-                    GPIO {seg.pin} • {seg.mode === "push" ? "MOMENTARY PUSH" : "ON/OFF SWITCH"}
-                  </span>
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-[var(--accent3-transparent)] border border-[var(--accent3-medium)] flex items-center justify-center shrink-0">
+                    <WidgetIcon icon={seg.icon} defaultIcon="Cpu" className="w-4 h-4 text-[var(--accent3)]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="block text-xs font-bold theme-text-primary truncate">
+                      {seg.title}
+                    </span>
+                    <span className="block text-[9px] theme-text-muted font-mono" dir="ltr">
+                      GPIO {seg.pin} • {seg.mode === "push" ? "MOMENTARY PUSH" : "ON/OFF SWITCH"}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             ))}

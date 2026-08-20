@@ -11,4 +11,6 @@ export interface BrandBoxProps {
   groupsOrder?: string[];
   selectedGroupFilter?: string | null;
   setSelectedGroupFilter?: (group: string | null) => void;
+  isSidebarCollapsed?: boolean;
+  setIsSidebarCollapsed?: (val: boolean) => void;
 }

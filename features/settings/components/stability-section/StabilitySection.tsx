@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Activity, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 import { ACCORDION_CLIP } from "@/lib/presets";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { StabilitySectionProps } from "./types";
@@ -65,7 +66,7 @@ export default function StabilitySection({
         />
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold theme-text-primary">کنترل پایداری و بهینه‌سازی</span>
-          <Activity className="w-4 h-4 text-accent4" style={{ color: "var(--accent4)" }} />
+          <WidgetIcon icon="Activity" className="w-4 h-4 text-accent4" animationsEnabled={animationsEnabled} />
         </div>
       </button>
 

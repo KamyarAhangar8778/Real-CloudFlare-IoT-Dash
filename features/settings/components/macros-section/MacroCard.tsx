@@ -1,6 +1,6 @@
 import React from "react";
 import { Edit2, Trash2 } from "lucide-react";
-import { ICON_MAP } from "@/features/iot/utils/icons";
+import { WidgetIcon } from "@/components/icons";
 import { MacroEditor } from "./MacroEditor";
 import { motion } from "motion/react";
 
@@ -13,8 +13,8 @@ interface Props {
   setNewMacroTitle: (val: string) => void;
   newMacroIcon: string;
   setNewMacroIcon: (val: string) => void;
-  iconMode: "emoji" | "lucide";
-  setIconMode: (val: "emoji" | "lucide") => void;
+  iconMode: "gif-color" | "gif-mono" | "emoji" | "lucide";
+  setIconMode: (val: "gif-color" | "gif-mono" | "emoji" | "lucide") => void;
   tempActions: Array<any>;
   setTempActions: (val: Array<any>) => void;
   onSave: () => void;
@@ -50,7 +50,7 @@ export function MacroCard({
           <div className="flex items-center gap-3">
             {macro.icon && (
               <div className="w-10 h-10 flex items-center justify-center bg-[var(--accent3-transparent)] text-[var(--accent3)] border border-[var(--accent3)] rounded-xl text-xl">
-                {ICON_MAP[macro.icon] ? React.createElement(ICON_MAP[macro.icon], { className: "w-5 h-5" }) : macro.icon}
+                <WidgetIcon icon={macro.icon} className="w-6 h-6 object-contain" />
               </div>
             )}
             <div className="flex flex-col gap-1.5">

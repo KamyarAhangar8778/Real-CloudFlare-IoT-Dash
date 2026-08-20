@@ -1,21 +1,4 @@
-interface RenderGridConfig {
-  ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
-  width: number;
-  height: number;
-  time: number;
-  pointer: { x: number; y: number };
-  matrixDensity: number;
-  matrixSize: number;
-  matrixHoverSize: number;
-  matrixOpacity: number;
-  matrixColor: string;
-  matrixMouseEffect: boolean;
-  matrixTwinkleEffect: boolean;
-  matrixTwinkleSpeed: number;
-  isDark: boolean;
-  animationsEnabled: boolean;
-  isMobile: boolean;
-}
+import { RenderGridConfig } from "./types";
 
 const LUT_SIZE = 3600;
 const SIN_LUT = new Float32Array(LUT_SIZE);
@@ -28,19 +11,19 @@ for (let i = 0; i < LUT_SIZE; i++) {
 }
 
 const FAST_RAD_CONVERSION = LUT_SIZE / (Math.PI * 2);
-
-const GLOW_RADIUS = 300;
+const GLOW_RADIUS = 320;
 const GLOW_RADIUS_SQ = GLOW_RADIUS * GLOW_RADIUS;
 const INTENSITY_LUT = new Float32Array(GLOW_RADIUS_SQ + 1);
+
 for (let dSq = 0; dSq <= GLOW_RADIUS_SQ; dSq++) {
   const dist = Math.sqrt(dSq);
-  INTENSITY_LUT[dSq] = 1 - Math.pow(dist / GLOW_RADIUS, 1.5);
+  INTENSITY_LUT[dSq] = 1 - Math.pow(dist / GLOW_RADIUS, 1.4);
 }
 
 const TWINKLE_LUT_SIZE = 1000;
 const TWINKLE_POW_LUT = new Float32Array(TWINKLE_LUT_SIZE + 1);
-for(let i = 0; i <= TWINKLE_LUT_SIZE; i++) {
-   TWINKLE_POW_LUT[i] = Math.pow(i / TWINKLE_LUT_SIZE, 1.5);
+for (let i = 0; i <= TWINKLE_LUT_SIZE; i++) {
+  TWINKLE_POW_LUT[i] = Math.pow(i / TWINKLE_LUT_SIZE, 1.5);
 }
 
 function fastSin(rad: number): number {
@@ -55,93 +38,118 @@ function fastCos(rad: number): number {
   return COS_LUT[idx | 0];
 }
 
+/**
+ * Renders the cuneiform / matrix geometric grid onto the 2D canvas.
+ * Utilizes precalculated trigonometry LUTs and continuous coordinate waves for constant, smooth 60fps performance.
+ *
+ * @param config Configuration containing dimensions, time offset, colors, and effects.
+ */
 export function renderGrid({
-  ctx, width, height, time, pointer, matrixDensity, matrixSize, matrixHoverSize,
-  matrixOpacity, matrixColor, matrixMouseEffect, matrixTwinkleEffect,
-  matrixTwinkleSpeed, isDark, animationsEnabled, isMobile
+  ctx,
+  width,
+  height,
+  time,
+  pointer,
+  matrixDensity,
+  matrixSize,
+  matrixHoverSize,
+  matrixOpacity,
+  matrixColor,
+  matrixMouseEffect,
+  matrixTwinkleEffect,
+  matrixTwinkleSpeed,
+  isDark,
+  animationsEnabled,
+  isMobile,
 }: RenderGridConfig) {
-  const SPACING = matrixDensity;
-  const CROSS_SIZE = matrixSize; 
-
+  const SPACING = Math.max(15, matrixDensity);
+  const CROSS_SIZE = Math.max(1, matrixSize);
   const effectiveMouseEffect = matrixMouseEffect && !isMobile;
 
-  const speedX = 0.3;
-  const speedY = 0.3;
-  
-  const offsetX = (time * speedX) % SPACING;
-  const offsetY = (time * speedY) % SPACING;
+  const speedX = 0.35;
+  const speedY = 0.35;
+  const rawOffsetX = time * speedX;
+  const rawOffsetY = time * speedY;
+  const offsetX = rawOffsetX % SPACING;
+  const offsetY = rawOffsetY % SPACING;
 
   ctx.clearRect(0, 0, width, height);
 
-  const baseColor = isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)";
-
+  // Mouse radial light spotlight
   if (effectiveMouseEffect && pointer.x > -500) {
     const gradient = ctx.createRadialGradient(
-      pointer.x, pointer.y, 0, 
-      pointer.x, pointer.y, GLOW_RADIUS
+      pointer.x,
+      pointer.y,
+      0,
+      pointer.x,
+      pointer.y,
+      GLOW_RADIUS
     );
-    gradient.addColorStop(0, `${matrixColor}33`);
+    gradient.addColorStop(0, `${matrixColor}40`);
+    gradient.addColorStop(0.6, `${matrixColor}15`);
     gradient.addColorStop(1, "transparent");
-    
-    ctx.globalAlpha = 1.0;
+
+    ctx.globalAlpha = Math.min(1, (matrixOpacity / 100) * 1.5);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
   }
 
-  ctx.lineWidth = 1.2;
+  const baseAlpha = Math.max(0.08, matrixOpacity / 100);
+  const baseColor = isDark ? "rgba(255, 255, 255, 0.55)" : "rgba(30, 41, 59, 0.45)";
 
+  ctx.lineWidth = 1.25;
   ctx.beginPath();
-  const activePoints = [];
+  const activePoints: Array<{ posX: number; posY: number; currentSize: number; currentAlpha: number; color: string }> = [];
+
+  const twinkleSpeed = (matrixTwinkleSpeed || 50) * 0.0003;
 
   for (let x = -SPACING; x < width + SPACING; x += SPACING) {
     for (let y = -SPACING; y < height + SPACING; y += SPACING) {
       const posX = x + offsetX;
       const posY = y + offsetY;
 
-      const baseAlpha = matrixOpacity / 100;
-      let currentAlpha = baseAlpha; 
+      let currentAlpha = baseAlpha;
       let currentSize = CROSS_SIZE;
       let color = baseColor;
       let isDefault = true;
-      
+
+      // Twinkle calculation based on continuous world coordinates to prevent phase jumps
       let twinkleFactor = 0;
       if (matrixTwinkleEffect && animationsEnabled) {
-        const gridX = (x / SPACING + 0.5) | 0;
-        const gridY = (y / SPACING + 0.5) | 0;
-        const speed = matrixTwinkleSpeed * 0.0003;
-        
-        const wave1 = fastSin(gridX * 0.137 + gridY * 0.271 + time * speed);
-        const wave2 = fastCos(gridX * 0.223 - gridY * 0.151 + time * speed * 1.3);
-        const wave3 = fastSin(gridX * 0.359 + gridY * 0.093 - time * speed * 0.8);
-        
-        const combined = (wave1 + wave2 + wave3) / 3; 
-        
-        if (combined > 0.7) {
-           let factor = (combined - 0.7) * 3.33333; 
-           if (factor > 1) factor = 1;
-           twinkleFactor = TWINKLE_POW_LUT[(factor * TWINKLE_LUT_SIZE) | 0]; 
-           isDefault = false;
+        const continuousX = x + rawOffsetX;
+        const continuousY = y + rawOffsetY;
+
+        const wave1 = fastSin(continuousX * 0.0035 + continuousY * 0.0068 + time * twinkleSpeed);
+        const wave2 = fastCos(continuousX * 0.0057 - continuousY * 0.0039 + time * twinkleSpeed * 1.3);
+        const wave3 = fastSin(continuousX * 0.0092 + continuousY * 0.0024 - time * twinkleSpeed * 0.8);
+        const combined = (wave1 + wave2 + wave3) / 3;
+
+        if (combined > 0.65) {
+          const factor = Math.min(1, (combined - 0.65) * 2.85);
+          twinkleFactor = TWINKLE_POW_LUT[(factor * TWINKLE_LUT_SIZE) | 0];
+          isDefault = false;
         }
       }
 
+      // Mouse proximity calculation
       if (effectiveMouseEffect) {
         const dx = pointer.x - posX;
         const dy = pointer.y - posY;
         const distSq = dx * dx + dy * dy;
 
         if (distSq <= GLOW_RADIUS_SQ) {
-          const intensity = INTENSITY_LUT[distSq | 0]; 
-          currentAlpha = baseAlpha + intensity * (1 - baseAlpha);
+          const intensity = INTENSITY_LUT[distSq | 0];
+          currentAlpha = Math.min(1, baseAlpha + intensity * (1 - baseAlpha));
           currentSize = CROSS_SIZE + intensity * matrixHoverSize;
           color = matrixColor;
           isDefault = false;
         }
       }
-      
+
       if (twinkleFactor > 0) {
-         currentAlpha = Math.max(currentAlpha, baseAlpha + twinkleFactor * (1 - baseAlpha));
-         currentSize = Math.max(currentSize, CROSS_SIZE + twinkleFactor * matrixHoverSize);
-         color = matrixColor;
+        currentAlpha = Math.min(1, Math.max(currentAlpha, baseAlpha + twinkleFactor * (1 - baseAlpha)));
+        currentSize = Math.max(currentSize, CROSS_SIZE + twinkleFactor * matrixHoverSize);
+        color = matrixColor;
       }
 
       if (isDefault) {
@@ -155,10 +163,12 @@ export function renderGrid({
     }
   }
 
-  ctx.globalAlpha = matrixOpacity / 100;
+  // Draw batch default static grid points
+  ctx.globalAlpha = baseAlpha;
   ctx.strokeStyle = baseColor;
   ctx.stroke();
 
+  // Draw active / hovered / twinkling points
   for (let i = 0; i < activePoints.length; i++) {
     const p = activePoints[i];
     ctx.globalAlpha = p.currentAlpha;

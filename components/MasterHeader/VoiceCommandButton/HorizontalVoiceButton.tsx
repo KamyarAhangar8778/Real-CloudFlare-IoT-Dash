@@ -1,6 +1,6 @@
 import React from 'react';
-import { Mic } from 'lucide-react';
 import { motion } from 'motion/react';
+import { VoiceAssistantIcon } from '@/components/icons';
 import { VoiceCommandButtonProps } from './types';
 
 interface HorizontalVoiceButtonProps extends VoiceCommandButtonProps {
@@ -11,7 +11,7 @@ interface HorizontalVoiceButtonProps extends VoiceCommandButtonProps {
 }
 
 export default function HorizontalVoiceButton({ 
-  animationsEnabled, 
+  animationsEnabled = false, 
   isListening, 
   handlePointerDown, 
   handlePointerUp, 
@@ -25,14 +25,19 @@ export default function HorizontalVoiceButton({
       onPointerCancel={handlePointerCancel}
       onContextMenu={(e) => e.preventDefault()}
       style={{ touchAction: 'none' }}
-      className={`p-2 md:p-2.5 transition-all border rounded-xl flex justify-center items-center group select-none ${
+      className={`p-2 md:p-2.5 transition-all border rounded-xl flex justify-center items-center group select-none cursor-pointer ${
         isListening
-          ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)]"
-          : "bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] border-[var(--border-color)] text-[var(--text-secondary)] md:hover:text-blue-400 md:hover:border-blue-500/50"
+          ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)] shadow-[0_0_12px_var(--accent4-transparent)]"
+          : "bg-transparent md:hover:bg-[var(--accent4-transparent)] border-[var(--border-color)] text-[var(--text-secondary)] md:hover:text-[var(--accent4)] md:hover:border-[var(--accent4)]"
       }`}
       title="فرمان صوتی (نگه دارید)"
     >
-      <Mic className={`w-4 h-4 transition-transform duration-300 ${isListening && animationsEnabled ? "animate-pulse scale-110" : animationsEnabled ? "md:group-hover:scale-110" : ""}`} />
+      <VoiceAssistantIcon
+        size={16}
+        animationsEnabled={animationsEnabled}
+        isListening={isListening}
+        className={`transition-transform duration-300 ${animationsEnabled && !isListening ? "md:group-hover:scale-110" : ""}`}
+      />
     </motion.button>
   );
 }

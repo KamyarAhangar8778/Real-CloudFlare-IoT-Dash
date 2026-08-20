@@ -67,15 +67,35 @@ function ActiveCard({
           ? { opacity: 0, scale: 0.85, y: -10, transition: { duration: 0.2, ease: "easeIn" } }
           : undefined
       }
-      className={`flex flex-col bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] relative group h-full shadow-sm rounded-2xl ${
+      className={`flex flex-col bg-[var(--card-bg)]/90 backdrop-blur-md border border-[var(--border-color)] relative group/segment h-full rounded-2xl element-card shadow-none transition-all duration-300 ease-out md:hover:-translate-y-1.5 md:hover:shadow-md ${
+        isPinOn
+          ? "border-[var(--accent4)]/50 shadow-[0_0_12px_var(--accent4-transparent)] md:hover:border-[var(--accent4)]"
+          : "md:hover:border-[var(--accent3-heavy)]"
+      } ${
+        isSettingsOpen ? "z-50" : ""
+      } ${
         isUltraCompact ? "min-h-[90px]" : "min-h-[140px]"
       }`}
     >
-      <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover:opacity-100 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-3 h-3 md:group-hover:border-accent3/40 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-3 h-3 md:group-hover:border-accent3/40 pointer-events-none" />
+      {/* Dynamic Hover & Active Aura Glow */}
+      <div
+        className={`absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 ${
+          isPinOn ? "opacity-100" : "opacity-0 md:group-hover/segment:opacity-100"
+        }`}
+        style={{
+          background: isPinOn
+            ? "radial-gradient(ellipse at 50% 100%, var(--accent4-transparent), transparent 70%)"
+            : "radial-gradient(ellipse at 50% 0%, var(--accent3-transparent), transparent 70%)",
+        }}
+      />
 
-      <div className="flex flex-col h-full justify-between relative z-10">
+      {/* Specular Inner Edge Highlight */}
+      <div className="absolute inset-0 rounded-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] pointer-events-none" />
+
+      {/* Hover border glow overlay */}
+      <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-300 md:group-hover/segment:opacity-40 pointer-events-none" />
+
+      <div className="flex flex-col h-full relative z-10 flex-1">
         <CardHeader
           segment={segment}
           isPinOn={isPinOn}

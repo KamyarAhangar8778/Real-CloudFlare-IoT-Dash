@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mic } from 'lucide-react';
+import { VoiceAssistantIcon } from '@/components/icons';
 import { VoiceCommandButtonProps } from './types';
 
 interface VerticalVoiceButtonProps extends VoiceCommandButtonProps {
@@ -10,7 +10,7 @@ interface VerticalVoiceButtonProps extends VoiceCommandButtonProps {
 }
 
 export default function VerticalVoiceButton({ 
-  animationsEnabled, 
+  animationsEnabled = false, 
   isListening, 
   handlePointerDown, 
   handlePointerUp, 
@@ -25,13 +25,17 @@ export default function VerticalVoiceButton({
       style={{ touchAction: 'none' }}
       className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 transform active:scale-[0.98] group select-none ${
         isListening 
-          ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)]" 
-          : "border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-blue-500/50 text-[var(--text-secondary)] md:hover:text-blue-400"
+          ? "bg-[var(--accent4-transparent)] border-[var(--accent4)] text-[var(--accent4)] shadow-[0_0_12px_var(--accent4-transparent)]" 
+          : "border-[var(--border-color)] bg-[var(--card-bg-solid)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-[var(--accent4)] text-[var(--text-secondary)] md:hover:text-[var(--accent4)]"
       }`}
     >
       <div className="flex items-center gap-2.5">
-        <div className={`p-1.5 rounded-lg transition-all ${isListening ? "bg-[var(--accent4)] text-white" : "bg-blue-500/10 text-blue-500"}`}>
-          <Mic className={`w-4 h-4 ${isListening && animationsEnabled ? "animate-pulse" : ""}`} />
+        <div className={`p-1.5 rounded-lg transition-all flex items-center justify-center ${isListening ? "bg-[var(--accent4)] text-white" : "bg-[var(--accent4-transparent)] text-[var(--accent4)]"}`}>
+          <VoiceAssistantIcon
+            size={16}
+            animationsEnabled={animationsEnabled}
+            isListening={isListening}
+          />
         </div>
         <span className="text-xs font-semibold">{isListening ? "در حال شنیدن..." : "فرمان صوتی (نگه دارید)"}</span>
       </div>

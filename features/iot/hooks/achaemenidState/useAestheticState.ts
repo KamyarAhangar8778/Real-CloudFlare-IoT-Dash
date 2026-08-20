@@ -6,7 +6,7 @@ export function useAestheticState() {
   const [isDark, setIsDark] = useState(false);
   const [accent3, setAccent3] = useState("#D4AF37");
   const [accent4, setAccent4] = useState("#10B981");
-  const [selectedFont, setSelectedFont] = useState("changa");
+  const [selectedFont, setSelectedFont] = useState("vazir");
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [animationsFps, setAnimationsFps] = useState(60);
   const [headerAnimationType, setHeaderAnimationType] = useState<"fade" | "chase">("fade");
@@ -23,7 +23,7 @@ export function useAestheticState() {
   const [headerPosition, setHeaderPosition] = useState<"top" | "left">("top");
   const [dashboardBgColor, setDashboardBgColor] = useState("default");
   const [dashboardBgOpacity, setDashboardBgOpacity] = useState(10);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [dashboardWidth, setDashboardWidth] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [isGroupsCompactLayout, setIsGroupsCompactLayout] = useState(false);
   const [isSegmentsCompactLayout, setIsSegmentsCompactLayout] = useState(false);

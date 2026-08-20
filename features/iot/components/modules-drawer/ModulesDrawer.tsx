@@ -1,3 +1,8 @@
+/**
+ * @file ModulesDrawer.tsx
+ * @description Main ModulesDrawer container matching SettingsDrawer design system.
+ */
+
 "use client";
 
 import React from "react";
@@ -50,6 +55,7 @@ export default function ModulesDrawer({
           animationsEnabled={animationsEnabled}
           accent3={accent3}
           accent4={accent4}
+          isDark={isDark}
         />
       )}
     </AnimatePresence>

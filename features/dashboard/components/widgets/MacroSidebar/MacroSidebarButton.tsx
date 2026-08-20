@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 import { motion } from "motion/react";
 import { Play } from "lucide-react";
-import { ICON_MAP } from "@/features/iot/utils/icons";
+import { WidgetIcon } from "@/components/icons";
 
 interface MacroSidebarButtonProps {
   macro: any;
@@ -40,8 +38,8 @@ export default function MacroSidebarButton({
         title={macro.title}
       >
         {macro.icon ? (
-          <span className={`${isHorizontal ? "text-xl" : "text-2xl mb-1"} md:group-hover:scale-110 transition-transform`}>
-            {ICON_MAP[macro.icon] ? React.createElement(ICON_MAP[macro.icon], { className: isHorizontal ? "w-5 h-5" : "w-6 h-6" }) : macro.icon}
+          <span className={`${isHorizontal ? "w-5 h-5" : "w-6 h-6 mb-1"} flex items-center justify-center md:group-hover:scale-110 transition-transform`}>
+            <WidgetIcon icon={macro.icon} className={isHorizontal ? "w-5 h-5 object-contain" : "w-6 h-6 object-contain"} />
           </span>
         ) : (
           <Play className={`${isHorizontal ? "w-5 h-5" : "w-6 h-6 mb-1"} opacity-70 md:group-hover:scale-110 transition-transform`} />
@@ -77,8 +75,8 @@ export default function MacroSidebarButton({
       title={macro.title}
     >
       {macro.icon ? (
-        <span className={`${isHorizontal ? "text-xl" : "text-2xl mb-1"} ${isCenter ? 'scale-110' : 'md:group-hover:scale-110'} transition-transform`}>
-          {ICON_MAP[macro.icon] ? React.createElement(ICON_MAP[macro.icon], { className: isHorizontal ? "w-5 h-5" : "w-6 h-6" }) : macro.icon}
+        <span className={`${isHorizontal ? "w-5 h-5" : "w-6 h-6 mb-1"} flex items-center justify-center ${isCenter ? 'scale-110' : 'md:group-hover:scale-110'} transition-transform`}>
+          <WidgetIcon icon={macro.icon} className={isHorizontal ? "w-5 h-5 object-contain" : "w-6 h-6 object-contain"} />
         </span>
       ) : (
         <Play className={`${isHorizontal ? "w-5 h-5" : "w-6 h-6 mb-1"} ${isCenter ? 'opacity-100 scale-110' : 'opacity-70 md:group-hover:scale-110'} transition-all`} />
@@ -89,3 +87,4 @@ export default function MacroSidebarButton({
     </motion.button>
   );
 }
+

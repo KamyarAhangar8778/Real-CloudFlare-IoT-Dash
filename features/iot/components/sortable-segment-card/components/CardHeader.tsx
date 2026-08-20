@@ -1,6 +1,6 @@
 import React from "react";
 import { Settings } from "lucide-react";
-import { ICON_MAP } from "@/features/iot/utils/icons";
+import { WidgetIcon } from "@/components/icons";
 import { AnimatePresence } from "motion/react";
 import { BUTTON_CLIP } from "@/lib/presets";
 import { SegmentData } from "../core/types";
@@ -8,6 +8,7 @@ import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { useCardHeaderLayout } from "../hooks/useCardHeaderLayout";
 import SegmentSettingsMenu from "./SegmentSettingsMenu";
 import SegmentActions from "./SegmentActions";
+import SegmentPattern from "./SegmentPattern";
 
 interface CardHeaderProps {
   segment: SegmentData;
@@ -40,27 +41,37 @@ export default function CardHeader({
   listeners,
   isSettingsOpen,
   setIsSettingsOpen,
-  groupMaxCols,
 }: CardHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const isSmall = isUltraCompact || isCompact || isMobile;
+  const headerRef = React.useRef<HTMLDivElement>(null);
+  const [isNarrow, setIsNarrow] = React.useState(false);
 
-  const showIconInHeader = !isSmall || (isMobile && groupMaxCols === 1);
-  const showIconInMenu = isSmall && !showIconInHeader;
+  React.useLayoutEffect(() => {
+    if (!headerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        // Collapse inline actions if header width is less than 270px to avoid element overflow
+        setIsNarrow(width < 270);
+      }
+    });
+    observer.observe(headerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const isSmall = isUltraCompact || isCompact || isMobile || isNarrow;
+  const showIconInMenu = isSmall;
 
   const {
-    isSettingsOpen: isLocalSettingsOpen,
-    setIsSettingsOpen: setLocalSettingsOpen,
+    isSettingsOpen: currentIsSettingsOpen,
+    setIsSettingsOpen: currentSetIsSettingsOpen,
     showAutoOffMenu,
     setShowAutoOffMenu,
     buttonRef,
     menuRef,
     autoOffButtonRef,
     autoOffMenuRef,
-  } = useCardHeaderLayout();
-
-  const currentIsSettingsOpen = isSettingsOpen ?? isLocalSettingsOpen;
-  const currentSetIsSettingsOpen = setIsSettingsOpen ?? setLocalSettingsOpen;
+  } = useCardHeaderLayout({ isSettingsOpen, setIsSettingsOpen });
 
   const autoOffMenuProps = {
     showAutoOffMenu,
@@ -71,84 +82,75 @@ export default function CardHeader({
 
   return (
     <div
+      ref={headerRef}
       {...(isSmall ? attributes : {})}
       {...(isSmall ? listeners : {})}
-      className={`flex items-center border-b border-[var(--border-color)] bg-slate-500/[0.05] dark:bg-black/25 ${
-        !showIconInHeader
-          ? "justify-center p-2 cursor-grab active:cursor-grabbing"
-          : isSmall
-            ? "justify-center gap-12 p-2 cursor-grab active:cursor-grabbing"
-            : "justify-between p-4"
-      }`}
+      data-segment-menu-open={currentIsSettingsOpen ? "true" : undefined}
+      className={`relative flex items-center ${
+        isSmall ? "justify-center p-2.5 px-3 cursor-grab active:cursor-grabbing" : "justify-between p-3.5"
+      } border-b border-[var(--border-color)] bg-transparent rounded-t-2xl`}
     >
-      <div className={`flex items-center ${!showIconInHeader || isSmall ? "justify-center" : "gap-1.5 md:gap-2"}`}>
-        {!isSmall && (
-          <SegmentActions
-            segment={segment}
-            onRemove={onRemove}
-            attributes={attributes}
-            listeners={listeners}
-            onUpdateSegmentMode={onUpdateSegmentMode}
-            onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
-            mode={mode}
-            countdown={countdown}
-            autoOffMenuProps={autoOffMenuProps}
-          />
-        )}
-
-        {isSmall && (
-          <div className="relative flex justify-center group/btn h-6 items-center">
-            <button
-              ref={buttonRef}
-              onClick={() => currentSetIsSettingsOpen(!currentIsSettingsOpen)}
-              className={`py-1 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer rounded-full shadow-sm flex items-center justify-center ${
-                currentIsSettingsOpen
-                  ? "border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_8px_rgba(255,165,0,0.3)] w-[22px]"
-                  : "w-[54px] md:group-hover/btn:w-[22px] text-slate-700 dark:text-gray-300 md:group-hover/btn:border-[var(--accent3)] md:group-hover/btn:text-[var(--accent3)] md:group-hover/btn:bg-slate-300/50 dark:md:group-hover/btn:bg-slate-800/50"
-              }`}
-              title="تنظیمات سگمنت"
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <Settings className="w-3.5 h-3.5 transition-transform duration-500 md:group-hover/btn:rotate-90 shrink-0" />
-            </button>
-
-            <AnimatePresence>
-              <SegmentSettingsMenu
-                segment={segment}
-                isSettingsOpen={currentIsSettingsOpen}
-                menuRef={menuRef}
-                showIconInMenu={showIconInMenu}
-                isPinOn={isPinOn}
-                isUltraCompact={isUltraCompact}
-                onRemove={onRemove}
-                onUpdateSegmentMode={onUpdateSegmentMode}
-                onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
-                mode={mode}
-                countdown={countdown}
-                autoOffMenuProps={autoOffMenuProps}
-              />
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
-
-      {showIconInHeader && (
-        <div className="flex items-center gap-2">
-          <div
-            className={`p-2 transition-colors ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
-            style={{ clipPath: BUTTON_CLIP }}
+      <SegmentPattern variant="header" />
+      {isSmall ? (
+        <div className="relative flex items-center justify-center w-full group/btn h-6">
+          <button
+            ref={buttonRef}
+            onClick={() => currentSetIsSettingsOpen(!currentIsSettingsOpen)}
+            className={`w-7 h-7 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 transition-all duration-300 cursor-pointer rounded-full shadow-sm flex items-center justify-center ${
+              currentIsSettingsOpen
+                ? "border-[var(--accent3)] text-[var(--accent3)] shadow-[0_0_8px_rgba(255,165,0,0.3)] bg-[var(--accent3-transparent)]"
+                : "text-slate-700 dark:text-gray-300 md:hover:border-[var(--accent3)] md:hover:text-[var(--accent3)]"
+            }`}
+            title="تنظیمات و منوی کشویی سگمنت"
+            onPointerDown={(e) => e.stopPropagation()}
           >
-            {segment.icon ? (
-              ICON_MAP[segment.icon] ? (
-                React.createElement(ICON_MAP[segment.icon], { className: "w-4 h-4" })
-              ) : (
-                <span className="text-sm leading-none flex items-center justify-center w-4 h-4">{segment.icon}</span>
-              )
-            ) : (
-              React.createElement(ICON_MAP["Cpu"], { className: "w-4 h-4" })
-            )}
-          </div>
+            <Settings className="w-3.5 h-3.5 transition-transform duration-500 md:hover:rotate-90 shrink-0" />
+          </button>
+
+          <AnimatePresence>
+            <SegmentSettingsMenu
+              segment={segment}
+              isSettingsOpen={currentIsSettingsOpen}
+              menuRef={menuRef}
+              showIconInMenu={showIconInMenu}
+              isPinOn={isPinOn}
+              isUltraCompact={isUltraCompact}
+              onRemove={onRemove}
+              onUpdateSegmentMode={onUpdateSegmentMode}
+              onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
+              mode={mode}
+              countdown={countdown}
+              autoOffMenuProps={autoOffMenuProps}
+            />
+          </AnimatePresence>
         </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <SegmentActions
+              segment={segment}
+              onRemove={onRemove}
+              attributes={attributes}
+              listeners={listeners}
+              onUpdateSegmentMode={onUpdateSegmentMode}
+              onUpdateSegmentAutoOff={onUpdateSegmentAutoOff}
+              mode={mode}
+              countdown={countdown}
+              autoOffMenuProps={autoOffMenuProps}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div
+              className={`p-2 transition-colors flex items-center justify-center ${
+                isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"
+              }`}
+              style={{ clipPath: BUTTON_CLIP }}
+            >
+              <WidgetIcon icon={segment.icon} defaultIcon="Cpu" className="w-4 h-4" />
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

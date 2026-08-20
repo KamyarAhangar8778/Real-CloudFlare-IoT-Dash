@@ -20,6 +20,88 @@
   }
 }
 
+/* Icon Animations */
+@keyframes solar-corona-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes solar-core-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.6)); }
+}
+
+@keyframes lunar-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-1.5px) rotate(-3deg); }
+}
+
+@keyframes celestial-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes layer-float-top {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes layer-float-mid {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+@keyframes voice-wave-idle {
+  0%, 100% { opacity: 0.4; transform: scaleY(0.75); }
+  50% { opacity: 0.9; transform: scaleY(1.15); }
+}
+
+@keyframes voice-wave-active {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+@keyframes col-wave-single {
+  0%, 100% { transform: scaleX(1); opacity: 0.9; }
+  50% { transform: scaleX(0.92); opacity: 1; }
+}
+
+@keyframes col-wave-left {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+
+@keyframes col-wave-right {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(1.5px); }
+}
+
+@keyframes col-stagger-1 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.78); }
+}
+
+@keyframes col-stagger-2 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.68); }
+}
+
+@keyframes col-stagger-3 {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.88); }
+}
+
+@keyframes delete-cross-twist {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+@keyframes grip-dot-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(-1px); opacity: 1; }
+}
+
 .title-animated {
   background: linear-gradient(to right, var(--text-primary) 20%, var(--accent3) 50%, var(--text-primary) 80%);
   background-size: 200% auto;
@@ -34,3 +116,21 @@
   background: linear-gradient(to right, var(--text-primary) 20%, var(--accent4) 50%, var(--text-primary) 80%);
   background-size: 200% auto;
 }
+
+@keyframes marquee-scroll-rtl {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-rtl {
+  animation: marquee-scroll-rtl 25s linear infinite;
+}
+
+.animate-marquee-rtl:hover {
+  animation-play-state: paused;
+}
+

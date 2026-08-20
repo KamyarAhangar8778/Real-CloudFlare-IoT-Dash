@@ -150,11 +150,13 @@ export interface MenuSlice {
   isEspDrawerOpen: boolean;
   isAutomationsMenuOpen: boolean;
   activeSettingsTab: string;
+  settingsGroupsOrder: string[];
   setIsMenuOpen: (o: boolean) => void;
   setIsModulesMenuOpen: (o: boolean) => void;
   setIsEspDrawerOpen: (o: boolean) => void;
   setIsAutomationsMenuOpen: (o: boolean) => void;
   setActiveSettingsTab: (t: string) => void;
+  setSettingsGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
 }
 
 export interface AestheticSlice {
@@ -212,4 +214,15 @@ export interface ConfigSlice {
   applyEspConfig: (config: EspConfig) => void;
 }
 
-export type IoTStoreState = SegmentsSlice & GroupsSlice & SyncSlice & SystemSlice & UiSlice & MenuSlice & AestheticSlice & ConfigSlice;
+export interface ElementEngineSlice {
+  elementConfig: import("@/features/iot/engine").ElementEngineConfig;
+  activeElementPreset: string;
+  elementValidationErrors: string[];
+  setElementConfig: (config: import("@/features/iot/engine").ElementEngineConfig | ((prev: import("@/features/iot/engine").ElementEngineConfig) => import("@/features/iot/engine").ElementEngineConfig)) => void;
+  updateRegistryValue: (keyPath: string, value: unknown) => void;
+  applyElementPreset: (presetId: string) => void;
+  importElementProtocolJSON: (jsonString: string) => { success: boolean; errors?: string[] };
+  resetElementConfig: () => void;
+}
+
+export type IoTStoreState = SegmentsSlice & GroupsSlice & SyncSlice & SystemSlice & UiSlice & MenuSlice & AestheticSlice & ConfigSlice & ElementEngineSlice;

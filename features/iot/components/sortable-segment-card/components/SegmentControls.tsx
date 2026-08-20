@@ -38,7 +38,7 @@ export default function SegmentControls({
 
   return (
     <div
-      className="flex items-center bg-white dark:bg-slate-950 border border-black dark:border-slate-800 p-[3px] rounded-full shadow-sm relative"
+      className="flex items-center bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-[3px] rounded-full shadow-sm relative transition-colors"
       onPointerDown={(e) => e.stopPropagation()}
     >
       <button

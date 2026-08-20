@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
-import { X, Settings as SettingsIcon } from "lucide-react";
+import { X } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 
 interface SettingsHeaderProps {
   onClose: () => void;
@@ -31,8 +32,10 @@ export function SettingsHeader({ onClose, animationsEnabled }: SettingsHeaderPro
           </p>
         </div>
         <div className="p-2 theme-card-bg-solid border border-accent3-medium text-accent3">
-          <SettingsIcon
-            className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+          <WidgetIcon
+            icon="Settings"
+            className="w-4 h-4 text-accent3"
+            animationsEnabled={animationsEnabled}
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Plus, Wifi } from "lucide-react";
+import { Plus } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { AnimatePresence } from "motion/react";
 import { WifiNetworkCard } from "./WifiNetworkCard";
@@ -51,7 +52,7 @@ export default function WifiSection() {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-[var(--text-primary)] flex items-center gap-2">
-          <Wifi className="w-5 h-5 text-[var(--accent3)]" />
+          <WidgetIcon icon="Wifi" className="w-5 h-5 text-[var(--accent3)]" />
           تنظیمات شبکه‌های وای‌فای
         </h3>
         <button
@@ -87,7 +88,7 @@ export default function WifiSection() {
         
         {wifiNetworks.length === 0 && (
           <div className="text-center p-6 bg-[var(--card-bg-solid)] rounded-2xl border border-dashed border-[var(--border-color)]">
-            <Wifi className="w-8 h-8 mx-auto mb-2 text-[var(--text-secondary)] opacity-50" />
+            <WidgetIcon icon="Wifi" className="w-8 h-8 mx-auto mb-2 text-[var(--text-secondary)] opacity-50" />
             <p className="text-sm text-[var(--text-secondary)]">هیچ شبکه وای‌فای تعریف نشده است.</p>
           </div>
         )}

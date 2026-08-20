@@ -1,5 +1,6 @@
 import React from "react";
-import { Music, Download, SkipBack, SkipForward } from "lucide-react";
+import { Download, SkipBack, SkipForward } from "lucide-react";
+import { WidgetIcon } from "@/components/icons";
 
 interface Props {
   trackInfo: any;
@@ -15,7 +16,7 @@ export function AudioTrackInfo({ trackInfo, isLoading, onNext, onPrev }: Props) 
     <div className="p-4 bg-[var(--card-bg-solid)] border border-[var(--border-color)] rounded-xl flex items-center justify-between">
       <div className="flex items-center gap-3 max-w-[70%]">
          <div className="w-8 h-8 shrink-0 rounded-full bg-[var(--accent3-transparent)] flex items-center justify-center">
-           <Music className="w-4 h-4 text-[var(--accent3)]" />
+           <WidgetIcon icon="Music" className="w-4 h-4 text-[var(--accent3)]" />
          </div>
          <div className="text-right overflow-hidden">
             <span className="block text-xs font-bold text-[var(--text-primary)] truncate" title={trackInfo.title}>{trackInfo.title}</span>

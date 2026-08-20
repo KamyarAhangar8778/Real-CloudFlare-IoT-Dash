@@ -1,11 +1,29 @@
+"use client";
+
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SETTINGS_TABS } from "./types";
+import { WidgetIcon } from "@/components/icons";
 
 interface TabActiveLabelProps {
   activeTab: string;
   isDark: boolean;
 }
+
+const TAB_ICON_MAP: Record<string, string> = {
+  layout: "Layers",
+  wifi: "Wifi",
+  conditions: "Settings",
+  colors: "Sun",
+  fonts: "Book",
+  animations: "Activity",
+  macros: "Play",
+  "voice-commands": "Mic",
+  "header-settings": "Menu",
+  matrix: "Sparkles",
+  audio: "Music",
+  mqtt: "Radio",
+};
 
 export function TabActiveLabel({ activeTab, isDark }: TabActiveLabelProps) {
   const currIndex = SETTINGS_TABS.findIndex((t) => t.id === activeTab);
@@ -23,16 +41,17 @@ export function TabActiveLabel({ activeTab, isDark }: TabActiveLabelProps) {
           className="flex flex-col items-center gap-0.5 w-full"
         >
           <div className="flex items-center gap-1.5 justify-center w-full max-w-full">
-            {React.createElement(tab.Icon, {
-              className: `w-4 h-4 shrink-0 ${isDark ? "text-accent4" : "text-accent3"}`,
-            })}
+            <WidgetIcon
+              icon={TAB_ICON_MAP[activeTab] || "Settings"}
+              className={`w-4 h-4 shrink-0 ${isDark ? "text-accent4" : "text-accent3"}`}
+            />
             <span
               className={`font-sans font-extrabold text-[12px] truncate leading-normal ${
                 isDark ? "text-[var(--accent3)]" : "text-slate-800"
               }`}
               style={isDark ? { color: "var(--accent3)" } : {}}
             >
-              {tab.title}
+              {tab ? tab.title : ""}
             </span>
           </div>
           <span
@@ -40,7 +59,7 @@ export function TabActiveLabel({ activeTab, isDark }: TabActiveLabelProps) {
               isDark ? "theme-text-muted" : "text-slate-500"
             }`}
           >
-            {tab.compactTitle}
+            {tab ? tab.compactTitle : ""}
           </span>
         </motion.div>
       </AnimatePresence>

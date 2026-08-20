@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { X } from "lucide-react";
-import { ICON_MAP } from "@/features/iot/utils/icons";
+import { WidgetIcon } from "@/components/icons";
 import { BUTTON_CLIP } from "@/lib/presets";
 import { SegmentData } from "../core/types";
 import SegmentControls from "./SegmentControls";
@@ -45,11 +45,11 @@ export default function SegmentSettingsMenu({
   return (
     <motion.div
       ref={menuRef}
-      className="absolute top-0 z-[100]"
+      className="absolute top-0 z-[100] max-w-[calc(100vw-32px)]"
       onPointerDown={(e) => e.stopPropagation()}
-      initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-10%" }}
-      animate={{ opacity: 1, scale: 1, x: "-50%", y: "-20%" }}
-      exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-10%" }}
+      initial={{ opacity: 0, scale: 0.95, x: "-50%", y: -6 }}
+      animate={{ opacity: 1, scale: 1, x: "-50%", y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, x: "-50%", y: -6 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <div className="relative w-[280px] sm:w-[340px] bg-[var(--card-bg-solid)] backdrop-blur-xl border border-[var(--border-color)] rounded-2xl shadow-sm p-4 flex flex-col gap-4 md:hover:-translate-y-1.5 transition-transform duration-300 cursor-default">
@@ -59,26 +59,17 @@ export default function SegmentSettingsMenu({
           <div className="flex items-center gap-3 text-right">
             {showIconInMenu && (
               <div
-                className={`p-2 transition-colors ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
+                className={`p-2 transition-colors flex items-center justify-center ${isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"}`}
                 style={{ clipPath: BUTTON_CLIP }}
               >
-                {segment.icon ? (
-                  ICON_MAP[segment.icon] ? (
-                    React.createElement(ICON_MAP[segment.icon], { className: "w-4 h-4" })
-                  ) : (
-                    <span className="text-sm leading-none flex items-center justify-center w-4 h-4">{segment.icon}</span>
-                  )
-                ) : (
-                  React.createElement(ICON_MAP["Cpu"], { className: "w-4 h-4" })
-                )}
+                <WidgetIcon icon={segment.icon} defaultIcon="Cpu" className="w-4 h-4" />
               </div>
             )}
+
             <div className="flex flex-col gap-1 text-right">
-              {isUltraCompact && (
-                <span className="font-sans font-extrabold theme-text-primary text-sm">
-                  {segment.title}
-                </span>
-              )}
+              <span className="font-sans font-extrabold theme-text-primary text-sm">
+                {segment.title}
+              </span>
             </div>
           </div>
           <button

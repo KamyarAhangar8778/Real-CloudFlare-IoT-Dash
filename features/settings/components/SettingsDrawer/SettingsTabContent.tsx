@@ -11,6 +11,7 @@ import VoiceCommandsSection from "../voice-commands-section/VoiceCommandsSection
 import WifiSection from "../wifi-section/WifiSection";
 import ConditionsSection from "../conditions-section/ConditionsSection";
 import LayoutSection from "../layout-section/LayoutSection";
+import { ElementEngineSection } from "../element-engine";
 
 import { SettingsDrawerProps } from "./types";
 
@@ -67,6 +68,8 @@ export function SettingsTabContent({
   setIsSegmentsCompactLayout,
 }: SettingsTabContentProps) {
   switch (activeTab) {
+    case "element-engine":
+      return <ElementEngineSection />;
     case "colors":
       return (
         <ColorsSection

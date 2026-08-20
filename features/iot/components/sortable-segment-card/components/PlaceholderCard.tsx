@@ -55,11 +55,10 @@ export default function PlaceholderCard({
           <GripVertical className="w-3.5 h-3.5" />
         </div>
       </div>
-      {/* Translate lives here — GPU composited, never causes paint */}
       <div className="w-full h-full md:hover:-translate-y-1.5 transition-transform duration-350 rounded-2xl group/ph-card">
         <button
           onClick={() => onSetupPlaceholder && onSetupPlaceholder(segment.id)}
-          className={`relative w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 bg-[var(--card-bg)] flex flex-col items-center justify-center gap-2 cursor-pointer text-center rounded-2xl overflow-hidden ${
+          className={`relative w-full h-full border-2 border-dashed border-[var(--accent3-medium)]/30 bg-[var(--card-bg)] backdrop-blur-md flex flex-col items-center justify-center gap-2 cursor-pointer text-center rounded-2xl overflow-hidden transition-all duration-300 md:hover:border-[var(--accent3)] md:hover:shadow-lg md:hover:shadow-[var(--accent3-transparent)]/40 ${
             isUltraCompact
               ? "p-3 min-h-[90px]"
               : isCompact
@@ -67,12 +66,17 @@ export default function PlaceholderCard({
                 : "p-6 min-h-[178px]"
           }`}
         >
-          {/* Hover glow overlay — opacity-only, GPU composited */}
+          {/* Hover glow overlay */}
           <div className="absolute inset-0 rounded-2xl border border-[var(--accent3)] shadow-xl opacity-0 transition-opacity duration-350 md:group-hover/ph-card:opacity-100 pointer-events-none" />
+          <div
+            className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 md:group-hover/ph-card:opacity-100 transition-opacity duration-300"
+            style={{
+              background: "radial-gradient(circle, var(--accent3-transparent) 0%, transparent 70%)",
+            }}
+          />
 
           <div
-            className="relative z-10 p-2 bg-[var(--accent3-transparent)] text-[var(--accent3)]"
-            style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
+            className="relative z-10 p-2.5 bg-[var(--accent3-transparent)] text-[var(--accent3)] rounded-xl transition-transform duration-300 md:group-hover/ph-card:scale-110"
           >
             <Plus className="w-4 h-4" />
           </div>

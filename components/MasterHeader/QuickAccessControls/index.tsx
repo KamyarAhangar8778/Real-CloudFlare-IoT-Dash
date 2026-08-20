@@ -4,7 +4,7 @@ import VerticalControls from "./VerticalControls";
 import HorizontalControls from "./HorizontalControls";
 
 export default function QuickAccessControls(props: QuickAccessControlsProps) {
-  if (props.variant === "vertical" && !props.isSidebarCollapsed) {
+  if (props.variant === "vertical") {
     return <VerticalControls {...props} />;
   }
 

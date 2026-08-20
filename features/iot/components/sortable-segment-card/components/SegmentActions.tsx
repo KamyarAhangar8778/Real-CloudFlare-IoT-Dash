@@ -1,7 +1,8 @@
 import React from "react";
-import { X, GripVertical } from "lucide-react";
 import { SegmentData } from "../core/types";
 import SegmentControls from "./SegmentControls";
+import { SegmentDeleteIcon, SegmentGripIcon } from "@/components/icons";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 
 interface SegmentActionsProps {
   segment: SegmentData;
@@ -31,23 +32,31 @@ export default function SegmentActions({
   countdown,
   autoOffMenuProps,
 }: SegmentActionsProps) {
+  const animationsEnabled = useIoTStore((s) => s.animationsEnabled);
+
   return (
     <>
       <button
         onClick={() => onRemove(segment.id)}
-        className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 md:hover:border-[var(--accent3)] md:hover:text-[var(--accent3)] transition-all cursor-pointer rounded-lg shadow-sm"
+        className="group/del p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-600 dark:text-gray-400 md:hover:border-rose-500/60 md:hover:bg-rose-500/10 md:hover:text-rose-400 transition-all duration-200 cursor-pointer rounded-lg shadow-xs active:scale-95 flex items-center justify-center"
         title="حذف این سگمنت"
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <X className="w-3.5 h-3.5" />
+        <SegmentDeleteIcon
+          size={14}
+          animationsEnabled={animationsEnabled}
+        />
       </button>
       <div
         {...attributes}
         {...listeners}
-        className="p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-700 dark:text-gray-300 md:hover:border-[var(--accent3)] md:hover:text-[var(--accent3)] cursor-grab active:cursor-grabbing transition-all rounded-lg shadow-sm"
+        className="group/grip p-1.5 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 text-slate-600 dark:text-gray-400 md:hover:border-[var(--accent4)] md:hover:bg-[var(--accent4-transparent)] md:hover:text-[var(--accent4)] cursor-grab active:cursor-grabbing transition-all duration-200 rounded-lg shadow-xs active:scale-95 flex items-center justify-center"
         title="کشیدن برای جابه‌جایی"
       >
-        <GripVertical className="w-4 h-4" />
+        <SegmentGripIcon
+          size={14}
+          animationsEnabled={animationsEnabled}
+        />
       </div>
       {onUpdateSegmentMode && segment.type !== "input" && (
         <div className="mr-1.5">
@@ -64,3 +73,4 @@ export default function SegmentActions({
     </>
   );
 }
+

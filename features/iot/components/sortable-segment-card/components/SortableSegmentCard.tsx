@@ -42,7 +42,7 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
     transition: animationsEnabled
       ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
       : "none",
-    zIndex: isDragging ? 50 : isSettingsOpen ? 40 : "auto",
+    zIndex: isDragging ? 50 : isSettingsOpen ? 50 : undefined,
     opacity: isDragging ? 0.35 : 1,
     scale: isDragging ? 0.96 : 1,
   };
@@ -61,6 +61,7 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
       <div className="relative h-full">
         <ActiveCard
           {...props}
+          isPinOn={isPinOn}
           isCompact={isCompact}
           isUltraCompact={isUltraCompact}
           isMobileTwoCol={isMobileTwoCol}
@@ -113,10 +114,12 @@ function SortableSegmentCard(props: SortableSegmentCardProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`touch-none relative h-full transition-all duration-300 ${isSettingsOpen ? "z-40" : ""}`}
+      data-segment-menu-open={isSettingsOpen ? "true" : undefined}
+      className={`touch-none relative h-full transition-all duration-300 ${isSettingsOpen ? "z-50" : ""}`}
     >
       <ActiveCard
         {...props}
+        isPinOn={isPinOn}
         isCompact={isCompact}
         isUltraCompact={isUltraCompact}
         isMobileTwoCol={isMobileTwoCol}
