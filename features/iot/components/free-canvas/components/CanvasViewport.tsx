@@ -6,8 +6,8 @@ import { Move } from "lucide-react";
 
 /**
  * Main viewport container that orchestrates pan/zoom transformations,
- * renders background dot grid, handles Right-Click & Middle-Scroll navigation
- * with organic damped gliding physics.
+ * renders background animated twinkle grid, handles Right-Click & Middle-Scroll navigation
+ * and mouse wheel zoom.
  */
 export const CanvasViewport: React.FC<CanvasViewportProps> = ({
   children,
@@ -22,6 +22,7 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
     handlePointerMove,
     handlePointerUp,
     handleContextMenu,
+    handleWheel,
   } = useCanvasPanZoom();
 
   return (
@@ -38,8 +39,9 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onContextMenu={handleContextMenu}
+      onWheel={handleWheel}
     >
-      {/* Dynamic Grid Background with parallax dot pattern */}
+      {/* Animated Matrix/Twinkle Canvas Background */}
       <CanvasGridBackground transform={transform} />
 
       {/* Middle Click Locked Origin Anchor Indicator */}
