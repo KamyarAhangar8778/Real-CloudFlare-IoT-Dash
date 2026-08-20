@@ -40,6 +40,7 @@ export default function CardHeader({
   listeners,
   isSettingsOpen,
   setIsSettingsOpen,
+  groupMaxCols = 3,
 }: CardHeaderProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const headerRef = React.useRef<HTMLDivElement>(null);
@@ -58,7 +59,7 @@ export default function CardHeader({
     return () => observer.disconnect();
   }, []);
 
-  const isSmall = isUltraCompact || isCompact || isMobile || isNarrow;
+  const isSmall = isUltraCompact || isCompact || (isMobile && groupMaxCols > 1) || isNarrow;
   const showIconInMenu = isSmall;
 
   const {
