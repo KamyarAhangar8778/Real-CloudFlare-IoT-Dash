@@ -6,7 +6,7 @@ import LayoutColumnsSwitcher from "../LayoutColumnsSwitcher";
 import QuickAccessControls from "../QuickAccessControls";
 import ThemeToggle from "../ThemeToggle";
 import ClockWidget from "../ClockWidget";
-import HeaderIslandPattern from "../HeaderIslandPattern";
+import HeaderZoomControls from "../HeaderZoomControls";
 
 export default function ControlsIsland({ props }: { props: any }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -23,6 +23,11 @@ export default function ControlsIsland({ props }: { props: any }) {
             variant="vertical"
             isSidebarCollapsed={isSidebarCollapsed}
           />
+        </div>
+
+        {/* Free-Canvas Zoom Controls in Vertical Header */}
+        <div className="w-full flex justify-center">
+          <HeaderZoomControls variant="vertical" />
         </div>
 
         {isSidebarCollapsed ? (
@@ -43,6 +48,7 @@ export default function ControlsIsland({ props }: { props: any }) {
         ) : (
           <div className="space-y-2.5 pt-3 border-t border-[var(--border-color)]/60">
             <button
+              type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
               className="w-full flex items-center justify-between text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               title="قابلیت‌های بیشتر"

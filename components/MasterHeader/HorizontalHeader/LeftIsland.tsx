@@ -6,7 +6,7 @@ import LayoutColumnsSwitcher from "../LayoutColumnsSwitcher";
 import QuickAccessControls from "../QuickAccessControls";
 import ThemeToggle from "../ThemeToggle";
 import ClockWidget from "../ClockWidget";
-import HeaderIslandPattern from "../HeaderIslandPattern";
+import HeaderZoomControls from "../HeaderZoomControls";
 
 interface LeftIslandProps {
   props: any;
@@ -28,6 +28,9 @@ export default function LeftIsland({ props, isSubIslandOpen, setIsSubIslandOpen 
           setGroupsCols={props.setGroupsCols}
           variant="horizontal"
         />
+
+        {/* Free-Canvas Zoom Controls in Horizontal Header */}
+        <HeaderZoomControls variant="horizontal" />
 
         <div className="flex items-center gap-2">
           <QuickAccessControls
