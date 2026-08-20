@@ -6,6 +6,5 @@ coverage/
 .env*
 !.env.example
 tsconfig.tsbuildinfo
-.turbo/
 out/
 .agent

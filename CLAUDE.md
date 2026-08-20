@@ -4,7 +4,7 @@ This file contains build, test, lint, code style, and structural guidelines for 
 
 ## Development Commands
 
-- **Run Dev Server**: `npm run dev` (Runs Next.js with Turbopack)
+- **Run Dev Server**: `npm run dev` (Runs Next.js development server)
 - **Build Production**: `npm run build`
 - **Start Production**: `npm run start` (Requires serving static export if standard start is not used)
 - **Lint Code**: `npm run lint` (Runs Biome linter)

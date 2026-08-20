@@ -32,7 +32,7 @@ export default function DashboardHeader({ position }: DashboardHeaderProps) {
   if (position === "left") {
     return (
       <aside 
-        className={`hidden md:flex md:shrink-0 md:sticky md:top-4 md:h-fit p-1 flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] gap-4 transition-all duration-300 ${
+        className={`hidden md:flex md:shrink-0 md:sticky md:top-0 md:h-screen flex-col justify-start overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] transition-all duration-300 ${
           isSidebarCollapsed ? "md:w-20" : "md:w-72"
         }`}
       >
