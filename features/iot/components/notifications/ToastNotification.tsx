@@ -1,67 +1,34 @@
 "use client";
 
-import { CheckCircle, XCircle } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect } from "react";
+import { AnimatePresence } from "motion/react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { soundManager } from "@/lib/audio";
+import ToastItem from "./ToastItem";
 
 /**
- * کامپوننت نمایش اعلان‌های ACK به صورت toast
- * موقعیت: پایین-چپ صفحه
- * سبز برای موفقیت، قرمز برای خطا
+ * کامپوننت اصلی مدیریت و نمایش لیست اعلان‌های شناور داشبورد (Toast Stack)
+ * موقعیت: شناور در پایین-چپ یا پایین-مرکز صفحه با قابلیت چیدمان عمودی
  */
 export default function ToastNotification() {
-  const { toast, clearToast } = useIoTStore();
+  const toasts = useIoTStore((s) => s.toasts);
+  const toast = useIoTStore((s) => s.toast);
+  const clearToast = useIoTStore((s) => s.clearToast);
 
-  // حذف خودکار بعد از 3.5 ثانیه
-  useEffect(() => {
-    if (!toast) return;
+  // در صورت وجود نداشتن آرایه، استفاده از single toast به صورت فال‌بک
+  const activeToasts = toasts && toasts.length > 0 ? toasts : toast ? [toast] : [];
 
-    if (toast.type === "success") {
-      soundManager.playSuccess();
-    } else {
-      soundManager.playError();
-    }
-
-    const timer = setTimeout(() => {
-      clearToast();
-    }, 3500);
-    return () => clearTimeout(timer);
-  }, [toast, clearToast]);
+  if (activeToasts.length === 0) return null;
 
   return (
-    <AnimatePresence>
-      {toast && (
-        <motion.div
-          initial={{ opacity: 0, y: 40, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          transition={{ type: "spring", damping: 22, stiffness: 300 }}
-          className="fixed bottom-6 left-6 z-[200] max-w-sm pointer-events-auto"
-        >
-          <div
-            className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl border shadow-2xl backdrop-blur-xl text-right font-sans ${
-              toast.type === "success"
-                ? "bg-emerald-950/80 border-emerald-500/40 text-emerald-300"
-                : "bg-red-950/80 border-red-500/40 text-red-300"
-            }`}
-          >
-            {toast.type === "success" ? (
-              <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-            ) : (
-              <XCircle className="w-5 h-5 text-red-400 shrink-0" />
-            )}
-            <span className="text-xs font-bold leading-relaxed">{toast.message}</span>
-            <button
-              onClick={clearToast}
-              className="mr-auto text-white/40 md:hover:text-white/80 transition-colors text-[10px] font-bold cursor-pointer shrink-0"
-            >
-              ✕
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      className="fixed bottom-6 left-6 z-[200] flex flex-col-reverse gap-3 max-w-sm w-full pointer-events-none transition-all duration-300 max-sm:left-4 max-sm:right-4 max-sm:max-w-none"
+    >
+      <AnimatePresence mode="popLayout">
+        {activeToasts.map((t) => (
+          <ToastItem key={t.id} toast={t} onDismiss={(id) => clearToast(id)} />
+        ))}
+      </AnimatePresence>
+    </div>
   );
 }

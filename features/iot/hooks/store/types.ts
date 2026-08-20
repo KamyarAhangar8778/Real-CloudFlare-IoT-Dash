@@ -1,4 +1,4 @@
-import { EspConfig } from "@/features/iot/services/esp32Config";
+import type { EspConfig } from "@/features/iot/services/esp32Config";
 
 export interface RuleAction {
   reqHold: number;
@@ -23,6 +23,10 @@ export interface Segment {
   state?: boolean;
   mode?: "switch" | "push";
   auto_off?: number;
+  off_label?: string;
+  on_label?: string;
+  offLabel?: string;
+  onLabel?: string;
   rule?: SegmentRule;
 }
 
@@ -40,10 +44,10 @@ export interface Automation {
   enabled: boolean;
   repeatCount?: number;
   intervalMinutes?: number;
-  conditionType?: 'time' | 'weather';
+  conditionType?: "time" | "weather";
   city?: string;
   temperatureThreshold?: number;
-  temperatureCondition?: 'greater' | 'less';
+  temperatureCondition?: "greater" | "less";
   actions: AutomationAction[];
 }
 
@@ -81,9 +85,12 @@ export interface SegmentsSlice {
   segments: Segment[];
   pinsState: Record<string, boolean>;
   setSegments: (segments: Segment[] | ((prev: Segment[]) => Segment[])) => void;
-  setPinsState: (pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>)) => void;
+  setPinsState: (
+    pins: Record<string, boolean> | ((prev: Record<string, boolean>) => Record<string, boolean>),
+  ) => void;
   updateSegmentMode: (id: string, mode: "switch" | "push") => void;
   updateSegmentRule: (id: string, rule: SegmentRule) => void;
+  updateSegmentLabels: (id: string, offLabel?: string, onLabel?: string) => void;
 }
 
 export interface GroupsSlice {
@@ -91,7 +98,11 @@ export interface GroupsSlice {
   groupConfigs: Record<string, { maxCols: number; icon?: string }>;
   groupsCols: number;
   setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
-  setGroupConfigs: (configs: Record<string, { maxCols: number }> | ((prev: Record<string, { maxCols: number }>) => Record<string, { maxCols: number }>)) => void;
+  setGroupConfigs: (
+    configs:
+      | Record<string, { maxCols: number }>
+      | ((prev: Record<string, { maxCols: number }>) => Record<string, { maxCols: number }>),
+  ) => void;
   setGroupsCols: (cols: number) => void;
 }
 
@@ -115,14 +126,26 @@ export interface SystemSlice {
   mqttConfig: MqttConfig | null;
   setAutomations: (automations: Automation[] | ((prev: Automation[]) => Automation[])) => void;
   setMacros: (macros: Macro[] | ((prev: Macro[]) => Macro[])) => void;
-  setVoiceCommands: (voiceCommands: VoiceCommand[] | ((prev: VoiceCommand[]) => VoiceCommand[])) => void;
+  setVoiceCommands: (
+    voiceCommands: VoiceCommand[] | ((prev: VoiceCommand[]) => VoiceCommand[]),
+  ) => void;
   setWifiNetworks: (networks: WifiNetwork[] | ((prev: WifiNetwork[]) => WifiNetwork[])) => void;
   setMqttConfig: (config: MqttConfig | null) => void;
 }
 
+export interface ToastItem {
+  id: string;
+  message: string;
+  type: "success" | "error" | "info" | "warning";
+  title?: string;
+  duration?: number;
+  timestamp: number;
+}
+
 export interface UiSlice {
   lowDataMode: boolean;
-  toast: { message: string; type: "success" | "error" } | null;
+  toasts: ToastItem[];
+  toast: ToastItem | null;
   selectedGroupFilter: string | null;
   isPageVisible: boolean;
   isListening: boolean;
@@ -132,8 +155,12 @@ export interface UiSlice {
   isLocal: boolean;
   localIp: string | null;
   setLowDataMode: (enabled: boolean) => void;
-  showToast: (message: string, type: "success" | "error") => void;
-  clearToast: () => void;
+  showToast: (
+    message: string,
+    type?: "success" | "error" | "info" | "warning",
+    options?: { title?: string; duration?: number },
+  ) => void;
+  clearToast: (id?: string) => void;
   setSelectedGroupFilter: (group: string | null) => void;
   setIsPageVisible: (visible: boolean) => void;
   setIsListening: (b: boolean) => void;
@@ -218,11 +245,25 @@ export interface ElementEngineSlice {
   elementConfig: import("@/features/iot/engine").ElementEngineConfig;
   activeElementPreset: string;
   elementValidationErrors: string[];
-  setElementConfig: (config: import("@/features/iot/engine").ElementEngineConfig | ((prev: import("@/features/iot/engine").ElementEngineConfig) => import("@/features/iot/engine").ElementEngineConfig)) => void;
+  setElementConfig: (
+    config:
+      | import("@/features/iot/engine").ElementEngineConfig
+      | ((
+          prev: import("@/features/iot/engine").ElementEngineConfig,
+        ) => import("@/features/iot/engine").ElementEngineConfig),
+  ) => void;
   updateRegistryValue: (keyPath: string, value: unknown) => void;
   applyElementPreset: (presetId: string) => void;
   importElementProtocolJSON: (jsonString: string) => { success: boolean; errors?: string[] };
   resetElementConfig: () => void;
 }
 
-export type IoTStoreState = SegmentsSlice & GroupsSlice & SyncSlice & SystemSlice & UiSlice & MenuSlice & AestheticSlice & ConfigSlice & ElementEngineSlice;
+export type IoTStoreState = SegmentsSlice &
+  GroupsSlice &
+  SyncSlice &
+  SystemSlice &
+  UiSlice &
+  MenuSlice &
+  AestheticSlice &
+  ConfigSlice &
+  ElementEngineSlice;

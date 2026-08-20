@@ -1,8 +1,9 @@
-import { StateCreator } from "zustand";
-import { IoTStoreState, UiSlice } from "../types";
+import type { StateCreator } from "zustand";
+import type { IoTStoreState, ToastItem, UiSlice } from "../types";
 
 export const createUiSlice: StateCreator<IoTStoreState, [], [], UiSlice> = (set) => ({
   lowDataMode: false,
+  toasts: [],
   toast: null,
   selectedGroupFilter: null,
   isPageVisible: true,
@@ -17,12 +18,36 @@ export const createUiSlice: StateCreator<IoTStoreState, [], [], UiSlice> = (set)
     set({ lowDataMode: enabled });
   },
 
-  showToast: (message, type) => {
-    set({ toast: { message, type } });
+  showToast: (message, type = "info", options) => {
+    const id = Date.now().toString() + Math.random().toString(36).substring(2, 6);
+    const newToast: ToastItem = {
+      id,
+      message,
+      type,
+      title: options?.title,
+      duration: options?.duration ?? 3500,
+      timestamp: Date.now(),
+    };
+    set((state) => {
+      const nextToasts = [newToast, ...state.toasts].slice(0, 4);
+      return {
+        toasts: nextToasts,
+        toast: newToast,
+      };
+    });
   },
 
-  clearToast: () => {
-    set({ toast: null });
+  clearToast: (id) => {
+    set((state) => {
+      if (!id) {
+        return { toasts: [], toast: null };
+      }
+      const nextToasts = state.toasts.filter((t) => t.id !== id);
+      return {
+        toasts: nextToasts,
+        toast: nextToasts[0] || null,
+      };
+    });
   },
 
   setSelectedGroupFilter: (group) => {
@@ -36,7 +61,7 @@ export const createUiSlice: StateCreator<IoTStoreState, [], [], UiSlice> = (set)
   setIsListening: (b) => set({ isListening: b }),
 
   setVoiceTranscript: (t) => set({ voiceTranscript: t }),
-  
+
   setActiveSegmentId: (id) => set({ activeSegmentId: id }),
   setActiveGroupId: (id) => set({ activeGroupId: id }),
   setIsLocal: (local) => set({ isLocal: local }),

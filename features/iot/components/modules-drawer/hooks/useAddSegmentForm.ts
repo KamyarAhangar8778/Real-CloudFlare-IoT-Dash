@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { validateEsp32Pin } from "@/features/iot/utils/pinValidation";
-import { Segment } from "../core/types";
+import type { Segment } from "../core/types";
 
 export function useAddSegmentForm(segments: Segment[], onAddSegment: any, onClose: () => void) {
   const { showToast, groupsOrder } = useIoTStore();
   const [selectedType, setSelectedType] = useState("gpio_toggle");
   const [targetPin, setTargetPin] = useState("");
   const [customTitle, setCustomTitle] = useState("");
+  const [offLabel, setOffLabel] = useState("");
+  const [onLabel, setOnLabel] = useState("");
   const [groupName, setGroupName] = useState(groupsOrder.length > 0 ? groupsOrder[0] : "Test");
   const [segmentIcon, setSegmentIcon] = useState("");
   const [groupIcon, setGroupIcon] = useState("");
@@ -40,9 +42,22 @@ export function useAddSegmentForm(segments: Segment[], onAddSegment: any, onClos
       return;
     }
 
-    onAddSegment(selectedType, finalPin, customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${finalPin})`, groupName.trim() || "Test", buttonMode, undefined, segmentIcon || undefined, groupIcon || undefined);
-    
+    onAddSegment(
+      selectedType,
+      finalPin,
+      customTitle.trim() || `کنترل پایه دیجیتال (GPIO ${finalPin})`,
+      groupName.trim() || "Test",
+      buttonMode,
+      undefined,
+      segmentIcon || undefined,
+      groupIcon || undefined,
+      offLabel.trim() || undefined,
+      onLabel.trim() || undefined,
+    );
+
     setCustomTitle("");
+    setOffLabel("");
+    setOnLabel("");
     setGroupName(groupsOrder.length > 0 ? groupsOrder[0] : "Test");
     setTargetPin("");
     setSegmentIcon("");
@@ -53,16 +68,28 @@ export function useAddSegmentForm(segments: Segment[], onAddSegment: any, onClos
   };
 
   return {
-    selectedType, setSelectedType,
-    targetPin, setTargetPin,
-    customTitle, setCustomTitle,
-    groupName, setGroupName,
-    segmentIcon, setSegmentIcon,
-    groupIcon, setGroupIcon,
+    selectedType,
+    setSelectedType,
+    targetPin,
+    setTargetPin,
+    customTitle,
+    setCustomTitle,
+    offLabel,
+    setOffLabel,
+    onLabel,
+    setOnLabel,
+    groupName,
+    setGroupName,
+    segmentIcon,
+    setSegmentIcon,
+    groupIcon,
+    setGroupIcon,
     errorText,
-    buttonMode, setButtonMode,
-    showAdvanced, setShowAdvanced,
+    buttonMode,
+    setButtonMode,
+    showAdvanced,
+    setShowAdvanced,
     groupsOrder,
-    handleSubmit
+    handleSubmit,
   };
 }

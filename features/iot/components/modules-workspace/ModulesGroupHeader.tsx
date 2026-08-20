@@ -3,9 +3,9 @@
  * @description Header component for Modules group card.
  */
 
-import React from "react";
-import { ChevronDown, ChevronUp, PlusCircle, Layers, Cpu } from "lucide-react";
-import { ModulesGroupMeta } from "./types";
+import { ChevronDown, ChevronUp, Cpu, Layers, PlusCircle } from "lucide-react";
+import type React from "react";
+import type { ModulesGroupMeta } from "./types";
 
 interface ModulesGroupHeaderProps {
   meta: ModulesGroupMeta;
@@ -29,7 +29,7 @@ export function ModulesGroupHeader({
   return (
     <div className="flex items-center justify-between p-4 border-b border-[var(--border-color)] bg-[var(--card-hover-bg)]/50 select-none">
       <div className="flex items-center gap-3 text-right">
-        <div className="p-2 bg-[var(--accent3-transparent)] text-[var(--accent3)] rounded-xl border border-[var(--accent3-medium)]">
+        <div className="p-2 bg-[var(--accent3-transparent)] text-[var(--accent3)] rounded-full border border-[var(--accent3-medium)]">
           <IconComponent className="w-5 h-5" />
         </div>
         <div>

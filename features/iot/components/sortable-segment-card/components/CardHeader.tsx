@@ -1,14 +1,13 @@
-import React from "react";
 import { Settings } from "lucide-react";
-import { WidgetIcon } from "@/components/icons";
 import { AnimatePresence } from "motion/react";
-import { BUTTON_CLIP } from "@/lib/presets";
-import { SegmentData } from "../core/types";
+import React from "react";
+import { WidgetIcon } from "@/components/icons";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import type { SegmentData } from "../core/types";
 import { useCardHeaderLayout } from "../hooks/useCardHeaderLayout";
-import SegmentSettingsMenu from "./SegmentSettingsMenu";
 import SegmentActions from "./SegmentActions";
 import SegmentPattern from "./SegmentPattern";
+import SegmentSettingsMenu from "./SegmentSettingsMenu";
 
 interface CardHeaderProps {
   segment: SegmentData;
@@ -87,13 +86,16 @@ export default function CardHeader({
       {...(isSmall ? listeners : {})}
       data-segment-menu-open={currentIsSettingsOpen ? "true" : undefined}
       className={`relative flex items-center ${
-        isSmall ? "justify-center p-2.5 px-3 cursor-grab active:cursor-grabbing" : "justify-between p-3.5"
+        isSmall
+          ? "justify-center p-2.5 px-3 cursor-grab active:cursor-grabbing"
+          : "justify-between p-3.5"
       } border-b border-[var(--border-color)] bg-transparent rounded-t-2xl`}
     >
       <SegmentPattern variant="header" />
       {isSmall ? (
         <div className="relative flex items-center justify-center w-full group/btn h-6">
           <button
+            type="button"
             ref={buttonRef}
             onClick={() => currentSetIsSettingsOpen(!currentIsSettingsOpen)}
             className={`w-7 h-7 bg-slate-200/90 dark:bg-slate-950 border border-slate-300/85 dark:border-slate-800 transition-all duration-300 cursor-pointer rounded-full shadow-sm flex items-center justify-center ${
@@ -112,6 +114,7 @@ export default function CardHeader({
               segment={segment}
               isSettingsOpen={currentIsSettingsOpen}
               menuRef={menuRef}
+              buttonRef={buttonRef}
               showIconInMenu={showIconInMenu}
               isPinOn={isPinOn}
               isUltraCompact={isUltraCompact}
@@ -142,10 +145,11 @@ export default function CardHeader({
 
           <div className="flex items-center gap-2">
             <div
-              className={`p-2 transition-colors flex items-center justify-center ${
-                isPinOn ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]" : "bg-gray-800/20 text-gray-500"
+              className={`p-2 rounded-full transition-colors flex items-center justify-center ${
+                isPinOn
+                  ? "bg-[var(--accent4-transparent)] text-[var(--accent4)]"
+                  : "bg-gray-800/20 text-gray-500"
               }`}
-              style={{ clipPath: BUTTON_CLIP }}
             >
               <WidgetIcon icon={segment.icon} defaultIcon="Cpu" className="w-4 h-4" />
             </div>

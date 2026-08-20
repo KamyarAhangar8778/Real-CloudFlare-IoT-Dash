@@ -1,6 +1,5 @@
-import React from "react";
-import { GripVertical, ChevronDown, ChevronUp } from "lucide-react";
-import { SettingsGroupMeta } from "./types";
+import { ChevronDown, ChevronUp, GripVertical } from "lucide-react";
+import type { SettingsGroupMeta } from "./types";
 
 interface SettingsGroupHeaderProps {
   meta: SettingsGroupMeta;
@@ -28,7 +27,7 @@ export function SettingsGroupHeader({
           <GripVertical className="w-4 h-4" />
         </div>
 
-        <div className="p-2 rounded-xl bg-[var(--accent3-transparent)] text-[var(--accent3)]">
+        <div className="p-2 rounded-full bg-[var(--accent3-transparent)] text-[var(--accent3)]">
           <Icon className="w-4 h-4" />
         </div>
 
@@ -39,9 +38,7 @@ export function SettingsGroupHeader({
               {meta.categoryLabel}
             </span>
           </h3>
-          <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5">
-            {meta.subtitle}
-          </p>
+          <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5">{meta.subtitle}</p>
         </div>
       </div>
 

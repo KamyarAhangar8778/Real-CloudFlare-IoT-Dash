@@ -1,14 +1,24 @@
-import React from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Plus, Settings2, ChevronDown } from "lucide-react";
-import { Segment } from "../core/types";
+import { ChevronDown, Plus, Settings2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import type { Segment } from "../core/types";
 import { useAddSegmentForm } from "../hooks/useAddSegmentForm";
 import ButtonModeSelector from "./ButtonModeSelector";
-import PinSelector from "./PinSelector";
 import FormDetailsInput from "./FormDetailsInput";
+import PinSelector from "./PinSelector";
 
 interface AddSegmentFormProps {
-  onAddSegment: (type: string, pin: string, title?: string, group?: string, mode?: "switch" | "push", auto_off?: number, icon?: string, groupIcon?: string) => void;
+  onAddSegment: (
+    type: string,
+    pin: string,
+    title?: string,
+    group?: string,
+    mode?: "switch" | "push",
+    auto_off?: number,
+    icon?: string,
+    groupIcon?: string,
+    off_label?: string,
+    on_label?: string,
+  ) => void;
   onClose: () => void;
   segments: Segment[];
   animationsEnabled: boolean;
@@ -21,17 +31,29 @@ export default function AddSegmentForm({
   animationsEnabled,
 }: AddSegmentFormProps) {
   const {
-    selectedType, setSelectedType,
-    targetPin, setTargetPin,
-    customTitle, setCustomTitle,
-    groupName, setGroupName,
-    segmentIcon, setSegmentIcon,
-    groupIcon, setGroupIcon,
+    selectedType,
+    setSelectedType,
+    targetPin,
+    setTargetPin,
+    customTitle,
+    setCustomTitle,
+    offLabel,
+    setOffLabel,
+    onLabel,
+    setOnLabel,
+    groupName,
+    setGroupName,
+    segmentIcon,
+    setSegmentIcon,
+    groupIcon,
+    setGroupIcon,
     errorText,
-    buttonMode, setButtonMode,
-    showAdvanced, setShowAdvanced,
+    buttonMode,
+    setButtonMode,
+    showAdvanced,
+    setShowAdvanced,
     groupsOrder,
-    handleSubmit
+    handleSubmit,
   } = useAddSegmentForm(segments, onAddSegment, onClose);
 
   return (
@@ -42,23 +64,33 @@ export default function AddSegmentForm({
           <span className="text-sm font-bold font-sans">افزودن سگمنت جدید</span>
         </div>
         <div className="space-y-1.5">
-          <label className="text-[10px] theme-text-tertiary font-bold block">نوع سگمنت مانیتورینگ:</label>
+          <label className="text-[10px] theme-text-tertiary font-bold block">
+            نوع سگمنت مانیتورینگ:
+          </label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
             className="w-full h-10 px-3 text-xs bg-[var(--bg-main)] text-[var(--text-primary)] border border-[var(--border-color)] rounded-xl focus:border-[var(--accent3)] outline-none transition-all cursor-pointer font-sans shadow-sm"
           >
-            <option value="gpio_toggle" className="bg-[var(--card-bg-solid)]">خاموش و روشن کردن یک پایه (GPIO Control)</option>
-            <option value="input" className="bg-[var(--card-bg-solid)]">ورودی دیجیتال 0 و 1 (Input Logic)</option>
+            <option value="gpio_toggle" className="bg-[var(--card-bg-solid)]">
+              خاموش و روشن کردن یک پایه (GPIO Control)
+            </option>
+            <option value="input" className="bg-[var(--card-bg-solid)]">
+              ورودی دیجیتال 0 و 1 (Input Logic)
+            </option>
           </select>
         </div>
-        
+
         <PinSelector customPin={targetPin} setCustomPin={setTargetPin} />
-        
-        <FormDetailsInput 
-          customTitle={customTitle} 
-          setCustomTitle={setCustomTitle} 
-          groupName={groupName} 
+
+        <FormDetailsInput
+          customTitle={customTitle}
+          setCustomTitle={setCustomTitle}
+          offLabel={offLabel}
+          setOffLabel={setOffLabel}
+          onLabel={onLabel}
+          setOnLabel={setOnLabel}
+          groupName={groupName}
           setGroupName={setGroupName}
           segmentIcon={segmentIcon}
           setSegmentIcon={setSegmentIcon}
@@ -77,9 +109,11 @@ export default function AddSegmentForm({
               <Settings2 className="w-4 h-4" />
               <span className="text-xs font-bold">تنظیمات جانبی</span>
             </div>
-            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAdvanced ? "rotate-180" : ""}`} />
+            <ChevronDown
+              className={`w-4 h-4 transition-transform duration-300 ${showAdvanced ? "rotate-180" : ""}`}
+            />
           </button>
-          
+
           <AnimatePresence>
             {showAdvanced && (
               <motion.div
@@ -90,10 +124,16 @@ export default function AddSegmentForm({
               >
                 <div className="pt-3 pb-1 space-y-4">
                   {selectedType === "gpio_toggle" && (
-                    <ButtonModeSelector buttonMode={buttonMode} setButtonMode={setButtonMode} animationsEnabled={animationsEnabled} />
+                    <ButtonModeSelector
+                      buttonMode={buttonMode}
+                      setButtonMode={setButtonMode}
+                      animationsEnabled={animationsEnabled}
+                    />
                   )}
                   {selectedType !== "gpio_toggle" && (
-                    <p className="text-[10px] text-[var(--text-muted)] text-center">تنظیمات جانبی برای این نوع سگمنت وجود ندارد.</p>
+                    <p className="text-[10px] text-[var(--text-muted)] text-center">
+                      تنظیمات جانبی برای این نوع سگمنت وجود ندارد.
+                    </p>
                   )}
                 </div>
               </motion.div>

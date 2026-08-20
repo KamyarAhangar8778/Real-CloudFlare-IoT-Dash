@@ -3,9 +3,8 @@
  * @description Header component for AutomationsDrawer matching the SettingsDrawer style language.
  */
 
-import React from "react";
-import { motion } from "motion/react";
 import { X } from "lucide-react";
+import { motion } from "motion/react";
 import { WidgetIcon } from "@/components/icons";
 
 interface AutomationsHeaderProps {
@@ -39,7 +38,7 @@ export function AutomationsHeader({ onClose, animationsEnabled = true }: Automat
             Automated Node Controller
           </p>
         </div>
-        <div className="p-2 theme-card-bg-solid border border-accent3-medium text-accent3">
+        <div className="p-2 theme-card-bg-solid border border-accent3-medium text-accent3 rounded-full">
           <WidgetIcon
             icon="Clock"
             className="w-4 h-4 text-accent3"

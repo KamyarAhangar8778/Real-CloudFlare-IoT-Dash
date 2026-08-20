@@ -1,5 +1,5 @@
-import { StateCreator } from "zustand";
-import { IoTStoreState, SegmentsSlice } from "../types";
+import type { StateCreator } from "zustand";
+import type { IoTStoreState, SegmentsSlice } from "../types";
 
 export const createSegmentsSlice: StateCreator<IoTStoreState, [], [], SegmentsSlice> = (set) => ({
   segments: [],
@@ -29,6 +29,23 @@ export const createSegmentsSlice: StateCreator<IoTStoreState, [], [], SegmentsSl
   updateSegmentRule: (id, rule) => {
     set((state) => {
       const updated = state.segments.map((seg) => (seg.id === id ? { ...seg, rule } : seg));
+      return { segments: updated };
+    });
+  },
+
+  updateSegmentLabels: (id, offLabel, onLabel) => {
+    set((state) => {
+      const updated = state.segments.map((seg) =>
+        seg.id === id
+          ? {
+              ...seg,
+              off_label: offLabel,
+              on_label: onLabel,
+              offLabel,
+              onLabel,
+            }
+          : seg,
+      );
       return { segments: updated };
     });
   },

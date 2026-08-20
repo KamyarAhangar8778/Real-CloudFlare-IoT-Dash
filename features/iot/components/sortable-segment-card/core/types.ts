@@ -8,7 +8,11 @@ export interface SegmentData {
   state?: boolean;
   mode?: "switch" | "push";
   auto_off?: number;
-  rule?: { 
+  off_label?: string;
+  on_label?: string;
+  offLabel?: string;
+  onLabel?: string;
+  rule?: {
     highActions?: Array<{
       reqHold: number;
       targetPin: string;
@@ -34,9 +38,10 @@ export interface SortableSegmentCardProps {
   onSetPinState?: (pin: string, state: boolean, preventMqtt?: boolean) => void;
   onUpdateSegmentMode?: (id: string, mode: "switch" | "push") => void;
   onUpdateSegmentAutoOff?: (id: string, autoOff: number) => void;
+  onUpdateSegmentLabels?: (id: string, offLabel?: string, onLabel?: string) => void;
   onUpdateSegmentRule?: (
-    id: string, 
-    rule: { 
+    id: string,
+    rule: {
       highActions?: Array<{
         reqHold: number;
         targetPin: string;
@@ -51,7 +56,7 @@ export interface SortableSegmentCardProps {
         actionType?: number;
         delay?: number;
       }>;
-    }
+    },
   ) => void;
   isLoadingIoT: boolean;
   onSetupPlaceholder?: (id: string) => void;

@@ -1,19 +1,18 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import React from "react";
-import WelcomePortal from "@/features/iot/components/welcome-portal";
-import IoTWorkspace from "@/features/iot/components/IoTWorkspace";
-import SettingsWorkspace from "@/features/settings/components/SettingsWorkspace";
-import ModulesWorkspace from "@/features/iot/components/modules-workspace";
-import AutomationsWorkspace from "@/features/iot/components/automations-workspace";
-import { WorkspaceSkeleton } from "@/features/iot/components/workspace";
-import MacroSidebar from "../widgets/MacroSidebar";
-import GroupFilterSelector from "@/components/MasterHeader/GroupFilterSelector";
 import { useDashboard } from "@/features/dashboard/context/DashboardContext";
+import AutomationsWorkspace from "@/features/iot/components/automations-workspace";
+import IoTWorkspace from "@/features/iot/components/IoTWorkspace";
+import ModulesWorkspace from "@/features/iot/components/modules-workspace";
+import WelcomePortal from "@/features/iot/components/welcome-portal";
+import { WorkspaceSkeleton } from "@/features/iot/components/workspace";
 import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
-import { useWorkspaceSwipe } from "../../hooks/useWorkspaceSwipe";
+import SettingsWorkspace from "@/features/settings/components/SettingsWorkspace";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
-import { motion, AnimatePresence } from "motion/react";
+import { useWorkspaceSwipe } from "../../hooks/useWorkspaceSwipe";
+import MacroSidebar from "../widgets/MacroSidebar";
 
 export default function DashboardWorkspace() {
   const {
@@ -36,69 +35,73 @@ export default function DashboardWorkspace() {
     isFullyReady,
   } = useDashboard();
 
-  const isMenuOpen = useIoTStore(s => s.isMenuOpen);
-  const isModulesMenuOpen = useIoTStore(s => s.isModulesMenuOpen);
-  const setIsModulesMenuOpen = useIoTStore(s => s.setIsModulesMenuOpen);
-  const isAutomationsMenuOpen = useIoTStore(s => s.isAutomationsMenuOpen);
-  const setIsAutomationsMenuOpen = useIoTStore(s => s.setIsAutomationsMenuOpen);
-  const segments = useIoTStore(s => s.segments);
-  const isDark = useIoTStore(s => s.isDark);
-  const accent3 = useIoTStore(s => s.accent3);
-  const setAccent3 = useIoTStore(s => s.setAccent3);
-  const accent4 = useIoTStore(s => s.accent4);
-  const setAccent4 = useIoTStore(s => s.setAccent4);
-  const setIsMenuOpen = useIoTStore(s => s.setIsMenuOpen);
-  const animationsEnabled = useIoTStore(s => s.animationsEnabled);
-  const setAnimationsEnabled = useIoTStore(s => s.setAnimationsEnabled);
-  const selectedFont = useIoTStore(s => s.selectedFont);
-  const setSelectedFont = useIoTStore(s => s.setSelectedFont);
-  const animationsFps = useIoTStore(s => s.animationsFps);
-  const setAnimationsFps = useIoTStore(s => s.setAnimationsFps);
-  const headerAnimationType = useIoTStore(s => s.headerAnimationType);
-  const setHeaderAnimationType = useIoTStore(s => s.setHeaderAnimationType);
-  const headerTitle = useIoTStore(s => s.headerTitle);
-  const setHeaderTitle = useIoTStore(s => s.setHeaderTitle);
-  const matrixDensity = useIoTStore(s => s.matrixDensity);
-  const setMatrixDensity = useIoTStore(s => s.setMatrixDensity);
-  const matrixSize = useIoTStore(s => s.matrixSize);
-  const setMatrixSize = useIoTStore(s => s.setMatrixSize);
-  const matrixHoverSize = useIoTStore(s => s.matrixHoverSize);
-  const setMatrixHoverSize = useIoTStore(s => s.setMatrixHoverSize);
-  const matrixOpacity = useIoTStore(s => s.matrixOpacity);
-  const setMatrixOpacity = useIoTStore(s => s.setMatrixOpacity);
-  const matrixColor = useIoTStore(s => s.matrixColor);
-  const setMatrixColor = useIoTStore(s => s.setMatrixColor);
-  const matrixMoving = useIoTStore(s => s.matrixMoving);
-  const setMatrixMoving = useIoTStore(s => s.setMatrixMoving);
-  const matrixMouseEffect = useIoTStore(s => s.matrixMouseEffect);
-  const setMatrixMouseEffect = useIoTStore(s => s.setMatrixMouseEffect);
-  const matrixTwinkleEffect = useIoTStore(s => s.matrixTwinkleEffect);
-  const setMatrixTwinkleEffect = useIoTStore(s => s.setMatrixTwinkleEffect);
-  const matrixTwinkleSpeed = useIoTStore(s => s.matrixTwinkleSpeed);
-  const setMatrixTwinkleSpeed = useIoTStore(s => s.setMatrixTwinkleSpeed);
-  const dashboardBgColor = useIoTStore(s => s.dashboardBgColor);
-  const setDashboardBgColor = useIoTStore(s => s.setDashboardBgColor);
-  const dashboardBgOpacity = useIoTStore(s => s.dashboardBgOpacity);
-  const setDashboardBgOpacity = useIoTStore(s => s.setDashboardBgOpacity);
-  const headerPosition = useIoTStore(s => s.headerPosition);
-  const setHeaderPosition = useIoTStore(s => s.setHeaderPosition);
-  const dashboardWidth = useIoTStore(s => s.dashboardWidth);
-  const setDashboardWidth = useIoTStore(s => s.setDashboardWidth);
-  const isGroupsCompactLayout = useIoTStore(s => s.isGroupsCompactLayout);
-  const setIsGroupsCompactLayout = useIoTStore(s => s.setIsGroupsCompactLayout);
-  const isSegmentsCompactLayout = useIoTStore(s => s.isSegmentsCompactLayout);
-  const setIsSegmentsCompactLayout = useIoTStore(s => s.setIsSegmentsCompactLayout);
-  const activeSegmentId = useIoTStore(s => s.activeSegmentId);
-  const activeGroupId = useIoTStore(s => s.activeGroupId);
+  const isMenuOpen = useIoTStore((s) => s.isMenuOpen);
+  const isModulesMenuOpen = useIoTStore((s) => s.isModulesMenuOpen);
+  const setIsModulesMenuOpen = useIoTStore((s) => s.setIsModulesMenuOpen);
+  const isAutomationsMenuOpen = useIoTStore((s) => s.isAutomationsMenuOpen);
+  const setIsAutomationsMenuOpen = useIoTStore((s) => s.setIsAutomationsMenuOpen);
+  const segments = useIoTStore((s) => s.segments);
+  const isDark = useIoTStore((s) => s.isDark);
+  const accent3 = useIoTStore((s) => s.accent3);
+  const setAccent3 = useIoTStore((s) => s.setAccent3);
+  const accent4 = useIoTStore((s) => s.accent4);
+  const setAccent4 = useIoTStore((s) => s.setAccent4);
+  const setIsMenuOpen = useIoTStore((s) => s.setIsMenuOpen);
+  const animationsEnabled = useIoTStore((s) => s.animationsEnabled);
+  const setAnimationsEnabled = useIoTStore((s) => s.setAnimationsEnabled);
+  const selectedFont = useIoTStore((s) => s.selectedFont);
+  const setSelectedFont = useIoTStore((s) => s.setSelectedFont);
+  const animationsFps = useIoTStore((s) => s.animationsFps);
+  const setAnimationsFps = useIoTStore((s) => s.setAnimationsFps);
+  const headerAnimationType = useIoTStore((s) => s.headerAnimationType);
+  const setHeaderAnimationType = useIoTStore((s) => s.setHeaderAnimationType);
+  const headerTitle = useIoTStore((s) => s.headerTitle);
+  const setHeaderTitle = useIoTStore((s) => s.setHeaderTitle);
+  const matrixDensity = useIoTStore((s) => s.matrixDensity);
+  const setMatrixDensity = useIoTStore((s) => s.setMatrixDensity);
+  const matrixSize = useIoTStore((s) => s.matrixSize);
+  const setMatrixSize = useIoTStore((s) => s.setMatrixSize);
+  const matrixHoverSize = useIoTStore((s) => s.matrixHoverSize);
+  const setMatrixHoverSize = useIoTStore((s) => s.setMatrixHoverSize);
+  const matrixOpacity = useIoTStore((s) => s.matrixOpacity);
+  const setMatrixOpacity = useIoTStore((s) => s.setMatrixOpacity);
+  const matrixColor = useIoTStore((s) => s.matrixColor);
+  const setMatrixColor = useIoTStore((s) => s.setMatrixColor);
+  const matrixMoving = useIoTStore((s) => s.matrixMoving);
+  const setMatrixMoving = useIoTStore((s) => s.setMatrixMoving);
+  const matrixMouseEffect = useIoTStore((s) => s.matrixMouseEffect);
+  const setMatrixMouseEffect = useIoTStore((s) => s.setMatrixMouseEffect);
+  const matrixTwinkleEffect = useIoTStore((s) => s.matrixTwinkleEffect);
+  const setMatrixTwinkleEffect = useIoTStore((s) => s.setMatrixTwinkleEffect);
+  const matrixTwinkleSpeed = useIoTStore((s) => s.matrixTwinkleSpeed);
+  const setMatrixTwinkleSpeed = useIoTStore((s) => s.setMatrixTwinkleSpeed);
+  const dashboardBgColor = useIoTStore((s) => s.dashboardBgColor);
+  const setDashboardBgColor = useIoTStore((s) => s.setDashboardBgColor);
+  const dashboardBgOpacity = useIoTStore((s) => s.dashboardBgOpacity);
+  const setDashboardBgOpacity = useIoTStore((s) => s.setDashboardBgOpacity);
+  const headerPosition = useIoTStore((s) => s.headerPosition);
+  const setHeaderPosition = useIoTStore((s) => s.setHeaderPosition);
+  const dashboardWidth = useIoTStore((s) => s.dashboardWidth);
+  const setDashboardWidth = useIoTStore((s) => s.setDashboardWidth);
+  const isGroupsCompactLayout = useIoTStore((s) => s.isGroupsCompactLayout);
+  const setIsGroupsCompactLayout = useIoTStore((s) => s.setIsGroupsCompactLayout);
+  const isSegmentsCompactLayout = useIoTStore((s) => s.isSegmentsCompactLayout);
+  const setIsSegmentsCompactLayout = useIoTStore((s) => s.setIsSegmentsCompactLayout);
+  const activeSegmentId = useIoTStore((s) => s.activeSegmentId);
+  const activeGroupId = useIoTStore((s) => s.activeGroupId);
 
-  const segmentsLength = useIoTStore(s => s.segments.length);
-  const selectedGroupFilter = useIoTStore(s => s.selectedGroupFilter);
-  const setSelectedGroupFilter = useIoTStore(s => s.setSelectedGroupFilter);
-  const groupsOrder = useIoTStore(s => s.groupsOrder);
-  const groupsCols = useIoTStore(s => s.groupsCols);
-  const groupConfigs = useIoTStore(s => s.groupConfigs);
+  const segmentsLength = useIoTStore((s) => s.segments.length);
+  const selectedGroupFilter = useIoTStore((s) => s.selectedGroupFilter);
+  const setSelectedGroupFilter = useIoTStore((s) => s.setSelectedGroupFilter);
+  const groupsOrder = useIoTStore((s) => s.groupsOrder);
+  const groupsCols = useIoTStore((s) => s.groupsCols);
+  const groupConfigs = useIoTStore((s) => s.groupConfigs);
 
-  const { onTouchStart, onTouchMove, onTouchEnd } = useWorkspaceSwipe(selectedGroupFilter, setSelectedGroupFilter, groupsOrder);
+  const { onTouchStart, onTouchMove, onTouchEnd } = useWorkspaceSwipe(
+    selectedGroupFilter,
+    setSelectedGroupFilter,
+    groupsOrder,
+  );
   const { innerWidthClass, outerWidthClass } = useDashboardLayout(dashboardWidth);
 
   const isLeftHeader = headerPosition === "left";
@@ -152,18 +155,17 @@ export default function DashboardWorkspace() {
   };
 
   return (
-    <div 
+    <div
       className={`w-full flex ${isLeftHeader ? "flex-col items-center" : "flex-row-reverse items-start justify-center gap-6"} ${outerWidthClass} mx-auto transition-all duration-500`}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
-      <main className={`flex-1 flex flex-col justify-center items-center text-center ${innerWidthClass} mx-auto space-y-8 py-4 w-full relative transition-all duration-500`}>
+      <main
+        className={`flex-1 flex flex-col justify-center items-center text-center ${innerWidthClass} mx-auto space-y-8 py-4 w-full relative transition-all duration-500`}
+      >
         {!isFullyReady ? (
           <div className="w-full flex flex-col gap-4">
-            <div className="-mt-6 sm:-mt-10 mb-2 w-full flex justify-center">
-               <div className="w-32 h-10 bg-[var(--card-bg)] rounded-2xl animate-pulse border border-[var(--border-color)]" />
-            </div>
             <WorkspaceSkeleton groupsCols={groupsCols} />
           </div>
         ) : (
@@ -217,7 +219,13 @@ export default function DashboardWorkspace() {
                 transition={{ duration: 0.3 }}
                 className="w-full"
               >
-                <React.Suspense fallback={<div className="w-full h-96 flex items-center justify-center"><div className="w-12 h-12 rounded-full border-2 border-[var(--accent3)] border-t-transparent animate-spin" /></div>}>
+                <React.Suspense
+                  fallback={
+                    <div className="w-full h-96 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full border-2 border-[var(--accent3)] border-t-transparent animate-spin" />
+                    </div>
+                  }
+                >
                   <WelcomePortal
                     setIsMenuOpen={setIsMenuOpen}
                     setIsModulesMenuOpen={setIsModulesMenuOpen}
@@ -237,15 +245,6 @@ export default function DashboardWorkspace() {
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="w-full flex flex-col gap-4"
               >
-                <div className="-mt-6 sm:-mt-10 mb-2 w-full flex justify-center">
-                  <GroupFilterSelector
-                    groupsOrder={groupsOrder}
-                    selectedGroupFilter={selectedGroupFilter}
-                    setSelectedGroupFilter={setSelectedGroupFilter}
-                    animationsEnabled={animationsEnabled}
-                  />
-                </div>
-
                 <IoTWorkspace
                   sensors={sensors}
                   groupsOrder={groupsOrder}

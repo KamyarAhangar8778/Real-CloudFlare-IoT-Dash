@@ -1,8 +1,7 @@
-import React from "react";
-import { motion, AnimatePresence } from "motion/react";
 import { Sliders, Trash2 } from "lucide-react";
-import { Segment } from "../core/types";
+import { AnimatePresence, motion } from "motion/react";
 import { WidgetIcon } from "@/components/icons";
+import type { Segment } from "../core/types";
 
 interface SegmentListProps {
   segments: Segment[];
@@ -43,8 +42,12 @@ export default function SegmentList({ segments, onRemoveSegment }: SegmentListPr
                 </button>
 
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                  <div className="w-7 h-7 rounded-lg bg-[var(--accent3-transparent)] border border-[var(--accent3-medium)] flex items-center justify-center shrink-0">
-                    <WidgetIcon icon={seg.icon} defaultIcon="Cpu" className="w-4 h-4 text-[var(--accent3)]" />
+                  <div className="w-7 h-7 rounded-full bg-[var(--accent3-transparent)] border border-[var(--accent3-medium)] flex items-center justify-center shrink-0">
+                    <WidgetIcon
+                      icon={seg.icon}
+                      defaultIcon="Cpu"
+                      className="w-4 h-4 text-[var(--accent3)]"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="block text-xs font-bold theme-text-primary truncate">
