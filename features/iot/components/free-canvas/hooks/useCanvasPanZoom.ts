@@ -4,7 +4,7 @@ import { DEFAULT_CANVAS_TRANSFORM, CANVAS_BOUNDS } from "../core/constants";
 
 /**
  * Custom hook to manage pan, drag navigation, and zoom transformations for 2D Canvas.
- * Supports smooth gesture handling and bounded scaling.
+ * Supports smooth pointer gesture handling, trackpad 2D panning, and bounded scaling.
  * 
  * @param initial - Optional initial transform coordinates.
  * @returns State and event handlers for canvas pan and zoom operations.
@@ -50,6 +50,25 @@ export function useCanvasPanZoom(initial: CanvasTransform = DEFAULT_CANVAS_TRANS
     }
   }, [isPanning]);
 
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+      setTransform((prev) => {
+        const nextScale = Math.min(
+          CANVAS_BOUNDS.maxScale,
+          Math.max(CANVAS_BOUNDS.minScale, +(prev.scale * zoomFactor).toFixed(2))
+        );
+        return { ...prev, scale: nextScale };
+      });
+    } else {
+      setTransform((prev) => ({
+        ...prev,
+        x: prev.x - e.deltaX,
+        y: prev.y - e.deltaY,
+      }));
+    }
+  }, []);
+
   const zoomIn = useCallback(() => {
     setTransform((prev) => ({
       ...prev,
@@ -75,6 +94,7 @@ export function useCanvasPanZoom(initial: CanvasTransform = DEFAULT_CANVAS_TRANS
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
+    handleWheel,
     zoomIn,
     zoomOut,
     resetTransform,

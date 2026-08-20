@@ -110,7 +110,7 @@ export function FreeCanvasGrid({
   });
 
   return (
-    <CanvasViewport className="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-main)] shadow-inner">
+    <CanvasViewport className="w-full h-full bg-[var(--bg-main)]">
       <SortableContext
         items={filteredGroupsOrder.map((g) => `group-${g}`)}
         strategy={rectSortingStrategy}

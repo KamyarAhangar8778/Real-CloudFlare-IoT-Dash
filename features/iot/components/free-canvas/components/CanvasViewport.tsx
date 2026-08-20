@@ -18,6 +18,7 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
+    handleWheel,
     zoomIn,
     zoomOut,
     resetTransform,
@@ -25,13 +26,14 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
 
   return (
     <div
-      className={`relative w-full h-full min-h-[70vh] overflow-hidden select-none touch-none ${
+      className={`relative w-full h-full overflow-hidden select-none touch-none ${
         isPanning ? "cursor-grabbing" : "cursor-grab"
       } ${className}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
+      onWheel={handleWheel}
     >
       {/* Dynamic Grid Background */}
       <CanvasGridBackground transform={transform} />
@@ -43,7 +45,7 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
           transform: `translate3d(${transform.x}px, ${transform.y}px, 0px) scale(${transform.scale})`,
         }}
       >
-        <div className="p-8 w-max h-max pointer-events-auto">
+        <div className="pt-28 pb-20 px-10 w-max h-max pointer-events-auto">
           {children}
         </div>
       </div>
