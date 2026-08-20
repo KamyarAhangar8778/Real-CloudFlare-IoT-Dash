@@ -235,6 +235,8 @@ export interface AestheticSlice {
   setIsGroupsCompactLayout: (c: boolean) => void;
   isSegmentsCompactLayout: boolean;
   setIsSegmentsCompactLayout: (c: boolean) => void;
+  dashboardViewMode: "grid" | "free_canvas";
+  setDashboardViewMode: (mode: "grid" | "free_canvas") => void;
 }
 
 export interface ConfigSlice {

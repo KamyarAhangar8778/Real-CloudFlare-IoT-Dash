@@ -33,6 +33,7 @@ export interface EspConfig {
     dashboard_bg_opacity?: number;
     groups_compact_layout?: boolean;
     segments_compact_layout?: boolean;
+    dashboard_view_mode?: "grid" | "free_canvas";
   };
   layout: {
     groups_order: string[];

@@ -48,6 +48,9 @@ export function useApplyEspConfig() {
     if (config.preferences.segments_compact_layout !== undefined) {
       store.setIsSegmentsCompactLayout(config.preferences.segments_compact_layout);
     }
+    if (config.preferences.dashboard_view_mode) {
+      store.setDashboardViewMode(config.preferences.dashboard_view_mode);
+    }
     
     store.applyEspConfig(config);
   }, [store]);

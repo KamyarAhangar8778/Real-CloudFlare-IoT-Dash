@@ -1,6 +1,12 @@
 import { EspConfig } from "@/features/iot/services/esp32Config";
 import { getCloudflareWorkerUrl } from "@/features/iot/services/cloudflareService";
 
+/**
+ * Builds the complete ESP32 configuration payload from the Zustand store state.
+ * 
+ * @param params - Store state object containing device preferences and IoT entities.
+ * @returns Serialized EspConfig ready for synchronization.
+ */
 export function buildEspConfig(params: any): EspConfig {
   return {
     version: "1.2.0-Achaemenid",
@@ -35,6 +41,7 @@ export function buildEspConfig(params: any): EspConfig {
       manual_save_mode: params.manualSaveMode,
       groups_compact_layout: params.isGroupsCompactLayout,
       segments_compact_layout: params.isSegmentsCompactLayout,
+      dashboard_view_mode: params.dashboardViewMode || "grid",
     },
     layout: {
       groups_order: params.groupsOrder,

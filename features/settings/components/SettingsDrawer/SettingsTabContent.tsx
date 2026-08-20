@@ -66,6 +66,8 @@ export function SettingsTabContent({
   setIsGroupsCompactLayout,
   isSegmentsCompactLayout,
   setIsSegmentsCompactLayout,
+  dashboardViewMode,
+  setDashboardViewMode,
 }: SettingsTabContentProps) {
   switch (activeTab) {
     case "element-engine":
@@ -117,6 +119,8 @@ export function SettingsTabContent({
           setIsGroupsCompactLayout={setIsGroupsCompactLayout}
           isSegmentsCompactLayout={isSegmentsCompactLayout}
           setIsSegmentsCompactLayout={setIsSegmentsCompactLayout}
+          dashboardViewMode={dashboardViewMode}
+          setDashboardViewMode={setDashboardViewMode}
         />
       );
     case "matrix":

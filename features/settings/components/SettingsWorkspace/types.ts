@@ -57,4 +57,6 @@ export interface SettingsWorkspaceProps {
   isSegmentsCompactLayout: boolean;
   setIsSegmentsCompactLayout: (val: boolean) => void;
   setAnimationsEnabled: (val: boolean) => void;
+  dashboardViewMode: "grid" | "free_canvas";
+  setDashboardViewMode: (val: "grid" | "free_canvas") => void;
 }

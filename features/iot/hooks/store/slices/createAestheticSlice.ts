@@ -26,6 +26,7 @@ export const createAestheticSlice: StateCreator<IoTStoreState, [], [], Aesthetic
   dashboardWidth: 1,
   isGroupsCompactLayout: false,
   isSegmentsCompactLayout: false,
+  dashboardViewMode: "grid",
 
   setIsDark: (d) => set({ isDark: d }),
   setAccent3: (a) => set({ accent3: a }),
@@ -51,4 +52,5 @@ export const createAestheticSlice: StateCreator<IoTStoreState, [], [], Aesthetic
   setDashboardWidth: (w) => set({ dashboardWidth: w }),
   setIsGroupsCompactLayout: (c) => set({ isGroupsCompactLayout: c }),
   setIsSegmentsCompactLayout: (c) => set({ isSegmentsCompactLayout: c }),
+  setDashboardViewMode: (mode) => set({ dashboardViewMode: mode }),
 });

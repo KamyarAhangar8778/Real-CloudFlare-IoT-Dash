@@ -87,6 +87,8 @@ export default function DashboardWorkspace() {
   const setIsGroupsCompactLayout = useIoTStore((s) => s.setIsGroupsCompactLayout);
   const isSegmentsCompactLayout = useIoTStore((s) => s.isSegmentsCompactLayout);
   const setIsSegmentsCompactLayout = useIoTStore((s) => s.setIsSegmentsCompactLayout);
+  const dashboardViewMode = useIoTStore((s) => s.dashboardViewMode);
+  const setDashboardViewMode = useIoTStore((s) => s.setDashboardViewMode);
   const activeSegmentId = useIoTStore((s) => s.activeSegmentId);
   const activeGroupId = useIoTStore((s) => s.activeGroupId);
 
@@ -152,6 +154,8 @@ export default function DashboardWorkspace() {
     setIsGroupsCompactLayout,
     isSegmentsCompactLayout,
     setIsSegmentsCompactLayout,
+    dashboardViewMode,
+    setDashboardViewMode,
   };
 
   return (
@@ -258,6 +262,7 @@ export default function DashboardWorkspace() {
                   isGroupsCompactLayout={isGroupsCompactLayout}
                   isSegmentsCompactLayout={isSegmentsCompactLayout}
                   dashboardWidth={dashboardWidth}
+                  dashboardViewMode={dashboardViewMode}
                   handleDragStart={handleDragStart}
                   handleDragOver={handleDragOver}
                   handleDragEnd={handleDragEnd}

@@ -13,6 +13,7 @@ export interface IoTWorkspaceProps {
   isGroupsCompactLayout?: boolean;
   isSegmentsCompactLayout?: boolean;
   dashboardWidth?: number;
+  dashboardViewMode?: "grid" | "free_canvas";
 
   handleDragStart: (event: DragStartEvent) => void;
   handleDragOver: (event: DragOverEvent) => void;

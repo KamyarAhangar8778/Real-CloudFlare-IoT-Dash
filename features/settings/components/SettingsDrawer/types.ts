@@ -51,6 +51,8 @@ export interface SettingsDrawerProps {
   setIsGroupsCompactLayout: (val: boolean) => void;
   isSegmentsCompactLayout: boolean;
   setIsSegmentsCompactLayout: (val: boolean) => void;
+  dashboardViewMode: "grid" | "free_canvas";
+  setDashboardViewMode: (val: "grid" | "free_canvas") => void;
 }
 
 export const SETTINGS_TABS = [

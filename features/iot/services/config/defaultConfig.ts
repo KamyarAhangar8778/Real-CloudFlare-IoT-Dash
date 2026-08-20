@@ -30,6 +30,7 @@ export const DEFAULT_ESP_CONFIG: EspConfig = {
     manual_save_mode: false,
     groups_compact_layout: false,
     segments_compact_layout: false,
+    dashboard_view_mode: "grid",
   },
   layout: {
     groups_order: [],
