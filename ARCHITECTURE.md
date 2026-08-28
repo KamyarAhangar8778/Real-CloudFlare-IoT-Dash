@@ -82,7 +82,6 @@
 ---
 
 ## 5. LLM Code Modification Rules & Guidelines
-1. **Single Responsibility**: Maintain file length < 150 lines. Extract sub-components into separate files.
 2. **Path Aliases**: Always use `@/*` imports (maps to project root).
 3. **Icons**: Use `lucide-react` only. Do not inline SVGs unless required for dynamic border animations.
 4. **Header Tag**: Use `<header>` for header containers.

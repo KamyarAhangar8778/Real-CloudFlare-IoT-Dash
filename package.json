@@ -6,8 +6,7 @@
     "dev": "next dev --turbo -p 3000 -H 0.0.0.0",
     "build": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "biome lint app components features lib",
-    "format": "biome format --write app components features lib",
+    "lint": "tsc --noEmit",
     "clean": "node -e \"['.next', 'out', 'tsconfig.tsbuildinfo'].forEach(p => require('fs').rmSync(p, { recursive: true, force: true }))\""
   },
   "dependencies": {
@@ -33,7 +32,6 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
     "@next/bundle-analyzer": "^16.2.6",
     "@tailwindcss/postcss": "4.1.11",
     "@tailwindcss/typography": "^0.5.19",

@@ -16,7 +16,6 @@ This dashboard blends historical Persian legacy with modern technology:
 
 - **Core**: Next.js 15 (App Router), React 19, TypeScript
 - **Styling**: Tailwind CSS v4 (using `@theme` variables for dynamic styling)
-- **Linter & Formatter**: Biome (for ultra-fast verification and code formatting)
 - **State Management**: Zustand
 - **Real-time Communication**: MQTT (via broker connectivity to ESP32 microcontrollers)
 - **Data Querying**: TanStack React Query v5
@@ -57,9 +56,8 @@ This dashboard blends historical Persian legacy with modern technology:
 
 ## 🛠️ Development & Script Guidelines
 
-This project uses **Biome** instead of ESLint/Prettier for style enforcement. Please refer to [CLAUDE.md](CLAUDE.md) for full commands:
+Please refer to [CLAUDE.md](CLAUDE.md) for full commands:
 - **Lint**: `npm run lint`
-- **Format**: `npm run format`
 - **Clean Cache**: `npm run clean`
 
 For structural details, check [ARCHITECTURE.md](ARCHITECTURE.md).

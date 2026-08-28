@@ -95,13 +95,15 @@ export interface SegmentsSlice {
 
 export interface GroupsSlice {
   groupsOrder: string[];
-  groupConfigs: Record<string, { maxCols: number; icon?: string }>;
+  groupConfigs: Record<string, { maxCols: number; icon?: string; x?: number; y?: number }>;
   groupsCols: number;
   setGroupsOrder: (order: string[] | ((prev: string[]) => string[])) => void;
   setGroupConfigs: (
     configs:
-      | Record<string, { maxCols: number }>
-      | ((prev: Record<string, { maxCols: number }>) => Record<string, { maxCols: number }>),
+      | Record<string, { maxCols: number; icon?: string; x?: number; y?: number }>
+      | ((
+          prev: Record<string, { maxCols: number; icon?: string; x?: number; y?: number }>
+        ) => Record<string, { maxCols: number; icon?: string; x?: number; y?: number }>),
   ) => void;
   setGroupsCols: (cols: number) => void;
 }

@@ -56,12 +56,12 @@ export const CanvasViewport: React.FC<CanvasViewportProps> = ({
 
       {/* Infinite Canvas Interactive Plane driven by Damped Physics */}
       <div
-        className="absolute inset-0 origin-top-left will-change-transform"
+        className="absolute inset-0 origin-top-left will-change-transform pointer-events-none"
         style={{
           transform: `translate3d(${transform.x}px, ${transform.y}px, 0px) scale(${transform.scale})`,
         }}
       >
-        <div className="p-8 w-max h-max pointer-events-auto">
+        <div className="relative pointer-events-auto min-w-[6000px] min-h-[6000px]">
           {children}
         </div>
       </div>

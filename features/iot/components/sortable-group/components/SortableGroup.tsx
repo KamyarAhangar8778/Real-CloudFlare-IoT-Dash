@@ -33,10 +33,13 @@ export default function SortableGroup({
   children,
   isOverlayItem,
   isSegmentsCompactLayout,
+  isFreeCanvas = false,
+  customDragListeners,
+  customDragAttributes,
 }: SortableGroupProps) {
   const {
-    attributes,
-    listeners,
+    attributes: sortableAttributes,
+    listeners: sortableListeners,
     setNodeRef,
     transform,
     transition,
@@ -47,17 +50,22 @@ export default function SortableGroup({
       type: "Group",
       group: id,
     },
-    disabled: isOverlayItem,
+    disabled: isOverlayItem || isFreeCanvas,
   });
 
-  const style = {
-    transform: CSS.Transform.toString(isDragging ? null : transform),
-    transition: animationsEnabled
-      ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
-      : "none",
-    zIndex: isDragging ? 0 : undefined,
-    opacity: isDragging ? 0.3 : 1,
-  };
+  const effectiveAttributes = isFreeCanvas ? customDragAttributes : sortableAttributes;
+  const effectiveListeners = isFreeCanvas ? customDragListeners : sortableListeners;
+
+  const style = isFreeCanvas
+    ? undefined
+    : {
+        transform: CSS.Transform.toString(isDragging ? null : transform),
+        transition: animationsEnabled
+          ? transition || "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)"
+          : "none",
+        zIndex: isDragging ? 0 : undefined,
+        opacity: isDragging ? 0.3 : 1,
+      };
 
   const childrenArray = React.Children.toArray(children);
   const { effectiveCols, masonryChildren, lastRowChild, columns } = useMasonryGrid(
@@ -117,8 +125,8 @@ export default function SortableGroup({
         onAddPlaceholder={onAddPlaceholder}
         onDeleteGroup={onDeleteGroup}
         parentGroupsCols={parentGroupsCols}
-        attributes={attributes}
-        listeners={listeners}
+        attributes={effectiveAttributes}
+        listeners={effectiveListeners}
       />
 
       {/* Body Island */}

@@ -38,7 +38,7 @@ export interface EspConfig {
   layout: {
     groups_order: string[];
     groups_cols: number;
-    group_configs: Record<string, { maxCols: number }>;
+    group_configs: Record<string, { maxCols: number; icon?: string; x?: number; y?: number }>;
   };
   segments: Array<{
     id: string;

@@ -14,4 +14,7 @@ export interface SortableGroupProps {
   children: React.ReactNode;
   isOverlayItem?: boolean;
   isSegmentsCompactLayout?: boolean;
+  isFreeCanvas?: boolean;
+  customDragListeners?: Record<string, any>;
+  customDragAttributes?: Record<string, any>;
 }
