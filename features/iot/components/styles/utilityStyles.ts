@@ -3,6 +3,12 @@ interface UtilityStylesParams {
   animationsEnabled: boolean;
 }
 
+/**
+ * Generates runtime utility CSS classes matching the high-contrast dark theme.
+ *
+ * @param {UtilityStylesParams} params - Dynamic state parameters.
+ * @returns {string} Injected utility CSS class rules.
+ */
 export function getUtilityStyles({ isDark, animationsEnabled }: UtilityStylesParams): string {
   return `
     /* Active Performance Settings - Disabling CSS animations on demand */
@@ -54,15 +60,20 @@ export function getUtilityStyles({ isDark, animationsEnabled }: UtilityStylesPar
     .border-accent3-medium { border-color: var(--accent3-medium); }
     .border-accent4-medium { border-color: var(--accent4-medium); }
 
-    .text-ruby { color: var(--accent-ruby); }
-    .bg-ruby { background-color: var(--accent-ruby); }
-    .border-ruby { border-color: var(--accent-ruby); }
-    .shadow-ruby-glow { box-shadow: 0 0 16px var(--accent-ruby-glow); }
+    .text-cyan { color: var(--accent-cyan); }
+    .bg-cyan { background-color: var(--accent-cyan); }
+    .border-cyan { border-color: var(--accent-cyan); }
+    .shadow-cyan-glow { box-shadow: 0 0 16px var(--accent-cyan-glow); }
 
-    .text-phosphor { color: var(--accent-phosphor); }
-    .bg-phosphor { background-color: var(--accent-phosphor); }
-    .border-phosphor { border-color: var(--accent-phosphor); }
-    .shadow-phosphor-glow { box-shadow: 0 0 16px var(--accent-phosphor-glow); }
+    .text-emerald { color: var(--accent-emerald); }
+    .bg-emerald { background-color: var(--accent-emerald); }
+    .border-emerald { border-color: var(--accent-emerald); }
+    .shadow-emerald-glow { box-shadow: 0 0 16px var(--accent-emerald-glow); }
+
+    .text-rose { color: var(--accent-rose); }
+    .bg-rose { background-color: var(--accent-rose); }
+    .border-rose { border-color: var(--accent-rose); }
+    .shadow-rose-glow { box-shadow: 0 0 16px var(--accent-rose-glow); }
 
     .bg-carbon { background-color: var(--accent-carbon); }
   `;

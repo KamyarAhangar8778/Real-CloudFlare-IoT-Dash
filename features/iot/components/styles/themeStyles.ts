@@ -7,12 +7,15 @@ interface ThemeStylesParams {
 }
 
 /**
- * Generates unified CSS tokens strictly conforming to DESIGN.md
- * Ultra-Deep Carbon Dark & High-Contrast Ruby/Phosphor System.
+ * Generates unified CSS tokens strictly conforming to DESIGN.md.
+ * Ultra-Deep Obsidian Dark with Maximum Contrast and a Restrained Palette.
+ *
+ * @param {ThemeStylesParams} params - Dynamic theme parameters including accents and background opacity.
+ * @returns {string} Injected CSS string with root custom properties.
  */
 export function getThemeStyles({
-  accent3 = "#FF1756",
-  accent4 = "#00FF88",
+  accent3 = "#00F0FF",
+  accent4 = "#10B981",
 }: ThemeStylesParams = {}): string {
   return `
     :root {
@@ -20,38 +23,33 @@ export function getThemeStyles({
       --font-vazir: var(--font-vazirmatn), 'Vazirmatn', system-ui, -apple-system, sans-serif;
       --selected-font: var(--font-vazirmatn), 'Vazirmatn', system-ui, -apple-system, sans-serif;
       
-      /* Surface & Elevation Tokens - Ultra-Deep Carbon & Obsidian */
-      --canvas-base: #030407;
-      --surface-panel: #07090F;
-      --surface-card: #0D1017;
-      --surface-glass: rgba(13, 16, 23, 0.88);
-      --surface-elevated: #141824;
-      --border-subtle: rgba(255, 255, 255, 0.10);
-      --border-highlight: rgba(255, 255, 255, 0.22);
+      /* Surface & Elevation Tokens — Ultra-Deep Obsidian & True Dark Slate */
+      --canvas-base: #020306;
+      --surface-panel: #06080D;
+      --surface-card: #0A0D14;
+      --surface-glass: rgba(10, 13, 20, 0.92);
+      --surface-elevated: #121620;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(255, 255, 255, 0.18);
 
-      /* Typography & High Contrast Tokens */
+      /* Typography & Maximum Contrast Tokens */
       --text-primary: #FFFFFF;
-      --text-secondary: #E2E8F0;
+      --text-secondary: #F1F5F9;
       --text-tertiary: #94A3B8;
       --text-muted: #64748B;
       --text-disabled: #334155;
 
-      /* High-Contrast Neon & Vivid Accents */
-      --accent-ruby: #FF1756;
-      --accent-ruby-pulse: #FF4D7D;
-      --accent-ruby-glow: rgba(255, 23, 86, 0.4);
-      --accent-phosphor: #00FF88;
-      --accent-phosphor-pulse: #5CFFB0;
-      --accent-phosphor-glow: rgba(0, 255, 136, 0.4);
+      /* Disciplined Restrained Semantic Accents (Minimal Color Clutter) */
       --accent-cyan: #00F0FF;
       --accent-cyan-pulse: #38E1FF;
-      --accent-amber: #FBBF24;
-      --accent-amber-pulse: #FDE047;
-      --accent-rose: #FF1756;
-      --accent-rose-pulse: #FF4D7D;
-      --accent-indigo: #818CF8;
-      --accent-indigo-pulse: #A5B4FC;
-      --accent-carbon: #030407;
+      --accent-cyan-glow: rgba(0, 240, 255, 0.35);
+      --accent-emerald: #10B981;
+      --accent-emerald-pulse: #34D399;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.35);
+      --accent-rose: #EF4444;
+      --accent-rose-pulse: #F87171;
+      --accent-rose-glow: rgba(239, 68, 68, 0.35);
+      --accent-carbon: #020306;
 
       /* Dynamic Accent Mapping */
       --accent3: ${accent3};
@@ -64,16 +62,16 @@ export function getThemeStyles({
       --accent4-heavy: ${accent4}AA;
 
       /* Semantic Layout Aliases */
-      --bg-main: #030407;
-      --bg-gradient-from: #080A10;
-      --bg-gradient-via: #030407;
-      --bg-gradient-to: #010204;
-      --card-bg: rgba(13, 16, 23, 0.88);
-      --card-bg-solid: #0D1017;
-      --card-hover-bg: #161B28;
-      --border-color: rgba(255, 255, 255, 0.10);
-      --drawer-gradient-from: #080A10;
-      --drawer-gradient-to: #030407;
+      --bg-main: #020306;
+      --bg-gradient-from: #06080D;
+      --bg-gradient-via: #020306;
+      --bg-gradient-to: #010103;
+      --card-bg: rgba(10, 13, 20, 0.92);
+      --card-bg-solid: #0A0D14;
+      --card-hover-bg: #121620;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --drawer-gradient-from: #06080D;
+      --drawer-gradient-to: #020306;
     }
     
     html, body, button, h1, h2, h3, h4, h5, h6, select, span, input, textarea, .font-sans {

@@ -3,8 +3,8 @@ import { IoTStoreState, AestheticSlice } from "../types";
 
 export const createAestheticSlice: StateCreator<IoTStoreState, [], [], AestheticSlice> = (set) => ({
   isDark: true,
-  accent3: "#FF1756",
-  accent4: "#00FF88",
+  accent3: "#00F0FF",
+  accent4: "#10B981",
   animationsEnabled: true,
   animationsFps: 60,
   headerAnimationType: "fade",
@@ -13,7 +13,7 @@ export const createAestheticSlice: StateCreator<IoTStoreState, [], [], Aesthetic
   matrixSize: 4,
   matrixHoverSize: 3,
   matrixOpacity: 15,
-  matrixColor: "#00FF88",
+  matrixColor: "#00F0FF",
   matrixMoving: true,
   matrixMouseEffect: true,
   matrixTwinkleEffect: false,
