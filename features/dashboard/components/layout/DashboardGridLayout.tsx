@@ -12,8 +12,8 @@ import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
 import { useDashboardLayout } from "../../hooks/useDashboardLayout";
 
 /**
- * Standard 1D Vertical Grid Layout.
- * Renders structured multi-column vertical scrolling workspace with background animations.
+ * Standard 1D Vertical Grid Layout with Permanent Right-Docked Header.
+ * Renders structured multi-column vertical scrolling workspace with right sidebar header.
  */
 export default function DashboardGridLayout() {
   const accent3 = useIoTStore((s) => s.accent3);
@@ -29,13 +29,12 @@ export default function DashboardGridLayout() {
   const matrixMouseEffect = useIoTStore((s) => s.matrixMouseEffect);
   const matrixTwinkleEffect = useIoTStore((s) => s.matrixTwinkleEffect);
   const matrixTwinkleSpeed = useIoTStore((s) => s.matrixTwinkleSpeed);
-  const headerPosition = useIoTStore((s) => s.headerPosition);
   const dashboardWidth = useIoTStore((s) => s.dashboardWidth);
 
-  const { topHeaderContainerWidth, leftHeaderContentWidth } = useDashboardLayout(dashboardWidth);
+  const { leftHeaderContentWidth } = useDashboardLayout(dashboardWidth);
 
   return (
-    <div className="animate-fade-in flex flex-col flex-1 min-h-screen justify-between">
+    <div className="animate-fade-in flex flex-col flex-1 min-h-screen justify-between" dir="rtl">
       {/* Background Matrix/Cuneiform Animations (Vertical Grid Mode Only) */}
       <CuneiformBackground
         isDark={isDark}
@@ -53,23 +52,12 @@ export default function DashboardGridLayout() {
         animationsFps={animationsFps}
       />
 
-      <div
-        className={`relative z-10 w-full flex-1 transition-all duration-500 ${
-          headerPosition === "left"
-            ? "flex flex-col md:flex-row-reverse items-stretch"
-            : `flex flex-col ${topHeaderContainerWidth} mx-auto px-6 py-6 md:py-8 justify-start gap-12`
-        }`}
-      >
-        {headerPosition === "left" && <DashboardHeader position="left" />}
+      <div className="relative z-10 w-full flex-1 flex flex-row items-stretch transition-all duration-500">
+        {/* Right-Docked Master Header (Pinned to the right of the screen) */}
+        <DashboardHeader />
 
-        <div
-          className={`flex-1 flex flex-col justify-start gap-12 ${
-            headerPosition === "left"
-              ? `p-6 md:pt-1 md:pb-8 md:px-8 ${leftHeaderContentWidth} w-full mx-auto`
-              : "w-full"
-          }`}
-        >
-          <DashboardHeader position="topOrMobile" />
+        {/* Main Content Workspace (To the left of the header) */}
+        <div className={`flex-1 flex flex-col justify-start gap-12 p-4 md:pt-4 md:pb-8 md:px-8 ${leftHeaderContentWidth} w-full mx-auto`}>
           <DashboardMain />
         </div>
       </div>

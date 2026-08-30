@@ -11,7 +11,6 @@ export function useApplyEspConfig() {
     store.setIsDark(config.preferences.theme_mode === "dark");
     store.setAccent3(config.preferences.accent_color_3);
     store.setAccent4(config.preferences.accent_color_4);
-    store.setSelectedFont(config.preferences.font_family);
     store.setAnimationsEnabled(config.preferences.animations_enabled);
     
     if (config.preferences.animations_fps !== undefined) store.setAnimationsFps(config.preferences.animations_fps);

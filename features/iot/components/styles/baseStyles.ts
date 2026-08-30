@@ -25,7 +25,7 @@ export function getBaseStyles(isDark: boolean): string {
       }
     }
     select option {
-      background-color: ${isDark ? "#080c14" : "#ffffff"} !important;
+      background-color: ${isDark ? "#05070c" : "#ffffff"} !important;
       color: ${isDark ? "var(--text-primary)" : "#1e293b"} !important;
       padding: 12px !important;
       font-size: 13px !important;

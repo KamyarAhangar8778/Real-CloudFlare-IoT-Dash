@@ -7,8 +7,8 @@ export interface MasterHeaderProps {
   headerTitle: string;
   groupsCols: number;
   setGroupsCols: (val: number) => void;
-  headerPosition: "top" | "left";
-  setHeaderPosition: (val: "top" | "left") => void;
+  headerPosition?: "top" | "left";
+  setHeaderPosition?: (val: "top" | "left") => void;
   animationsEnabled?: boolean;
   isSidebarCollapsed?: boolean;
   setIsSidebarCollapsed?: (val: boolean) => void;

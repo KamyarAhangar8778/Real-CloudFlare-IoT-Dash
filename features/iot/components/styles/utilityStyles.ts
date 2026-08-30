@@ -49,9 +49,21 @@ export function getUtilityStyles({ isDark, animationsEnabled }: UtilityStylesPar
     .text-accent4 { color: var(--accent4); }
     .bg-accent3 { background-color: var(--accent3); }
     .bg-accent4 { background-color: var(--accent4); }
-    .border-accent3 { border-color: var(--accent3)0; }
+    .border-accent3 { border-color: var(--accent3); }
     .border-accent4 { border-color: var(--accent4); }
     .border-accent3-medium { border-color: var(--accent3-medium); }
     .border-accent4-medium { border-color: var(--accent4-medium); }
+
+    .text-ruby { color: var(--accent-ruby); }
+    .bg-ruby { background-color: var(--accent-ruby); }
+    .border-ruby { border-color: var(--accent-ruby); }
+    .shadow-ruby-glow { box-shadow: 0 0 16px var(--accent-ruby-glow); }
+
+    .text-phosphor { color: var(--accent-phosphor); }
+    .bg-phosphor { background-color: var(--accent-phosphor); }
+    .border-phosphor { border-color: var(--accent-phosphor); }
+    .shadow-phosphor-glow { box-shadow: 0 0 16px var(--accent-phosphor-glow); }
+
+    .bg-carbon { background-color: var(--accent-carbon); }
   `;
 }

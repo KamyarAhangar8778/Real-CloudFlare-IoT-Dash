@@ -6,7 +6,6 @@ export function useAestheticState() {
   const [isDark, setIsDark] = useState(false);
   const [accent3, setAccent3] = useState("#D4AF37");
   const [accent4, setAccent4] = useState("#10B981");
-  const [selectedFont, setSelectedFont] = useState("vazir");
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [animationsFps, setAnimationsFps] = useState(60);
   const [headerAnimationType, setHeaderAnimationType] = useState<"fade" | "chase">("fade");
@@ -35,8 +34,6 @@ export function useAestheticState() {
     setAccent3,
     accent4,
     setAccent4,
-    selectedFont,
-    setSelectedFont,
     animationsEnabled,
     setAnimationsEnabled,
     animationsFps,
