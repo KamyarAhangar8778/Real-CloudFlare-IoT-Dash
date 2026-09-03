@@ -9,6 +9,8 @@ export default function HeaderSettingsSection({
   setHeaderTitle,
   expandedSection,
   toggleSection,
+  headerPosition,
+  setHeaderPosition,
   hideHeader = false,
 }: HeaderSettingsSectionProps) {
   const isExpanded = hideHeader ? true : expandedSection === "header-settings";
@@ -17,6 +19,8 @@ export default function HeaderSettingsSection({
     return (
       <div className="theme-card-bg-solid border border-accent3-medium/30 p-4 space-y-4 overflow-hidden rounded-2xl text-right">
         <HeaderSettingsContent
+          headerPosition={headerPosition}
+          setHeaderPosition={setHeaderPosition}
           headerTitle={headerTitle}
           setHeaderTitle={setHeaderTitle}
         />
@@ -35,7 +39,7 @@ export default function HeaderSettingsSection({
           style={{ transform: isExpanded ? "rotate(-90deg)" : "rotate(0deg)" }}
         />
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold theme-text-primary">تنظیمات هدر</span>
+          <span className="text-xs font-bold theme-text-primary">موقعیت و تنظیمات هدر</span>
           <LayoutGrid className="w-4 h-4 text-accent4" style={{ color: "var(--accent4)" }} />
         </div>
       </button>
@@ -50,6 +54,8 @@ export default function HeaderSettingsSection({
             className="theme-card-bg-solid border-t border-accent3-medium/30 p-4 space-y-4 overflow-hidden text-right"
           >
             <HeaderSettingsContent
+              headerPosition={headerPosition}
+              setHeaderPosition={setHeaderPosition}
               headerTitle={headerTitle}
               setHeaderTitle={setHeaderTitle}
             />

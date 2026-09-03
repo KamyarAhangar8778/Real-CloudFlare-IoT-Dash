@@ -9,35 +9,35 @@ interface TriggerButtonProps {
 }
 
 export default function TriggerButton({ variant, isSidebarCollapsed, animationsEnabled, onClick }: TriggerButtonProps) {
-  if (isSidebarCollapsed || (variant === "horizontal" && isSidebarCollapsed !== false)) {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
       <button
-        id="mobile-global-rules-trigger"
         onClick={onClick}
-        className="w-10 h-10 p-2 bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] md:hover:border-[var(--accent3)]/60 rounded-xl text-[var(--accent3)] transition-all cursor-pointer flex justify-center items-center shadow-xs md:hover:shadow-[0_0_12px_var(--accent3-transparent)] active:scale-95"
-        title="قوانین و شرط‌ها"
+        className="w-full flex items-center justify-between p-3 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] hover:border-[var(--accent3-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 transform active:scale-[0.98]"
       >
-        <Settings2 className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "md:hover:rotate-90" : ""}`} />
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
+            <Settings2
+              className={`w-4 h-4 ${animationsEnabled ? "animate-[spin_10s_linear_infinite]" : ""}`}
+            />
+          </div>
+          <span className="text-xs font-semibold">قوانین و شرط‌ها</span>
+        </div>
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[var(--text-muted)] font-mono">
+          Rules
+        </span>
       </button>
     );
   }
 
   return (
     <button
+      id="mobile-global-rules-trigger"
       onClick={onClick}
-      className="w-full flex items-center justify-between p-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] md:hover:border-[var(--accent3)]/40 text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] transition-all duration-200 transform active:scale-[0.98] group cursor-pointer shadow-xs"
+      className="p-2 md:p-2.5 bg-[var(--card-bg-solid)] hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all hover:border-[var(--accent3)] active:scale-[0.97] group flex justify-center items-center w-full"
+      title="تنظیمات شرط‌ها"
     >
-      <div className="flex items-center gap-2.5">
-        <div className="p-1.5 rounded-lg bg-[var(--accent3-transparent)] text-[var(--accent3)]">
-          <Settings2
-            className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:rotate-90" : ""}`}
-          />
-        </div>
-        <span className="text-xs font-semibold">قوانین و سناریوها</span>
-      </div>
-      <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--border-color)]/60 text-[var(--text-muted)] font-mono">
-        Rules
-      </span>
+      <Settings2 className={`w-4 h-4 transition-transform duration-300 ${animationsEnabled ? "group-hover:rotate-90" : ""}`} />
     </button>
   );
 }

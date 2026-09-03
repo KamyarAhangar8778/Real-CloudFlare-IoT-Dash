@@ -51,6 +51,7 @@ export default function DashboardWorkspace() {
   const accent4 = useIoTStore((s) => s.accent4);
   const setIsMenuOpen = useIoTStore((s) => s.setIsMenuOpen);
   const animationsEnabled = useIoTStore((s) => s.animationsEnabled);
+  const headerPosition = useIoTStore((s) => s.headerPosition);
   const dashboardWidth = useIoTStore((s) => s.dashboardWidth);
   const isGroupsCompactLayout = useIoTStore((s) => s.isGroupsCompactLayout);
   const isSegmentsCompactLayout = useIoTStore((s) => s.isSegmentsCompactLayout);
@@ -70,6 +71,7 @@ export default function DashboardWorkspace() {
     groupsOrder
   );
   const { innerWidthClass, outerWidthClass } = useDashboardLayout(dashboardWidth);
+  const isLeftHeader = headerPosition === "left";
 
   if (!isFullyReady) {
     return (

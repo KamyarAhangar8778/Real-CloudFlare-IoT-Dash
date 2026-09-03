@@ -4,6 +4,8 @@ import { IoTStoreState, MenuSlice } from "../types";
 export const DEFAULT_SETTINGS_GROUPS_ORDER = [
   "mqtt",
   "wifi",
+  "colors",
+  "fonts",
   "matrix",
   "layout",
   "header-settings",
@@ -19,7 +21,7 @@ export const createMenuSlice: StateCreator<IoTStoreState, [], [], MenuSlice> = (
   isModulesMenuOpen: false,
   isEspDrawerOpen: false,
   isAutomationsMenuOpen: false,
-  activeSettingsTab: "layout",
+  activeSettingsTab: "colors",
   settingsGroupsOrder: DEFAULT_SETTINGS_GROUPS_ORDER,
 
   setIsMenuOpen: (o) => set({ isMenuOpen: o }),

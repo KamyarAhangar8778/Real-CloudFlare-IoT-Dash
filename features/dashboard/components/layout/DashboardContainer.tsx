@@ -20,6 +20,7 @@ export default function DashboardContainer() {
   const accent3 = useIoTStore((s) => s.accent3);
   const accent4 = useIoTStore((s) => s.accent4);
   const isDark = useIoTStore((s) => s.isDark);
+  const selectedFont = useIoTStore((s) => s.selectedFont);
   const animationsEnabled = useIoTStore((s) => s.animationsEnabled);
   const dashboardBgColor = useIoTStore((s) => s.dashboardBgColor);
   const dashboardBgOpacity = useIoTStore((s) => s.dashboardBgOpacity);
@@ -40,6 +41,7 @@ export default function DashboardContainer() {
           accent3={accent3}
           accent4={accent4}
           isDark={isDark}
+          selectedFont={selectedFont}
           animationsEnabled={animationsEnabled}
           dashboardBgColor={dashboardBgColor}
           dashboardBgOpacity={dashboardBgOpacity}

@@ -16,6 +16,8 @@ export interface SettingsWorkspaceProps {
   isDark: boolean;
   accent3: string;
   accent4: string;
+  selectedFont: string;
+  setSelectedFont: (val: string) => void;
   setAccent3: (val: string) => void;
   setAccent4: (val: string) => void;
   animationsFps: number;

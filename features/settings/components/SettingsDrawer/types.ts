@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic, Wifi, Settings2, Cpu } from "lucide-react";
+import { Palette, Type, Activity, LayoutGrid, Sparkles, Music, Radio, Command, Mic, Wifi, Settings2, Cpu } from "lucide-react";
 
 export interface SettingsDrawerProps {
   isOpen: boolean;
@@ -10,6 +10,8 @@ export interface SettingsDrawerProps {
   setAccent3: (val: string) => void;
   accent4: string;
   setAccent4: (val: string) => void;
+  selectedFont: string;
+  setSelectedFont: (val: string) => void;
   animationsEnabled: boolean;
   setAnimationsEnabled: (val: boolean) => void;
   animationsFps: number;
@@ -77,6 +79,18 @@ export const SETTINGS_TABS = [
     title: "مدیریت شرط‌ها و قوانین (Rules)",
     compactTitle: "قوانین و شرط‌ها",
     Icon: Settings2,
+  },
+  {
+    id: "colors",
+    title: "تنظیم تنوع رنگ و تضاد",
+    compactTitle: "رنگ ۳ و رنگ ۴ بورد",
+    Icon: Palette,
+  },
+  {
+    id: "fonts",
+    title: "مدیریت قلم و تایپوگرافی",
+    compactTitle: "قلم و فونت‌های سلطنتی",
+    Icon: Type,
   },
   {
     id: "animations",

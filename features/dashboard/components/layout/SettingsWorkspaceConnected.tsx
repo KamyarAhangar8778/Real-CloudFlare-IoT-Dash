@@ -15,6 +15,8 @@ export default function SettingsWorkspaceConnected() {
   const setAccent3 = useIoTStore((s) => s.setAccent3);
   const accent4 = useIoTStore((s) => s.accent4);
   const setAccent4 = useIoTStore((s) => s.setAccent4);
+  const selectedFont = useIoTStore((s) => s.selectedFont);
+  const setSelectedFont = useIoTStore((s) => s.setSelectedFont);
   const animationsFps = useIoTStore((s) => s.animationsFps);
   const setAnimationsFps = useIoTStore((s) => s.setAnimationsFps);
   const headerAnimationType = useIoTStore((s) => s.headerAnimationType);
@@ -63,6 +65,8 @@ export default function SettingsWorkspaceConnected() {
       setAccent3={setAccent3}
       accent4={accent4}
       setAccent4={setAccent4}
+      selectedFont={selectedFont}
+      setSelectedFont={setSelectedFont}
       animationsFps={animationsFps}
       setAnimationsFps={setAnimationsFps}
       headerAnimationType={headerAnimationType}

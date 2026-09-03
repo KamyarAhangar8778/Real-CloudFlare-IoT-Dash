@@ -3,6 +3,8 @@ import { SettingsGroupHeader } from "./SettingsGroupHeader";
 import { SETTINGS_GROUPS_META } from "./constants";
 import { SettingsWorkspaceProps } from "./types";
 
+import ColorsSection from "../ColorsSection";
+import TypographySection from "../TypographySection";
 import StabilitySection from "../StabilitySection";
 import MatrixSection from "../matrix-section/MatrixSection";
 import HeaderSettingsSection from "../HeaderSettingsSection";
@@ -28,6 +30,10 @@ export function SettingsGroupCard(props: SettingsGroupCardProps) {
 
   const renderContent = () => {
     switch (groupId) {
+      case "colors":
+        return <ColorsSection accent3={props.accent3} setAccent3={props.setAccent3} accent4={props.accent4} setAccent4={props.setAccent4} isDark={props.isDark} hideHeader={true} />;
+      case "fonts":
+        return <TypographySection selectedFont={props.selectedFont} setSelectedFont={props.setSelectedFont} hideHeader={true} />;
       case "animations":
         return <StabilitySection animationsEnabled={props.animationsEnabled} setAnimationsEnabled={props.setAnimationsEnabled} animationsFps={props.animationsFps} setAnimationsFps={props.setAnimationsFps} hideHeader={true} isDark={props.isDark} />;
       case "macros":

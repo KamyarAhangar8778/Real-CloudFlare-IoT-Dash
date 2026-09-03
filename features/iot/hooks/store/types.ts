@@ -195,6 +195,8 @@ export interface AestheticSlice {
   setAccent3: (a: string) => void;
   accent4: string;
   setAccent4: (a: string) => void;
+  selectedFont: string;
+  setSelectedFont: (f: string) => void;
   animationsEnabled: boolean;
   setAnimationsEnabled: (e: boolean) => void;
   animationsFps: number;

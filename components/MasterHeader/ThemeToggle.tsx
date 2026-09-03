@@ -5,35 +5,36 @@ interface ThemeToggleProps {
   isDark: boolean;
   setIsDark: (val: boolean) => void;
   animationsEnabled?: boolean;
-  variant?: "vertical" | "horizontal";
+  variant: "vertical" | "horizontal";
   isSidebarCollapsed?: boolean;
 }
 
 /**
- * Dashboard Theme Toggle button for the Right-Docked Master Header.
+ * Dashboard Theme Toggle button supporting horizontal and vertical layouts.
  */
 export default function ThemeToggle({
   isDark,
   setIsDark,
   animationsEnabled = false,
+  variant,
   isSidebarCollapsed,
 }: ThemeToggleProps) {
-  if (!isSidebarCollapsed) {
+  if (variant === "vertical" && !isSidebarCollapsed) {
     return (
-      <div className="pt-2 border-t border-[var(--border-color)]/60">
+      <div className="pt-4 border-t border-[var(--border-color)]">
         <button
           onClick={() => setIsDark(!isDark)}
-          className="w-full flex items-center justify-between p-2 rounded-xl bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] transition-all text-xs font-medium group cursor-pointer shadow-xs active:scale-[0.98]"
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-main)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] transition-all text-xs font-medium group"
           title="تغییر حالت روز و شب"
         >
           <span className="text-[11px] text-[var(--text-secondary)] font-medium">
             {isDark ? "حالت شب (تیره)" : "حالت روز (روشن)"}
           </span>
-          <div className="p-1.5 rounded-lg bg-[var(--card-bg)] border border-[var(--border-color)] shadow-xs text-[var(--accent3)]">
+          <div className="p-1.5 rounded-lg bg-[var(--card-bg-solid)] border border-[var(--border-color)] shadow-xs">
             <ThemeAnimatedIcon
               isDark={isDark}
               animationsEnabled={animationsEnabled}
-              size={15}
+              size={16}
             />
           </div>
         </button>
@@ -42,10 +43,10 @@ export default function ThemeToggle({
   }
 
   return (
-    <div className="pt-2 border-t border-[var(--border-color)]/60 flex justify-center w-full">
+    <div className={variant === "vertical" ? "pt-4 border-t border-[var(--border-color)] flex justify-center" : ""}>
       <button
         onClick={() => setIsDark(!isDark)}
-        className="w-10 h-10 flex justify-center items-center p-2 bg-[var(--card-bg)] md:hover:bg-[var(--card-hover-bg)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--accent3)] md:hover:border-[var(--accent3)]/50 transition-all active:scale-95 group cursor-pointer shadow-xs md:hover:shadow-[0_0_12px_var(--accent3-transparent)]"
+        className={`${variant === "vertical" ? "w-full flex justify-center items-center" : "hidden md:flex"} p-2 md:p-2.5 bg-transparent md:hover:bg-[var(--accent3-transparent)] border border-[var(--border-color)] rounded-xl text-[var(--text-secondary)] md:hover:text-[var(--text-primary)] md:hover:border-[var(--accent3)] transition-all active:scale-[0.97] group cursor-pointer`}
         title="تغییر رنگ پوسته"
       >
         <ThemeAnimatedIcon

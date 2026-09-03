@@ -4,8 +4,8 @@ import { DashboardWidthSetting } from "./DashboardWidthSetting";
 import { CompactLayoutToggles } from "./CompactLayoutToggles";
 
 interface LayoutSectionProps {
-  headerPosition?: "top" | "left";
-  setHeaderPosition?: (val: "top" | "left") => void;
+  headerPosition: "top" | "left";
+  setHeaderPosition: (val: "top" | "left") => void;
   headerTitle: string;
   setHeaderTitle: (val: string) => void;
   dashboardWidth: 1 | 2 | 3 | 4 | 5;
@@ -19,6 +19,7 @@ interface LayoutSectionProps {
 }
 
 export default function LayoutSection({
+  headerPosition, setHeaderPosition,
   headerTitle, setHeaderTitle,
   dashboardWidth, setDashboardWidth,
   isGroupsCompactLayout, setIsGroupsCompactLayout,
@@ -29,6 +30,8 @@ export default function LayoutSection({
     <div className="space-y-6">
       <div className="bg-[var(--card-bg-solid)] border border-[var(--border-color)] p-4 space-y-4 rounded-2xl text-right">
         <HeaderSettingsContent
+          headerPosition={headerPosition}
+          setHeaderPosition={setHeaderPosition}
           headerTitle={headerTitle}
           setHeaderTitle={setHeaderTitle}
         />

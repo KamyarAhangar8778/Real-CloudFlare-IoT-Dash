@@ -143,75 +143,7 @@ export const PERSIAN_GOLD_PRESET: ElementEngineConfig = {
   },
 };
 
-export const RUBY_PHOSPHOR_CARBON_PRESET: ElementEngineConfig = {
-  meta: {
-    id: "ruby-phosphor-carbon",
-    name: "یاقوتی و فسفری کربنی (Ruby & Phosphor)",
-    author: "Achaemenid High-Contrast",
-    version: "1.0",
-    description: "پس‌زمینه مشکی کربنی خالص با تضاد بالای یاقوتی درخشان و فسفری نئونی",
-    createdAt: "2026-08-29",
-  },
-  global: {
-    borderRadiusCard: "16px",
-    borderRadiusButton: "12px",
-    fontFamily: "var(--font-vazir)",
-    shadowIntensity: "0 12px 35px rgba(0,0,0,0.7)",
-    blurBackdrop: "16px",
-    primaryAccent: "#FF1756",
-    secondaryAccent: "#00FF88",
-  },
-  header: {
-    background: "rgba(7, 9, 15, 0.92)",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
-    clockColor: "#00FF88",
-    brandTitleColor: "#FFFFFF",
-    voiceButtonBg: "rgba(255, 23, 86, 0.2)",
-  },
-  groups: {
-    cardBg: "rgba(13, 16, 23, 0.88)",
-    cardBorder: "1px solid rgba(255, 255, 255, 0.1)",
-    headerTitleColor: "#FFFFFF",
-    headerBadgeBg: "rgba(255, 23, 86, 0.25)",
-    gapSpacing: "16px",
-  },
-  segments: {
-    activeCardBg: "rgba(0, 255, 136, 0.12)",
-    inactiveCardBg: "rgba(13, 16, 23, 0.75)",
-    activeBorder: "1px solid #00FF88",
-    inactiveBorder: "1px solid rgba(255, 255, 255, 0.08)",
-    activeGlow: "0 0 24px rgba(0, 255, 136, 0.4)",
-    iconActiveColor: "#00FF88",
-    iconInactiveColor: "#64748b",
-    toggleOnBg: "#00FF88",
-    toggleOffBg: "#1e2433",
-  },
-  buttons: {
-    primaryBg: "#FF1756",
-    primaryText: "#ffffff",
-    secondaryBg: "rgba(30, 36, 50, 0.8)",
-    secondaryText: "#ffffff",
-    dangerBg: "#FF1756",
-    hoverScale: "1.02",
-  },
-  drawers: {
-    background: "rgba(7, 9, 15, 0.98)",
-    headerBg: "rgba(13, 16, 23, 0.95)",
-    tabActiveBg: "#FF1756",
-    tabActiveText: "#ffffff",
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  matrixBg: {
-    color: "#00FF88",
-    opacity: 0.2,
-    gridSize: 32,
-    twinkleSpeed: 3,
-  },
-  customVars: {},
-};
-
 export const BUILTIN_PRESETS: Record<string, ElementEngineConfig> = {
-  "ruby-phosphor-carbon": RUBY_PHOSPHOR_CARBON_PRESET,
   "default-standard": DEFAULT_ELEMENT_CONFIG,
   "cyberpunk-neon": CYBERPUNK_NEON_PRESET,
   "persian-gold": PERSIAN_GOLD_PRESET,

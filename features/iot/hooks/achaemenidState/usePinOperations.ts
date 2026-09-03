@@ -25,17 +25,22 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
   }, [setPinsState]);
 
   const updatePinOnServer = useCallback(async (pin: string, pinState: boolean, preventMqtt: boolean = false, timer?: number) => {
+    setIsLoadingIoT(true);
     try {
       setPinsState((prev) => ({ ...prev, [pin]: pinState }));
       const segments = useIoTStore.getState().segments;
       const segment = segments.find((s) => s.pin === pin);
+      
+      await syncSinglePin(pin, pinState, preventMqtt, timer, segment?.mode === "push", showToast);
 
-      // Fire-and-forget: منتظر پاسخ HTTP کلادفلر نمی‌ماند تا تاخیر کاربر صفر شود
-      void syncSinglePin(pin, pinState, preventMqtt, timer, segment?.mode === "push", showToast);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await refetchIot();
     } catch (error) {
       console.error("Failed to update pin value:", error);
+    } finally {
+      setIsLoadingIoT(false);
     }
-  }, [setPinsState, showToast]);
+  }, [setPinsState, refetchIot, showToast]);
 
   const handleTogglePin = useCallback(async (pin: string) => {
     const currentState = useIoTStore.getState().pinsState[pin];
@@ -62,6 +67,7 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
   }, [setPinsState, updatePinOnServer]);
 
   const handleBatchPinState = useCallback(async (actions: Array<{ targetPin: string; actionOn: boolean }>) => {
+    setIsLoadingIoT(true);
     try {
       let soundPlayed = false;
       const stateUpdates: Record<string, boolean> = {};
@@ -75,15 +81,20 @@ export function usePinOperations({ refetchIot }: UsePinOperationsProps) {
       }
 
       if (soundPlayed) soundManager.playToggleOn();
-
+      
       setPinsState((prev) => ({ ...prev, ...stateUpdates }));
-
+      
       const segments = useIoTStore.getState().segments;
-      void syncBatchPins(actions, segments, isCloudflareEnabled(), showToast);
+      await syncBatchPins(actions, segments, isCloudflareEnabled(), showToast);
+
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await refetchIot();
     } catch (error) {
       console.error("Failed to update batch pin values:", error);
+    } finally {
+      setIsLoadingIoT(false);
     }
-  }, [setPinsState, showToast]);
+  }, [setPinsState, refetchIot, showToast]);
 
   return {
     isLoadingIoT,

@@ -47,11 +47,11 @@ export default function GroupFilterSelector({
     <div className={`flex items-center justify-center pointer-events-auto max-w-full overflow-hidden ${!isCompact ? 'mb-2' : ''}`} dir="rtl">
       <div className={`flex flex-row items-center justify-center ${isCompact ? 'gap-1' : 'gap-2'} max-w-full`}>
         
-        <button onClick={goPrev} className={`rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0 cursor-pointer ${isCompact ? 'p-1' : 'p-1.5'}`} title="قبلی">
+        <button onClick={goPrev} className={`hidden md:block rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0 ${isCompact ? 'p-0.5' : 'p-1'}`} title="قبلی">
           <ChevronRight className={isCompact ? "w-3.5 h-3.5" : "w-5 h-5"} />
         </button>
         
-        <div className={`flex flex-row items-center justify-center relative overflow-hidden ${isCompact ? 'gap-1 p-0.5 max-w-[200px]' : 'gap-2 p-1 max-w-[460px]'}`}>
+        <div className={`flex flex-row items-center justify-center relative overflow-hidden ${isCompact ? 'gap-1 p-0.5 max-w-[300px]' : 'gap-2 p-1 max-w-[460px]'}`}>
           <AnimatePresence mode="popLayout" custom={direction}>
             {[
               { group: allGroups[(safeCurrIndex - 1 + allGroups.length) % allGroups.length], key: offset - 1 },
@@ -76,7 +76,7 @@ export default function GroupFilterSelector({
           </AnimatePresence>
         </div>
 
-        <button onClick={goNext} className={`rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0 cursor-pointer ${isCompact ? 'p-1' : 'p-1.5'}`} title="بعدی">
+        <button onClick={goNext} className={`hidden md:block rounded-full text-[var(--text-secondary)] md:hover:bg-[var(--accent3)] md:hover:text-white transition-colors shrink-0 ${isCompact ? 'p-0.5' : 'p-1'}`} title="بعدی">
           <ChevronLeft className={isCompact ? "w-3.5 h-3.5" : "w-5 h-5"} />
         </button>
       </div>

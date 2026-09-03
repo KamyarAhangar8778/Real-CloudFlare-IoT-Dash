@@ -21,7 +21,7 @@ export function buildEspConfig(params: any): EspConfig {
       theme_mode: params.isDark ? "dark" : "light",
       accent_color_3: params.accent3,
       accent_color_4: params.accent4,
-      font_family: "vazir",
+      font_family: params.selectedFont,
       animations_enabled: params.animationsEnabled,
       animations_fps: params.animationsFps,
       header_animation: params.headerAnimationType,
