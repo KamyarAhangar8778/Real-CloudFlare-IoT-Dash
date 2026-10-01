@@ -13,16 +13,18 @@ export async function syncSinglePin(pin: string, state: boolean, preventMqtt: bo
     publishPinCommand(pin, state, autoOff);
   }
   if (isCloudflareEnabled() && !isPushMode) {
-    try {
-      const result = await updatePinOnCloudflare(pin, state);
-      if (result.success) {
-        showToast(result.message, "success");
-      } else {
-        showToast(result.message, "error");
-      }
-    } catch (e) {
-      console.error(`Failed to sync pin ${pin} value to Cloudflare:`, e);
-    }
+    // Fire-and-forget: منتظر پاسخ HTTP نمی‌ماند تا تاخیر کاربر صفر شود
+    void updatePinOnCloudflare(pin, state)
+      .then((result) => {
+        if (result?.success) {
+          showToast(result.message, "success");
+        } else if (result?.message) {
+          showToast(result.message, "error");
+        }
+      })
+      .catch((e) => {
+        console.error(`Failed to sync pin ${pin} value to Cloudflare:`, e);
+      });
   }
 }
 
@@ -49,16 +51,18 @@ export async function syncBatchPins(actions: any[], segments: any[], isCfEnabled
   }
 
   if (cfActions.length > 0) {
-    try {
-      const result = await updateBatchPinsOnCloudflare(cfActions);
-      if (result.success) {
-        showToast(result.message, "success");
-      } else {
-        showToast(result.message, "error");
-      }
-    } catch (e) {
-      console.error(`Failed to batch sync pins to Cloudflare:`, e);
-    }
+    // Fire-and-forget: منتظر پاسخ HTTP نمی‌ماند
+    void updateBatchPinsOnCloudflare(cfActions)
+      .then((result) => {
+        if (result?.success) {
+          showToast(result.message, "success");
+        } else if (result?.message) {
+          showToast(result.message, "error");
+        }
+      })
+      .catch((e) => {
+        console.error(`Failed to batch sync pins to Cloudflare:`, e);
+      });
   }
 }
 

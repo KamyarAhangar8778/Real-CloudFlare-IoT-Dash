@@ -1,4 +1,4 @@
-# CLAUDE.md — Development Guidelines
+# GEMINI.md — Development Guidelines
 
 This file contains build, test, lint, code style, and structural guidelines for the Achaemenid IoT Dashboard project.
 
