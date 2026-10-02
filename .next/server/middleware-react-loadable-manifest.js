@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"app/page.tsx -> @/features/dashboard\":{\"id\":\"app/page.tsx -> @/features/dashboard\",\"files\":[]},\"features/iot/hooks/store/slices/createConfigSlice.ts -> @/features/iot/services/mqttService\":{\"id\":\"features/iot/hooks/store/slices/createConfigSlice.ts -> @/features/iot/services/mqttService\",\"files\":[]}}"
