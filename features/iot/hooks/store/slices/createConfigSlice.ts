@@ -35,9 +35,13 @@ export const createConfigSlice: StateCreator<IoTStoreState, [], [], ConfigSlice>
     }
 
     const importedPins: Record<string, boolean> = {};
-    config.segments.forEach((s) => {
+    config.segments.forEach((s: any) => {
       if (s.pin && s.state !== undefined) {
-        importedPins[s.pin] = s.state;
+        importedPins[s.pin] = s.state === true || s.state === 1 || s.state === "true";
+      } else if (s.pin && s.value !== undefined) {
+        importedPins[s.pin] = s.value === true || s.value === 1 || s.value === "true";
+      } else if (s.pin && s.initial_state !== undefined) {
+        importedPins[s.pin] = s.initial_state === true || s.initial_state === 1 || s.initial_state === "true";
       }
       
       // Backward compatibility for old rule schema
