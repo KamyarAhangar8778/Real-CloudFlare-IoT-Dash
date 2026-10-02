@@ -3,9 +3,6 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  experimental: {
-    reactCompiler: true,
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },
