@@ -6,6 +6,7 @@ import { EspConfig, DEFAULT_ESP_CONFIG } from "@/features/iot/services/esp32Conf
 import {
   isCloudflareEnabled,
   fetchConfigFromCloudflare,
+  fetchPinsFromCloudflare,
   getCloudflareWorkerUrl,
   setCloudflareWorkerUrl,
 } from "@/features/iot/services/cloudflareService";
@@ -80,6 +81,17 @@ export function useCloudflareInit({ mounted, handleApplyEspConfig }: UseCloudfla
           }
 
           handleApplyEspConfig(cfConfig);
+
+          // Fetch initial live pin states from Cloudflare Durable Objects
+          try {
+            const livePins = await fetchPinsFromCloudflare(cfConfig.segments);
+            if (livePins && Object.keys(livePins).length > 0) {
+              useIoTStore.getState().setPinsState((prev) => ({ ...prev, ...livePins }));
+            }
+          } catch (e) {
+            console.warn("Could not fetch live pin states from Cloudflare DO:", e);
+          }
+
           setSyncStatus(false, 100, "همگام‌سازی تنظیمات انجام شد.");
           setIsFullyReady(true);
           return;

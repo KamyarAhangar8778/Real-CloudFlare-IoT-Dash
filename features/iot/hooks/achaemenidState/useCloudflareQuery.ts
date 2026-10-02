@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useIoTStore } from "@/features/iot/hooks/useIoTStore";
+import { fetchPinsFromCloudflare } from "@/features/iot/services/cloudflareService";
 
 /**
- * این hook فقط وضعیت mount را مدیریت می‌کند.
- * وضعیت پین‌ها از ESP32 از طریق MQTT می‌آید (در services/mqtt/init.ts پارس می‌شود).
- * CloudFlare فقط برای UI Config (رنگ، نام، تنظیمات) استفاده می‌شود، نه برای وضعیت پین‌ها.
+ * این hook وضعیت mount و همگام‌سازی استعلامی پین‌ها از کلادفلر را مدیریت می‌کند.
  */
 export function useCloudflareQuery() {
   const [mounted, setMounted] = useState(false);
@@ -14,8 +14,19 @@ export function useCloudflareQuery() {
     setMounted(true);
   }, []);
 
-  // refetchIot برای سازگاری با کد موجود نگه داشته شده
-  const refetchIot = async () => {};
+  const refetchIot = useCallback(async () => {
+    try {
+      const segments = useIoTStore.getState().segments;
+      if (segments && segments.length > 0) {
+        const livePins = await fetchPinsFromCloudflare(segments);
+        if (livePins && Object.keys(livePins).length > 0) {
+          useIoTStore.getState().setPinsState((prev) => ({ ...prev, ...livePins }));
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to refetch pin states from Cloudflare:", e);
+    }
+  }, []);
 
   return {
     mounted,
