@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+const repoName = "Real-CloudFlare-IoT-Dash";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  basePath: isGithubPages ? `/${repoName}` : undefined,
   eslint: {
     ignoreDuringBuilds: true,
   },
